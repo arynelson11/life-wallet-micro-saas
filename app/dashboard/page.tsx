@@ -194,7 +194,9 @@ export default async function DashboardPage() {
                         <Wallet className="h-6 w-6 text-blue-200" />
                     </div>
                     <div className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight mb-2 break-all">
-                        <span className="whitespace-nowrap">R$ </span>{formatCurrency(availableBalance).replace(/^R\$\s?/, '')}
+                        <span className="whitespace-nowrap">
+                            R$ {formatCurrency(availableBalance).replace(/^R\$\s?/, '')}
+                        </span>
                     </div>
                     <div className="text-sm text-blue-200 bg-white/10 w-fit px-3 py-1 rounded-full">
                         Livre para usar
@@ -209,7 +211,9 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 leading-tight text-left break-all">
-                        <span className="whitespace-nowrap">R$ </span>{formatCurrency(totalIncome).replace(/^R\$\s?/, '')}
+                        <span className="whitespace-nowrap">
+                            R$ {formatCurrency(totalIncome).replace(/^R\$\s?/, '')}
+                        </span>
                     </div>
                 </Card>
 
@@ -221,7 +225,9 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 leading-tight text-left break-all">
-                        <span className="whitespace-nowrap">R$ </span>{formatCurrency(totalExpense).replace(/^R\$\s?/, '')}
+                        <span className="whitespace-nowrap">
+                            R$ {formatCurrency(totalExpense).replace(/^R\$\s?/, '')}
+                        </span>
                     </div>
                 </Card>
 
@@ -232,7 +238,9 @@ export default async function DashboardPage() {
                         <Target className="h-6 w-6 text-purple-200" />
                     </div>
                     <div className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-2 break-all">
-                        <span className="whitespace-nowrap">R$ </span>{formatCurrency(totalInvested).replace(/^R\$\s?/, '')}
+                        <span className="whitespace-nowrap">
+                            R$ {formatCurrency(totalInvested).replace(/^R\$\s?/, '')}
+                        </span>
                     </div>
                     <Link href="/metas" className="text-sm text-purple-200 hover:text-white underline">
                         Ver Metas
