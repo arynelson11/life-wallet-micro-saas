@@ -4,30 +4,28 @@ import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, getDay, addMonths, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MonthlyBillDialog } from "@/components/MonthlyBillDialog";
-import { ChevronLeft, ChevronRight, CheckCircle2, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight, CheckCircle2, Circle, Trash2 } from "lucide-react";
+import { deleteAppointment } from "@/app/actions/appointments";
+import { toast } from "sonner";
 
-type MonthlyBill = {
+type Appointment = {
     id: string;
     title: string;
     amount: number;
-    due_date: string;
+    date: string; // ISO string from DB
     status: 'pending' | 'paid';
-    description?: string;
-    fixed_bills?: { category: string };
+    type: 'bill' | 'task';
+    category?: string;
 };
 
 export default function CalendarClient({ initialTransactions }: { initialTransactions: any[] }) {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [isDayModalOpen, setIsDayModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    // State for the specific bill detail modal
-    const [selectedBill, setSelectedBill] = useState<MonthlyBill | null>(null);
-    const [isBillModalOpen, setIsBillModalOpen] = useState(false);
-
-    const bills = initialTransactions as MonthlyBill[];
+    const appointments = initialTransactions as Appointment[];
 
     // Navigation
     const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
@@ -41,11 +39,13 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
 
     const startingDayIndex = getDay(startOfMonth(currentDate));
 
-    const getBillsForDay = (date: Date) => {
-        // Adjust for timezone issues if necessary, but assuming ISO strings YYYY-MM-DD
-        // We compare the string part YYYY-MM-DD
+    const getAppointmentsForDay = (date: Date) => {
+        // Compare YYYY-MM-DD
         const dateString = format(date, 'yyyy-MM-dd');
-        return bills.filter((b) => b.due_date === dateString);
+        return appointments.filter((a) => {
+            const aDate = new Date(a.date);
+            return format(aDate, 'yyyy-MM-dd') === dateString;
+        });
     };
 
     const handleDayClick = (date: Date) => {
@@ -53,33 +53,46 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
         setIsDayModalOpen(true);
     };
 
-    const handleBillClick = (bill: MonthlyBill) => {
-        setSelectedBill(bill);
-        setIsBillModalOpen(true);
+    const handleDelete = async (id: string) => {
+        if (!confirm("Tem certeza que deseja excluir esta conta?")) return;
+        setLoading(true);
+        try {
+            const res = await deleteAppointment(id);
+            if (res?.error) {
+                toast.error(res.error);
+            } else {
+                toast.success("Conta excluída!");
+                setIsDayModalOpen(false); // Close to refresh or just let revalidate handle it
+            }
+        } catch (error) {
+            toast.error("Erro ao excluir");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const selectedDayBills = selectedDate ? getBillsForDay(selectedDate) : [];
+    const selectedDayAppointments = selectedDate ? getAppointmentsForDay(selectedDate) : [];
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 px-2">
                 <h2 className="text-2xl font-bold capitalize text-zinc-900">
                     {format(currentDate, "MMMM yyyy", { locale: ptBR })}
                 </h2>
                 <div className="flex gap-2">
-                    <Button variant="outline" size="icon" onClick={prevMonth}>
-                        <ChevronLeft className="h-4 w-4" />
+                    <Button variant="outline" size="icon" onClick={prevMonth} className="rounded-full hover:bg-blue-50 hover:text-blue-600 border-zinc-200">
+                        <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={nextMonth}>
-                        <ChevronRight className="h-4 w-4" />
+                    <Button variant="outline" size="icon" onClick={nextMonth} className="rounded-full hover:bg-blue-50 hover:text-blue-600 border-zinc-200">
+                        <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
             </div>
 
             {/* Grid do Calendário */}
-            <div className="grid grid-cols-7 gap-4">
+            <div className="grid grid-cols-7 gap-2 md:gap-4">
                 {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((weekDay) => (
-                    <div key={weekDay} className="text-center font-bold text-zinc-400 text-sm uppercase tracking-wider">{weekDay}</div>
+                    <div key={weekDay} className="text-center font-bold text-zinc-400 text-xs md:text-sm uppercase tracking-wider">{weekDay}</div>
                 ))}
 
                 {/* Espaços vazios */}
@@ -88,40 +101,50 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                 ))}
 
                 {daysInMonth.map((day) => {
-                    const dayBills = getBillsForDay(day);
-                    const hasBills = dayBills.length > 0;
+                    const dayApps = getAppointmentsForDay(day);
+                    const hasApps = dayApps.length > 0;
                     const isToday = isSameDay(day, new Date());
+                    const isSelected = selectedDate && isSameDay(day, selectedDate);
 
                     return (
                         <div
                             key={day.toString()}
                             onClick={() => handleDayClick(day)}
                             className={`
-                                min-h-[120px] border rounded-2xl p-3 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1
+                                min-h-[80px] md:min-h-[120px] border rounded-2xl p-2 md:p-3 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 relative
                                 ${isToday ? "bg-blue-50 border-blue-500 ring-1 ring-blue-500" : "bg-white border-zinc-100"}
+                                ${isSelected ? "ring-2 ring-blue-300" : ""}
                             `}
                         >
-                            <div className={`font-bold text-right mb-2 ${isToday ? 'text-blue-600' : 'text-zinc-700'}`}>
+                            <div className={`font-bold text-right mb-1 md:mb-2 text-sm md:text-base ${isToday ? 'text-blue-600' : 'text-zinc-700'}`}>
                                 {format(day, "d")}
                             </div>
 
-                            <div className="space-y-1.5">
-                                {dayBills.slice(0, 3).map((bill) => (
+                            {/* Dots for Mobile / List for Desktop */}
+                            <div className="space-y-1 hidden md:block">
+                                {dayApps.slice(0, 3).map((app) => (
                                     <div
-                                        key={bill.id}
-                                        className={`text-xs px-2 py-1 rounded-md truncate flex items-center gap-1.5
-                                            ${bill.status === 'paid'
+                                        key={app.id}
+                                        className={`text-[10px] px-1.5 py-0.5 rounded-md truncate flex items-center gap-1
+                                            ${app.status === 'paid'
                                                 ? 'bg-green-100 text-green-700'
                                                 : 'bg-red-50 text-red-700'
                                             }`}
                                     >
-                                        {bill.status === 'paid' ? <CheckCircle2 className="h-3 w-3 flex-shrink-0" /> : <Circle className="h-3 w-3 flex-shrink-0" />}
-                                        <span className="truncate font-medium">{bill.title}</span>
+                                        <div className={`w-1.5 h-1.5 rounded-full ${app.status === 'paid' ? 'bg-green-500' : 'bg-red-500'}`} />
+                                        <span className="truncate font-medium">{app.title}</span>
                                     </div>
                                 ))}
-                                {dayBills.length > 3 && (
-                                    <div className="text-xs text-zinc-400 pl-1">+{dayBills.length - 3} mais</div>
+                                {dayApps.length > 3 && (
+                                    <div className="text-[10px] text-zinc-400 pl-1">+{dayApps.length - 3}</div>
                                 )}
+                            </div>
+
+                            {/* Mobile Dots */}
+                            <div className="flex md:hidden gap-1 justify-end flex-wrap">
+                                {dayApps.map((app, i) => (
+                                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${app.status === 'paid' ? 'bg-green-500' : 'bg-red-500'}`} />
+                                ))}
                             </div>
                         </div>
                     );
@@ -138,25 +161,36 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                     </DialogHeader>
 
                     <div className="space-y-3 mt-4">
-                        {selectedDayBills.length > 0 ? (
-                            selectedDayBills.map((bill) => (
+                        {selectedDayAppointments.length > 0 ? (
+                            selectedDayAppointments.map((app) => (
                                 <div
-                                    key={bill.id}
-                                    onClick={() => handleBillClick(bill)}
-                                    className="flex justify-between items-center p-3 rounded-xl border border-zinc-100 hover:bg-zinc-50 cursor-pointer transition-colors"
+                                    key={app.id}
+                                    className="flex justify-between items-center p-3 rounded-xl border border-zinc-100 bg-white shadow-sm"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <div className={`p-2 rounded-full ${bill.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-50 text-red-500'}`}>
-                                            {bill.status === 'paid' ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
+                                        <div className={`p-2 rounded-full ${app.status === 'paid' ? 'bg-green-100 text-green-600' : 'bg-red-50 text-red-500'}`}>
+                                            {app.status === 'paid' ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
                                         </div>
                                         <div>
-                                            <p className="font-semibold text-zinc-900">{bill.title}</p>
-                                            <p className="text-xs text-zinc-500">{bill.fixed_bills?.category || 'Geral'}</p>
+                                            <p className="font-semibold text-zinc-900">{app.title}</p>
+                                            <p className="text-xs text-zinc-500">{app.category || 'Geral'}</p>
                                         </div>
                                     </div>
-                                    <span className="font-bold text-zinc-900">
-                                        {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(bill.amount)}
-                                    </span>
+
+                                    <div className="flex items-center gap-3">
+                                        <span className="font-bold text-zinc-900">
+                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(app.amount)}
+                                        </span>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-full h-8 w-8"
+                                            onClick={() => handleDelete(app.id)}
+                                            disabled={loading}
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
                                 </div>
                             ))
                         ) : (
@@ -167,13 +201,6 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                     </div>
                 </DialogContent>
             </Dialog>
-
-            {/* Modal de Edição da Conta Mensal */}
-            <MonthlyBillDialog
-                bill={selectedBill}
-                open={isBillModalOpen}
-                onOpenChange={setIsBillModalOpen}
-            />
         </div>
     );
 }

@@ -2,7 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CalendarClient from "@/components/CalendarClient";
 import { FixedBillDialog } from "@/components/FixedBillDialog";
-import { getMonthlyBills } from "@/app/actions/monthly-bills";
+import { getAppointments } from "@/app/actions/appointments";
+import { CalendarActions } from "@/components/CalendarActions";
+import { Wallet, Calendar as CalendarIcon } from "lucide-react";
 
 export default async function CalendarioPage() {
     const supabase = await createClient();
@@ -10,30 +12,63 @@ export default async function CalendarioPage() {
 
     if (!user) redirect("/login");
 
-    // Fetch Monthly Bills for a wide range (e.g., current year +/- 1 year)
-    // Ideally, CalendarClient should fetch on demand, but for MVP we fetch a batch
+    // Fetch Appointments for a wide range
     const start = new Date().getFullYear() + "-01-01";
     const end = (new Date().getFullYear() + 1) + "-12-31";
 
-    const monthlyBills = await getMonthlyBills(start, end);
+    const appointments = await getAppointments(start, end);
 
-    // Transform to format expected by CalendarClient (if needed) or update CalendarClient
-    // For now, let's assume we pass the raw bills and CalendarClient adapts
+    // Calculate Total Pending for Current Month
+    const currentMonth = new Date().getMonth();
+    const totalPending = appointments
+        .filter(a => {
+            const d = new Date(a.date);
+            return d.getMonth() === currentMonth && a.status === 'pending';
+        })
+        .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
     return (
-        <div className="p-6 max-w-5xl mx-auto space-y-8 pb-24 md:pb-8">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900">Calendário de Contas</h1>
-                    <p className="text-zinc-500">Gerencie suas contas fixas e vencimentos.</p>
+        <div className="min-h-screen bg-zinc-50 pb-24 md:pb-8">
+            {/* Header Vibrante */}
+            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 pb-12 md:pb-16 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                    <CalendarIcon className="w-64 h-64" />
                 </div>
-                <FixedBillDialog />
+
+                <div className="max-w-5xl mx-auto relative z-10">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight">Calendário Financeiro</h1>
+                            <p className="text-blue-100 opacity-90">Organize seus vencimentos e evite juros.</p>
+                        </div>
+                        <div className="flex flex-wrap gap-3">
+                            <CalendarActions />
+                            <FixedBillDialog />
+                        </div>
+                    </div>
+
+                    {/* Card de Resumo Flutuante (Mobile/Desktop) */}
+                    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl max-w-sm">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="p-2 bg-white/20 rounded-lg">
+                                <Wallet className="h-5 w-5 text-white" />
+                            </div>
+                            <span className="font-medium text-blue-50">A Pagar este Mês</span>
+                        </div>
+                        <div className="text-4xl font-bold tracking-tighter">
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPending)}
+                        </div>
+                        <p className="text-xs text-blue-200 mt-1">Total de contas pendentes para o mês atual.</p>
+                    </div>
+                </div>
             </div>
 
-            {/* Calendar Client Component (handles interactivity) */}
-            {/* We pass monthlyBills as 'transactions' for now, but we should probably rename prop in Client */}
-            <CalendarClient initialTransactions={monthlyBills} />
+            {/* Conteúdo Principal (Calendário) */}
+            <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-8 relative z-20">
+                <div className="bg-white rounded-3xl shadow-lg border border-zinc-100 p-2 md:p-6">
+                    <CalendarClient initialTransactions={appointments} />
+                </div>
+            </div>
         </div>
     );
 }

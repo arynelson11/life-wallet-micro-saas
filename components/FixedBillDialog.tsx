@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createFixedBill } from "@/app/actions/fixed-bills";
+import { createFixedBill } from "@/app/actions/appointments";
 import { Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,7 +34,7 @@ export function FixedBillDialog() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
+                <Button className="bg-white/20 hover:bg-white/30 text-white border border-white/40 backdrop-blur-sm gap-2 transition-all">
                     <Plus className="h-4 w-4" /> Nova Conta Fixa
                 </Button>
             </DialogTrigger>
@@ -74,11 +74,6 @@ export function FixedBillDialog() {
                                 <SelectItem value="Outros">Outros</SelectItem>
                             </SelectContent>
                         </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                        <Label htmlFor="description">Observação (Opcional)</Label>
-                        <Input id="description" name="description" placeholder="Detalhes extras..." />
                     </div>
 
                     <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={loading}>
