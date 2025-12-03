@@ -8,8 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar as CalendarIcon, Plus, Loader2 } from "lucide-react";
 import { syncGoogleCalendar } from "@/app/actions/calendar";
 import { createManualReminder } from "@/app/actions/reminders";
-import { toast } from "sonner"; // Assuming sonner is used, or I'll use simple alert/console if not sure. I'll use alert for now to be safe or check if toast is available. I'll stick to basic alert or just console.log if no toast.
-// Actually, I'll use standard alert for simplicity or just rely on the return message.
+import { toast } from "sonner";
 
 export function CalendarActions() {
     const [isSyncing, setIsSyncing] = useState(false);
@@ -21,11 +20,13 @@ export function CalendarActions() {
         try {
             const result = await syncGoogleCalendar();
             if (result.success) {
-                alert(result.message); // Simple feedback
+                toast.success(result.message);
+            } else {
+                toast.error(result.message);
             }
         } catch (error) {
             console.error(error);
-            alert("Erro ao sincronizar.");
+            toast.error("Erro ao sincronizar com Google Calendar.");
         } finally {
             setIsSyncing(false);
         }
@@ -36,14 +37,14 @@ export function CalendarActions() {
         try {
             const result = await createManualReminder(formData);
             if (result.success) {
-                alert(result.message);
+                toast.success(result.message);
                 setIsReminderOpen(false);
             } else {
-                alert(result.message);
+                toast.error(result.message);
             }
         } catch (error) {
             console.error(error);
-            alert("Erro ao criar lembrete.");
+            toast.error("Erro ao criar lembrete.");
         } finally {
             setIsCreating(false);
         }
