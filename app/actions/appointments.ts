@@ -72,6 +72,25 @@ export async function createFixedBill(formData: FormData) {
     return { success: true };
 }
 
+export async function updateAppointment(id: string, updates: { date?: string, amount?: number, title?: string, status?: 'pending' | 'paid' }) {
+    const supabase = await createClient();
+
+    const payload: any = { ...updates };
+    if (updates.date) {
+        payload.date = new Date(updates.date).toISOString();
+    }
+
+    const { error } = await supabase
+        .from("appointments")
+        .update(payload)
+        .eq("id", id);
+
+    if (error) return { error: "Erro ao atualizar conta" };
+
+    revalidatePath("/calendario");
+    return { success: true };
+}
+
 export async function deleteAppointment(id: string) {
     const supabase = await createClient();
 

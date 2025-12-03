@@ -7,13 +7,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Plus, Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Plus, Loader2, Repeat } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { createFixedBill } from "@/app/actions/appointments";
+import { createTransaction } from "@/app/actions/transactions";
+import { toast } from "sonner";
 
 export function TransactionDialog({ spaceId }: { spaceId: string }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRecurrent, setIsRecurrent] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
@@ -34,35 +39,55 @@ export function TransactionDialog({ spaceId }: { spaceId: string }) {
             return;
         }
 
-        // Se não tiver spaceId (usuário novo), tenta criar um agora
-        let finalSpaceId = spaceId;
-        if (!finalSpaceId) {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                // Tenta achar ou criar
-                const { data: newSpace } = await supabase.from("spaces").insert({ name: "Minha Carteira", owner_id: user.id }).select().single();
-                if (newSpace) {
-                    finalSpaceId = newSpace.id;
-                    // Cria membro
-                    await supabase.from("space_members").insert({ space_id: newSpace.id, user_id: user.id, role: 'admin' });
-                }
+        // --- CORREÇÃO DE DATA (OFF-BY-ONE) ---
+        // Quando criamos new Date("2023-12-15"), o JS assume UTC 00:00.
+        // Se o usuário está no Brasil (UTC-3), isso vira "2023-12-14 21:00".
+        // Para corrigir, vamos adicionar o horário 12:00 para garantir o mesmo dia.
+        const dateStr = date as string;
+        const safeDate = new Date(`${dateStr}T12:00:00`).toISOString();
+
+        // Atualiza o formData com a data segura
+        formData.set("date", safeDate);
+
+        try {
+            if (isRecurrent) {
+                // Se for recorrente, cria como Appointment (Conta Fixa)
+                // Precisamos adaptar os campos, pois createFixedBill espera 'title' e 'due_day'
+                // Mas aqui temos 'description' e 'date'
+
+                // Extrair dia do vencimento da data
+                const dueDay = new Date(`${dateStr}T12:00:00`).getDate();
+
+                formData.set("title", description as string);
+                formData.set("due_day", dueDay.toString());
+
+                const res = await createFixedBill(formData);
+                if (res?.error) toast.error(res.error);
+                else toast.success("Conta fixa criada com sucesso!");
+
+            } else {
+                // Transação normal
+                // createTransaction já espera 'date' e 'description'
+                // Mas precisamos garantir que createTransaction use a data que passamos ou a trate
+                // Como createTransaction usa new Date(date), se passarmos ISO com T12:00:00, ele vai respeitar.
+
+                // Vamos chamar a Server Action diretamente para garantir
+                // Nota: createTransaction espera formData. Vamos garantir que o 'date' lá seja o safeDate
+                // Como FormData é imutável em alguns contextos, vamos criar um novo se precisar, 
+                // mas o set acima deve funcionar.
+
+                const res = await createTransaction(formData);
+                if (res?.error) toast.error(res.error);
+                else toast.success("Transação criada com sucesso!");
             }
-        }
 
-        const { error } = await supabase.from("transactions").insert({
-            amount: Number(amount),
-            description,
-            category,
-            type,
-            date,
-            space_id: finalSpaceId
-        });
-
-        if (!error) {
             setOpen(false);
             router.refresh();
+        } catch (error) {
+            toast.error("Erro ao salvar.");
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     }
 
     return (
@@ -130,6 +155,20 @@ export function TransactionDialog({ spaceId }: { spaceId: string }) {
                                 <SelectItem value="Outros">📦 Outros</SelectItem>
                             </SelectContent>
                         </Select>
+                    </div>
+
+                    {/* Toggle Recorrente */}
+                    <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-100">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                                <Repeat className="h-4 w-4" />
+                            </div>
+                            <div className="space-y-0.5">
+                                <Label className="text-base">É conta fixa?</Label>
+                                <p className="text-xs text-zinc-500">Repetir todo mês (cria agendamento)</p>
+                            </div>
+                        </div>
+                        <Switch checked={isRecurrent} onCheckedChange={setIsRecurrent} />
                     </div>
 
                     <Button disabled={isLoading} type="submit" className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-bold h-12 rounded-xl">

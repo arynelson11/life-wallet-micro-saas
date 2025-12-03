@@ -60,8 +60,33 @@ export async function createTransaction(formData: FormData) {
     // Revalidate pages
     revalidatePath('/dashboard')
     revalidatePath('/extrato')
+    revalidatePath('/calendario')
 
     return { success: true }
+}
+
+export async function updateTransaction(id: string, updates: { date?: string, amount?: number, description?: string }) {
+    const supabase = await createClient();
+
+    // Se a data for atualizada, garantir que seja ISO
+    const payload: any = { ...updates };
+    if (updates.date) {
+        payload.date = new Date(updates.date).toISOString();
+    }
+
+    const { error } = await supabase
+        .from('transactions')
+        .update(payload)
+        .eq('id', id);
+
+    if (error) {
+        console.error('Erro ao atualizar:', error);
+        return { error: 'Falha ao atualizar transação' };
+    }
+
+    revalidatePath('/dashboard');
+    revalidatePath('/calendario');
+    return { success: true };
 }
 
 export async function deleteTransaction(transactionId: string) {
@@ -78,6 +103,7 @@ export async function deleteTransaction(transactionId: string) {
     }
 
     revalidatePath('/dashboard');
+    revalidatePath('/calendario');
 }
 
 export async function joinSpace(inviteCode: string) {

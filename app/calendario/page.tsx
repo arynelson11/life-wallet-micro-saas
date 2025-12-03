@@ -12,13 +12,42 @@ export default async function CalendarioPage() {
 
     if (!user) redirect("/login");
 
-    // Fetch Appointments for a wide range
+    // Fetch Range
     const start = new Date().getFullYear() + "-01-01";
     const end = (new Date().getFullYear() + 1) + "-12-31";
 
+    // 1. Fetch Appointments (Contas Fixas / Agendadas)
     const appointments = await getAppointments(start, end);
 
-    // Calculate Total Pending for Current Month
+    // 2. Fetch Transactions (Gastos Realizados)
+    // Precisamos buscar manualmente aqui pois não temos uma action 'getTransactions' com range exposta
+    // Vamos fazer a query direta
+    const { data: transactions } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("profile_id", user.id) // ou space_id se preferir
+        .gte("date", start)
+        .lte("date", end);
+
+    // 3. Unificar Dados
+    // Vamos normalizar para um formato comum para o CalendarClient
+    const normalizedAppointments = appointments.map(a => ({
+        ...a,
+        source: 'appointment', // Identificador
+        isPaid: a.status === 'paid'
+    }));
+
+    const normalizedTransactions = (transactions || []).map(t => ({
+        ...t,
+        title: t.description, // Transactions usam 'description', Appointments usam 'title'
+        source: 'transaction',
+        status: 'paid', // Transações passadas são sempre "pagas/realizadas"
+        isPaid: true
+    }));
+
+    const allEvents = [...normalizedAppointments, ...normalizedTransactions];
+
+    // Calculate Total Pending for Current Month (Only Appointments)
     const currentMonth = new Date().getMonth();
     const totalPending = appointments
         .filter(a => {
@@ -66,7 +95,7 @@ export default async function CalendarioPage() {
             {/* Conteúdo Principal (Calendário) */}
             <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-8 relative z-20">
                 <div className="bg-white rounded-3xl shadow-lg border border-zinc-100 p-2 md:p-6">
-                    <CalendarClient initialTransactions={appointments} />
+                    <CalendarClient initialTransactions={allEvents} />
                 </div>
             </div>
         </div>
