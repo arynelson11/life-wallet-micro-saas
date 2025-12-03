@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { ArrowUp, Wallet, Target, PieChart, Lightbulb, AlertTriangle, TrendingDown, Sparkles, ShoppingBag, Car, Home, FileText, Banknote, Package } from "lucide-react";
+import { ArrowUp, Wallet, Target, PieChart, Lightbulb, AlertTriangle, TrendingDown, Sparkles, ShoppingBag, Car, Home, FileText, Banknote, Package, BrainCircuit } from "lucide-react";
 import Link from "next/link";
 import { TransactionDialog } from "@/components/TransactionDialog";
 import { DashboardChart } from "@/components/DashboardChart";
@@ -100,6 +100,43 @@ export default async function DashboardPage() {
         .sort((a, b) => b.amount - a.amount)
         .slice(0, 4); // Top 4 categorias
 
+
+    // --- INTELIGÊNCIA PREDITIVA DE GASTOS (FORECAST) ---
+    const now = new Date();
+    const currentDay = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const remainingDays = daysInMonth - currentDay;
+
+    // Categorias Variáveis (Ignora fixas)
+    const variableCategories = ['Alimentação', 'Lazer', 'Transporte', 'Outros', 'Mercado', 'Restaurante'];
+    const fixedCategories = ['Contas', 'Casa', 'Salário', 'Aluguel', 'Internet', 'Luz', 'Água'];
+
+    const currentMonthTransactions = allTransactions?.filter(t => {
+        const tDate = new Date(t.date);
+        return tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear();
+    });
+
+    const variableSpend = currentMonthTransactions
+        ?.filter(t => t.type === 'expense' && !fixedCategories.includes(t.category || ''))
+        .reduce((acc, curr) => acc + Math.abs(Number(curr.amount)), 0) || 0;
+
+    // Burn Rate (Média Diária)
+    // Evita divisão por zero se for dia 1, assume 1
+    const dailyBurnRate = variableSpend / (currentDay > 0 ? currentDay : 1);
+
+    // Projeção Final
+    const forecastedSpend = variableSpend + (dailyBurnRate * remainingDays);
+
+    // Status da Previsão
+    let forecastStatus: 'safe' | 'warning' | 'danger' = 'safe';
+    // Se a projeção de gastos variáveis for > 60% da receita total (exemplo de regra)
+    if (totalIncome > 0) {
+        const ratio = forecastedSpend / totalIncome;
+        if (ratio > 0.8) forecastStatus = 'danger';
+        else if (ratio > 0.5) forecastStatus = 'warning';
+    }
+
+
     // --- INSIGHTS INTELIGENTES ---
     const insights: { type: 'warning' | 'tip' | 'success'; message: string }[] = [];
 
@@ -194,7 +231,7 @@ export default async function DashboardPage() {
                         <Wallet className="h-6 w-6 text-blue-200" />
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 truncate">
                             R$ {formatCurrency(availableBalance).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -211,7 +248,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left truncate">
                             R$ {formatCurrency(totalIncome).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -225,7 +262,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left truncate">
                             R$ {formatCurrency(totalExpense).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -238,7 +275,7 @@ export default async function DashboardPage() {
                         <Target className="h-6 w-6 text-purple-200" />
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 truncate">
                             R$ {formatCurrency(totalInvested).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -248,32 +285,69 @@ export default async function DashboardPage() {
                 </Card>
             </div>
 
-            {/* NOVA SEÇÃO: Insights Inteligentes */}
-            {insights.length > 0 && (
-                <Card className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 shadow-sm rounded-3xl">
-                    <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-amber-100 rounded-full">
-                            <Lightbulb className="h-5 w-5 text-amber-600" />
-                        </div>
-                        <h3 className="text-lg font-bold text-zinc-900">Dicas do Assessor</h3>
+            {/* --- CARD DE PREVISÃO (FORECAST) --- */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <Card className={`p-6 border-none shadow-lg rounded-3xl relative overflow-hidden ${forecastStatus === 'danger' ? 'bg-gradient-to-br from-red-500 to-rose-600 text-white' :
+                    forecastStatus === 'warning' ? 'bg-gradient-to-br from-amber-400 to-orange-500 text-white' :
+                        'bg-gradient-to-br from-emerald-500 to-teal-600 text-white'
+                    }`}>
+                    <div className="absolute top-0 right-0 p-4 opacity-20">
+                        <BrainCircuit className="w-24 h-24" />
                     </div>
-                    <div className="space-y-3">
-                        {insights.map((insight, i) => (
-                            <div
-                                key={i}
-                                className={`flex items-start gap-3 p-4 rounded-xl ${insight.type === 'warning' ? 'bg-red-50 border border-red-100' :
-                                    insight.type === 'success' ? 'bg-green-50 border border-green-100' :
-                                        'bg-blue-50 border border-blue-100'
-                                    }`}
-                            >
-                                {insight.type === 'warning' && <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />}
-                                {insight.type === 'success' && <Sparkles className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />}
-                                <p className="text-sm font-medium text-zinc-700 leading-relaxed">{insight.message}</p>
+                    <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-5 h-5 text-white/80" />
+                            <h3 className="font-semibold text-white/90 uppercase tracking-wider text-xs">Inteligência Preditiva</h3>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-4">Previsão de Fechamento 🔮</h2>
+
+                        <div className="space-y-4">
+                            <div>
+                                <p className="text-white/80 text-sm">Média diária (variáveis)</p>
+                                <p className="text-3xl font-bold tracking-tight">{formatCurrency(dailyBurnRate)} <span className="text-sm font-normal text-white/60">/ dia</span></p>
                             </div>
-                        ))}
+
+                            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm border border-white/10">
+                                <p className="text-sm font-medium mb-1">
+                                    {forecastStatus === 'danger' ? '⚠️ Cuidado! Vai ficar apertado.' :
+                                        forecastStatus === 'warning' ? '👀 Atenção aos gastos.' :
+                                            '✅ Ritmo saudável!'}
+                                </p>
+                                <p className="text-xs text-white/80 leading-relaxed">
+                                    Nesse ritmo, suas despesas variáveis fecharão o mês em aprox. <strong className="text-white text-base">{formatCurrency(forecastedSpend)}</strong>.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </Card>
-            )}
+
+                {/* Dicas do Assessor (Ocupa o resto ou move para baixo) */}
+                {insights.length > 0 && (
+                    <Card className="lg:col-span-2 p-6 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200 shadow-sm rounded-3xl">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-amber-100 rounded-full">
+                                <Lightbulb className="h-5 w-5 text-amber-600" />
+                            </div>
+                            <h3 className="text-lg font-bold text-zinc-900">Dicas do Assessor</h3>
+                        </div>
+                        <div className="space-y-3">
+                            {insights.map((insight, i) => (
+                                <div
+                                    key={i}
+                                    className={`flex items-start gap-3 p-4 rounded-xl ${insight.type === 'warning' ? 'bg-red-50 border border-red-100' :
+                                        insight.type === 'success' ? 'bg-green-50 border border-green-100' :
+                                            'bg-blue-50 border border-blue-100'
+                                        }`}
+                                >
+                                    {insight.type === 'warning' && <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />}
+                                    {insight.type === 'success' && <Sparkles className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />}
+                                    <p className="text-sm font-medium text-zinc-700 leading-relaxed">{insight.message}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </Card>
+                )}
+            </div>
 
             {/* Layout Principal: Gráfico + Categorias */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
