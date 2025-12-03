@@ -92,3 +92,7 @@ export async function createCustomerPortal() {
 
     redirect(session.url);
 }
+
+export async function createCustomerPortalSession() {
+    return createCustomerPortal();
+}

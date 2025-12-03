@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { joinSpace } from "@/app/actions/transactions";
 import { updateProfile } from "@/app/actions/profile";
 import { User, Users, LogOut, Copy, CreditCard } from "lucide-react";
-import { createCustomerPortal, createCheckoutSession } from "@/app/actions/stripe";
+import { createCustomerPortal, createCheckoutSession, createCustomerPortalSession } from "@/app/actions/stripe";
 
 export default async function SettingsPage() {
     const supabase = await createClient();
@@ -86,14 +86,14 @@ export default async function SettingsPage() {
                                 <form action={async () => {
                                     'use server'
                                     if (!process.env.STRIPE_SECRET_KEY) return;
-                                    await createCustomerPortal();
+                                    await createCustomerPortalSession();
                                 }}>
                                     <Button
                                         disabled={!isStripeConfigured}
                                         variant="outline"
                                         className="bg-white hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {isStripeConfigured ? "Gerenciar Assinatura" : "⚠️ Stripe não configurado"}
+                                        {isStripeConfigured ? "Gerenciar Assinatura / Alterar Plano" : "⚠️ Stripe não configurado"}
                                     </Button>
                                 </form>
                             )}

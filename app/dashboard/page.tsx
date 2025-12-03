@@ -188,61 +188,61 @@ export default async function DashboardPage() {
 
             {/* Cards de KPI - NOVA GRID (4 colunas) - RESPONSIVO */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <Card className="p-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white border-none shadow-xl rounded-3xl">
+                <Card className="p-6 pb-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white border-none shadow-xl rounded-3xl flex flex-col justify-between">
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-blue-100 font-medium">Disponível</span>
                         <Wallet className="h-6 w-6 text-blue-200" />
                     </div>
-                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight mb-2 break-all">
-                        <span className="whitespace-nowrap">
+                    <div className="flex flex-col overflow-hidden">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
                             R$ {formatCurrency(availableBalance).replace(/^R\$\s?/, '')}
-                        </span>
+                        </div>
                     </div>
-                    <div className="text-sm text-blue-200 bg-white/10 w-fit px-3 py-1 rounded-full">
+                    <div className="text-sm text-blue-200 bg-white/10 w-fit px-3 py-1 rounded-full mt-auto">
                         Livre para usar
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-white border-zinc-100 shadow-sm rounded-3xl">
+                <Card className="p-6 pb-8 bg-white border-zinc-100 shadow-sm rounded-3xl flex flex-col justify-between">
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-zinc-500 font-medium">Receitas</span>
                         <div className="p-2 bg-green-50 rounded-full">
                             <ArrowUp className="h-5 w-5 text-green-600" />
                         </div>
                     </div>
-                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 leading-tight text-left break-all">
-                        <span className="whitespace-nowrap">
+                    <div className="flex flex-col overflow-hidden">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
                             R$ {formatCurrency(totalIncome).replace(/^R\$\s?/, '')}
-                        </span>
+                        </div>
                     </div>
                 </Card>
 
-                <Card className="p-6 bg-white border-zinc-100 shadow-sm rounded-3xl">
+                <Card className="p-6 pb-8 bg-white border-zinc-100 shadow-sm rounded-3xl flex flex-col justify-between">
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-zinc-500 font-medium">Despesas</span>
                         <div className="p-2 bg-red-50 rounded-full">
                             <TrendingDown className="h-5 w-5 text-red-600" />
                         </div>
                     </div>
-                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-zinc-900 leading-tight text-left break-all">
-                        <span className="whitespace-nowrap">
+                    <div className="flex flex-col overflow-hidden">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
                             R$ {formatCurrency(totalExpense).replace(/^R\$\s?/, '')}
-                        </span>
+                        </div>
                     </div>
                 </Card>
 
                 {/* NOVO CARD: Guardado em Metas */}
-                <Card className="p-6 bg-gradient-to-br from-purple-600 to-purple-700 text-white border-none shadow-xl rounded-3xl">
+                <Card className="p-6 pb-8 bg-gradient-to-br from-purple-600 to-purple-700 text-white border-none shadow-xl rounded-3xl flex flex-col justify-between">
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-purple-100 font-medium">Em Metas</span>
                         <Target className="h-6 w-6 text-purple-200" />
                     </div>
-                    <div className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-2 break-all">
-                        <span className="whitespace-nowrap">
+                    <div className="flex flex-col overflow-hidden">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
                             R$ {formatCurrency(totalInvested).replace(/^R\$\s?/, '')}
-                        </span>
+                        </div>
                     </div>
-                    <Link href="/metas" className="text-sm text-purple-200 hover:text-white underline">
+                    <Link href="/metas" className="text-sm text-purple-200 hover:text-white underline mt-auto">
                         Ver Metas
                     </Link>
                 </Card>

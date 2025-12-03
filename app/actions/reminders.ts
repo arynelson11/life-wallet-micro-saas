@@ -11,11 +11,11 @@ export async function createManualReminder(formData: FormData) {
         return { success: false, message: "Usuário não autenticado" };
     }
 
-    const description = formData.get("description") as string;
+    const title = (formData.get("title") || formData.get("description")) as string;
     const date = formData.get("date") as string; // YYYY-MM-DD
-    const amount = formData.get("amount") ? Number(formData.get("amount")) : 0;
+    const amount = formData.get("amount") ? Number(formData.get("amount")) : null;
 
-    if (!description || !date) {
+    if (!title || !date) {
         return { success: false, message: "Descrição e data são obrigatórios" };
     }
 
@@ -41,15 +41,16 @@ export async function createManualReminder(formData: FormData) {
         return { success: false, message: "Espaço não encontrado" };
     }
 
-    const { error } = await supabase.from("transactions").insert({
-        description: `Lembrete: ${description}`,
-        amount: amount, // Se for despesa, deveria ser negativo? O usuário pediu "valor (opcional)". Vou assumir que é despesa.
-        type: 'expense',
+    // Determine type based on amount
+    const type = amount && amount > 0 ? 'bill' : 'task';
+
+    const { error } = await supabase.from("appointments").insert({
+        title: title,
         date: date,
-        category: 'Outros', // Categoria padrão
+        type: type,
+        amount: amount,
         space_id: spaceId,
-        user_id: user.id,
-        is_paid: false // Lembretes geralmente não estão pagos
+        status: 'pending'
     });
 
     if (error) {
