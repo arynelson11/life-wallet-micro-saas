@@ -5,6 +5,7 @@ import { MobileNav } from "@/components/MobileNav";
 import { DesktopHeader } from "@/components/DesktopHeader";
 import { createClient } from "@/lib/supabase/server";
 import { SubscriptionGuard } from "@/components/SubscriptionGuard";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -98,6 +99,7 @@ export default async function RootLayout({
         {/* Menu Inferior (Apenas Mobile) - Só aparece se logado */}
         {user && <MobileNav spaceId={spaceId} />}
 
+        <Toaster />
       </body>
     </html>
   );
