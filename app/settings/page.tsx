@@ -16,13 +16,14 @@ export default async function SettingsPage() {
     if (!user) redirect("/login");
 
     // Busca dados do perfil e do space
-    const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+    // USA maybeSingle() PARA EVITAR CRASH SE NÃO TIVER PERFIL AINDA
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
 
     const { data: spaceMember } = await supabase
         .from("space_members")
         .select("space_id, spaces(name, invite_code)")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
     // @ts-ignore
     const inviteCode = spaceMember?.spaces?.invite_code || "---";

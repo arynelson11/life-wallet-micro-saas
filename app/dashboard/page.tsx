@@ -22,11 +22,12 @@ export default async function DashboardPage() {
     if (!user) redirect("/login");
 
     // --- BUSCAR NOME DO PERFIL ---
+    // USA maybeSingle() PARA EVITAR CRASH
     const { data: profile } = await supabase
         .from("profiles")
         .select("full_name")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
     const userName = profile?.full_name || user.user_metadata?.full_name || "Viajante";
 
@@ -35,7 +36,7 @@ export default async function DashboardPage() {
         .from("space_members")
         .select("space_id")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
     let spaceId = spaceMember?.space_id;
 
@@ -44,7 +45,7 @@ export default async function DashboardPage() {
             .from("spaces")
             .select("id")
             .eq("owner_id", user.id)
-            .single();
+            .maybeSingle();
         spaceId = personalSpace?.id;
     }
 
@@ -231,7 +232,7 @@ export default async function DashboardPage() {
                         <Wallet className="h-6 w-6 text-blue-200" />
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 truncate">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
                             R$ {formatCurrency(availableBalance).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -248,7 +249,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left truncate">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
                             R$ {formatCurrency(totalIncome).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -262,7 +263,7 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left truncate">
+                        <div className="text-3xl lg:text-4xl font-bold text-zinc-900 tracking-tighter leading-tight text-left break-words text-wrap balance">
                             R$ {formatCurrency(totalExpense).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
@@ -275,7 +276,7 @@ export default async function DashboardPage() {
                         <Target className="h-6 w-6 text-purple-200" />
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 truncate">
+                        <div className="text-3xl lg:text-4xl font-bold tracking-tighter leading-tight mb-2 break-words text-wrap balance">
                             R$ {formatCurrency(totalInvested).replace(/^R\$\s?/, '')}
                         </div>
                     </div>
