@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { MobileNav } from "@/components/MobileNav";
 import { DesktopHeader } from "@/components/DesktopHeader";
@@ -7,14 +7,10 @@ import { createClient } from "@/lib/supabase/server";
 import { SubscriptionGuard } from "@/components/SubscriptionGuard";
 import { Toaster } from "sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -79,7 +75,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}>
+      <body className={`${inter.variable} antialiased bg-background text-foreground`}>
 
         {/* Menu Superior (Apenas Desktop) - Só aparece se logado */}
         {user && <DesktopHeader />}

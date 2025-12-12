@@ -4,36 +4,28 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* Apple-style Design Tokens */
-  --color-ios-blue: #007AFF;
+  /* Orvion Design Tokens */
+  --color-brand-lime: #C7F33C;
+  --color-brand-lime-light: #E1F2AE;
+  --color-brand-black: #000000;
+  --color-brand-gray: #F5F5F7;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  
-  /* Zinc Palette for Apple-style UI */
-  --color-zinc-50: #fafafa;
-  --color-zinc-100: #f4f4f5;
-  --color-zinc-200: #e4e4e7;
-  --color-zinc-300: #d4d4d8;
-  --color-zinc-400: #a1a1aa;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #52525b;
-  --color-zinc-700: #3f3f46;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #18181b;
-  
-  /* Custom Apple Shadows */
-  --shadow-apple: 0 2px 16px rgba(0, 0, 0, 0.08);
-  --shadow-apple-sm: 0 1px 8px rgba(0, 0, 0, 0.06);
-  --shadow-apple-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
-  
+  --font-sans: var(--font-inter);
+
+  /* Glassmorphism & Shadows */
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-glass-sm: 0 4px 16px 0 rgba(31, 38, 135, 0.05);
+  --backdrop-blur-glass: 12px;
+
   /* Border Radius */
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
   --radius-3xl: 2rem;
-  
-  /* Shadcn Variables */
+  --radius-4xl: 2.5rem;
+
+  /* Shadcn Variables Mapped to Orvion */
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -69,99 +61,127 @@
 }
 
 :root {
-  --radius: 1rem;
-  
-  /* Apple-style Light Mode */
-  --background: #fafafa; /* zinc-50 for mobile */
-  --foreground: #18181b; /* zinc-900 for titles */
-  --card: #ffffff;
-  --card-foreground: #18181b;
+  --radius: 1.5rem;
+
+  /* Orvion Light Mode */
+  --background: #F5F5F7;
+  /* Light Gray Background */
+  --foreground: #000000;
+
+  --card: rgba(255, 255, 255, 0.7);
+  --card-foreground: #000000;
+
   --popover: #ffffff;
-  --popover-foreground: #18181b;
-  
-  /* Primary = iOS Blue */
-  --primary: #007AFF;
-  --primary-foreground: #ffffff;
-  
-  /* Secondary & Muted = Zinc tones */
-  --secondary: #f4f4f5; /* zinc-100 */
-  --secondary-foreground: #18181b;
-  --muted: #f4f4f5;
-  --muted-foreground: #71717a; /* zinc-500 for subtitles */
-  --accent: #f4f4f5;
-  --accent-foreground: #18181b;
-  
+  --popover-foreground: #000000;
+
+  /* Primary = Lime Green */
+  --primary: #C7F33C;
+  --primary-foreground: #000000;
+
+  /* Secondary = Pale Lime */
+  --secondary: #E1F2AE;
+  --secondary-foreground: #000000;
+
+  --muted: #F5F5F7;
+  --muted-foreground: #71717a;
+
+  --accent: #E1F2AE;
+  --accent-foreground: #000000;
+
   --destructive: oklch(0.577 0.245 27.325);
-  --border: #f4f4f5; /* zinc-100 for subtle borders */
-  --input: #f4f4f5; /* zinc-100 for iOS-style inputs */
-  --ring: #007AFF;
-  
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  
-  --sidebar: #fafafa;
-  --sidebar-foreground: #18181b;
-  --sidebar-primary: #007AFF;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f4f4f5;
-  --sidebar-accent-foreground: #18181b;
-  --sidebar-border: #f4f4f5;
-  --sidebar-ring: #007AFF;
+
+  --border: rgba(0, 0, 0, 0.05);
+  --input: #ffffff;
+  --ring: #C7F33C;
+
+  /* Chart Colors matching the image */
+  --chart-1: #C7F33C;
+  /* Lime */
+  --chart-2: #000000;
+  /* Black */
+  --chart-3: #E1F2AE;
+  /* Pale Lime */
+  --chart-4: #9CA3AF;
+  /* Gray */
+  --chart-5: #F3F4F6;
+  /* Light Gray */
+
+  --sidebar: #F5F5F7;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #C7F33C;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #E1F2AE;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: rgba(0, 0, 0, 0.05);
+  --sidebar-ring: #C7F33C;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: #007AFF;
-  --primary-foreground: #ffffff;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Orvion Dark Mode (Optional, but good to have) */
+  --background: #000000;
+  --foreground: #ffffff;
+
+  --card: rgba(24, 24, 27, 0.7);
+  --card-foreground: #ffffff;
+
+  --popover: #18181b;
+  --popover-foreground: #ffffff;
+
+  --primary: #C7F33C;
+  --primary-foreground: #000000;
+
+  --secondary: #27272a;
+  --secondary-foreground: #ffffff;
+
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+
+  --accent: #27272a;
+  --accent-foreground: #ffffff;
+
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: #007AFF;
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: #007AFF;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: #007AFF;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --input: #27272a;
+  --ring: #C7F33C;
+
+  --chart-1: #C7F33C;
+  --chart-2: #ffffff;
+  --chart-3: #E1F2AE;
+  --chart-4: #52525b;
+  --chart-5: #27272a;
+
+  --sidebar: #000000;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #C7F33C;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #27272a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #C7F33C;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   /* Apple-style Typography */
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold text-zinc-900;
   }
-  
+
   /* Smooth Scrolling */
   html {
     scroll-behavior: smooth;
@@ -169,43 +189,29 @@
 }
 
 @layer utilities {
-  /* Glassmorphism Header (Apple-style) */
-  .glass-header {
-    @apply bg-white/80 backdrop-blur-md border-b border-zinc-100;
+
+  /* Glassmorphism Panel */
+  .glass-panel {
+    @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-glass;
   }
-  
-  /* Glassmorphism Card */
-  .glass-card {
-    @apply bg-white/60 backdrop-blur-lg border border-white/20;
+
+  /* Orvion Card */
+  .orvion-card {
+    @apply bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg border border-white/40 dark:border-white/10 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300;
   }
-  
-  /* Apple Shadow Utilities */
-  .shadow-apple {
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+
+  /* Pill Button */
+  .btn-pill {
+    @apply rounded-full px-6 py-2.5 font-medium transition-all active:scale-95;
   }
-  
-  .shadow-apple-sm {
-    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+
+  /* Custom Scrollbar */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
-  
-  .shadow-apple-lg {
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  }
-  
-  /* iOS-style Input */
-  .input-ios {
-    @apply bg-zinc-100 rounded-xl border-0 px-4 py-3 text-zinc-900 placeholder:text-zinc-500 focus:ring-2 focus:ring-ios-blue;
-  }
-  
-  /* iOS Button (Pill Shape) */
-  .btn-ios {
-    @apply bg-ios-blue text-white font-semibold rounded-full px-6 py-3 hover:bg-blue-600 transition-all active:scale-95;
-  }
-  
-  /* Desktop Background */
-  @media (min-width: 768px) {
-    body {
-      @apply bg-white;
-    }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
