@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plane, Car, Home, GraduationCap, Shield, Plus, Loader2 } from "lucide-react";
-import { createGoal } from "@/app/actions/goals"; // Importando a ação que criamos acima
+import { createGoal } from "@/app/actions/goals";
 
 // Lista de Ícones Predefinidos
 const PRESET_ICONS = [
@@ -17,7 +17,12 @@ const PRESET_ICONS = [
     { id: 'safety', label: 'Reserva', icon: Shield },
 ];
 
-export function GoalDialog({ spaceId }: { spaceId: string }) {
+interface GoalDialogProps {
+    spaceId?: string;
+    children?: React.ReactNode;
+}
+
+export function GoalDialog({ spaceId, children }: GoalDialogProps) {
     const [open, setOpen] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("plane");
     const [customEmoji, setCustomEmoji] = useState("");
@@ -25,29 +30,32 @@ export function GoalDialog({ spaceId }: { spaceId: string }) {
 
     async function handleSubmit(formData: FormData) {
         setIsLoading(true);
-        // Se o usuário digitou um emoji, usa ele. Se não, usa o ícone selecionado.
         const iconToSave = customEmoji || selectedIcon;
         formData.append("icon", iconToSave);
-        formData.append("space_id", spaceId);
+        if (spaceId) {
+            formData.append("space_id", spaceId);
+        }
 
         await createGoal(formData);
 
         setIsLoading(false);
-        setOpen(false); // Fecha o modal
-        setCustomEmoji(""); // Limpa form
+        setOpen(false);
+        setCustomEmoji("");
     }
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button className="gap-2 bg-blue-600 hover:bg-blue-500 text-white">
-                    <Plus className="h-4 w-4" /> Nova Meta
-                </Button>
+                {children || (
+                    <Button className="gap-2 bg-black hover:bg-black/90 text-white rounded-full">
+                        <Plus className="h-4 w-4" /> Nova Meta
+                    </Button>
+                )}
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md bg-white rounded-[2rem] border-zinc-100 shadow-xl">
                 <DialogHeader>
-                    <DialogTitle>Nova Meta 🚀</DialogTitle>
+                    <DialogTitle className="text-xl font-bold">Nova Meta 🚀</DialogTitle>
                 </DialogHeader>
 
                 <form action={handleSubmit} className="space-y-6 mt-4">
@@ -55,13 +63,13 @@ export function GoalDialog({ spaceId }: { spaceId: string }) {
                     {/* Nome da Meta */}
                     <div className="space-y-2">
                         <Label>Nome do Objetivo</Label>
-                        <Input name="title" placeholder="Ex: Viagem para Disney" required />
+                        <Input name="title" placeholder="Ex: Viagem para Disney" required className="rounded-xl bg-zinc-50 border-zinc-200" />
                     </div>
 
                     {/* Valor */}
                     <div className="space-y-2">
                         <Label>Valor Alvo (R$)</Label>
-                        <Input name="target_amount" type="number" placeholder="5000" required />
+                        <Input name="target_amount" type="number" placeholder="5000" required className="rounded-xl bg-zinc-50 border-zinc-200" />
                     </div>
 
                     {/* Seleção de Ícone */}
@@ -79,8 +87,8 @@ export function GoalDialog({ spaceId }: { spaceId: string }) {
                                         type="button"
                                         onClick={() => { setSelectedIcon(item.id); setCustomEmoji(""); }}
                                         className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${isSelected
-                                                ? "border-blue-600 bg-blue-50 text-blue-600 ring-2 ring-blue-600 ring-offset-1"
-                                                : "border-zinc-200 hover:bg-zinc-50 text-zinc-500"
+                                            ? "border-primary bg-primary/10 text-primary ring-2 ring-primary ring-offset-1"
+                                            : "border-zinc-200 hover:bg-zinc-50 text-zinc-500"
                                             }`}
                                     >
                                         <Icon className="h-6 w-6 mb-1" />
@@ -97,7 +105,7 @@ export function GoalDialog({ spaceId }: { spaceId: string }) {
                             </div>
                             <Input
                                 placeholder="Ex: 💻, 💍, 🐶"
-                                className="pl-36 text-lg"
+                                className="pl-36 text-lg rounded-xl bg-zinc-50 border-zinc-200"
                                 value={customEmoji}
                                 onChange={(e) => setCustomEmoji(e.target.value)}
                                 maxLength={2}
@@ -106,7 +114,7 @@ export function GoalDialog({ spaceId }: { spaceId: string }) {
                     </div>
 
                     {/* Botão Salvar */}
-                    <Button disabled={isLoading} type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold h-12 rounded-xl">
+                    <Button disabled={isLoading} type="submit" className="w-full bg-black hover:bg-black/90 text-white font-bold h-12 rounded-xl">
                         {isLoading ? <Loader2 className="animate-spin" /> : "Criar Meta"}
                     </Button>
 

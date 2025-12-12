@@ -20,28 +20,25 @@ export default async function CalendarioPage() {
     const appointments = await getAppointments(start, end);
 
     // 2. Fetch Transactions (Gastos Realizados)
-    // Precisamos buscar manualmente aqui pois não temos uma action 'getTransactions' com range exposta
-    // Vamos fazer a query direta
     const { data: transactions } = await supabase
         .from("transactions")
         .select("*")
-        .eq("profile_id", user.id) // ou space_id se preferir
+        .eq("profile_id", user.id)
         .gte("date", start)
         .lte("date", end);
 
     // 3. Unificar Dados
-    // Vamos normalizar para um formato comum para o CalendarClient
     const normalizedAppointments = appointments.map(a => ({
         ...a,
-        source: 'appointment', // Identificador
+        source: 'appointment',
         isPaid: a.status === 'paid'
     }));
 
     const normalizedTransactions = (transactions || []).map(t => ({
         ...t,
-        title: t.description, // Transactions usam 'description', Appointments usam 'title'
+        title: t.description,
         source: 'transaction',
-        status: 'paid', // Transações passadas são sempre "pagas/realizadas"
+        status: 'paid',
         isPaid: true
     }));
 
@@ -57,45 +54,59 @@ export default async function CalendarioPage() {
         .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
     return (
-        <div className="min-h-screen bg-zinc-50 pb-24 md:pb-8">
-            {/* Header Vibrante */}
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 text-white p-6 pb-12 md:pb-16 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-8 opacity-10">
-                    <CalendarIcon className="w-64 h-64" />
+        <div className="max-w-[1600px] mx-auto">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 pt-4">
+                <div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                        <span>Dashboard</span>
+                        <span>/</span>
+                        <span>Calendário</span>
+                    </div>
+                    <h1 className="text-3xl font-bold text-black tracking-tight">
+                        Calendário Financeiro
+                    </h1>
+                    <p className="text-muted-foreground mt-1">Organize seus vencimentos e evite juros.</p>
                 </div>
-
-                <div className="max-w-5xl mx-auto relative z-10">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-                        <div>
-                            <h1 className="text-3xl font-bold tracking-tight">Calendário Financeiro</h1>
-                            <p className="text-blue-100 opacity-90">Organize seus vencimentos e evite juros.</p>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                            <CalendarActions />
-                            <FixedBillDialog />
-                        </div>
-                    </div>
-
-                    {/* Card de Resumo Flutuante (Mobile/Desktop) */}
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-2xl max-w-sm">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="p-2 bg-white/20 rounded-lg">
-                                <Wallet className="h-5 w-5 text-white" />
-                            </div>
-                            <span className="font-medium text-blue-50">A Pagar este Mês</span>
-                        </div>
-                        <div className="text-4xl font-bold tracking-tighter">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPending)}
-                        </div>
-                        <p className="text-xs text-blue-200 mt-1">Total de contas pendentes para o mês atual.</p>
-                    </div>
+                <div className="flex flex-wrap gap-3">
+                    <CalendarActions />
+                    <FixedBillDialog />
                 </div>
             </div>
 
-            {/* Conteúdo Principal (Calendário) */}
-            <div className="max-w-5xl mx-auto px-4 md:px-6 -mt-8 relative z-20">
-                <div className="bg-white rounded-3xl shadow-lg border border-zinc-100 p-2 md:p-6">
-                    <CalendarClient initialTransactions={allEvents} />
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                {/* Sidebar / Summary */}
+                <div className="lg:col-span-3 space-y-6">
+                    <div className="orvion-card p-6 bg-black text-white border-none">
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="p-2 bg-primary/20 rounded-lg">
+                                <Wallet className="h-5 w-5 text-primary" />
+                            </div>
+                            <span className="font-medium text-zinc-300">A Pagar este Mês</span>
+                        </div>
+                        <div className="text-4xl font-bold tracking-tighter mb-2">
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalPending)}
+                        </div>
+                        <p className="text-xs text-zinc-400">Total de contas pendentes para o mês atual.</p>
+                    </div>
+
+                    {/* Dica ou Info Extra */}
+                    <div className="glass-panel p-6 rounded-[2rem]">
+                        <div className="flex items-center gap-2 mb-2 text-primary font-bold">
+                            <CalendarIcon className="w-4 h-4" />
+                            <span>Dica</span>
+                        </div>
+                        <p className="text-sm text-muted-foreground">
+                            Clique em uma data para adicionar um novo agendamento ou transação.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Calendar Area */}
+                <div className="lg:col-span-9">
+                    <div className="glass-panel p-6 rounded-[2.5rem] min-h-[600px]">
+                        <CalendarClient initialTransactions={allEvents} />
+                    </div>
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { MobileNav } from "@/components/MobileNav";
-import { DesktopHeader } from "@/components/DesktopHeader";
+import { Sidebar } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { SubscriptionGuard } from "@/components/SubscriptionGuard";
 import { Toaster } from "sonner";
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "LifeWallet - Sua Carteira Digital",
   description: "Gerencie suas finanças de forma inteligente com LifeWallet",
   manifest: "/manifest.json",
-  themeColor: "#2563EB", // Azul LifeWallet
+  themeColor: "#C7F33C", // Lime Green
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -77,16 +77,11 @@ export default async function RootLayout({
     <html lang="pt-BR">
       <body className={`${inter.variable} antialiased bg-background text-foreground`}>
 
-        {/* Menu Superior (Apenas Desktop) - Só aparece se logado */}
-        {user && <DesktopHeader />}
-
-
+        {/* Sidebar Global (Apenas Desktop) - Só aparece se logado */}
+        {user && <Sidebar />}
 
         {/* Conteúdo Principal */}
-        <main className="min-h-screen pb-32 md:pb-10 md:pt-20 transition-all duration-300">
-          {/* pb-32: Espaço para a barra mobile não cobrir o conteúdo final
-             md:pt-20: Espaço para o header desktop não cobrir o topo
-          */}
+        <main className={`min-h-screen transition-all duration-300 ${user ? 'md:pl-28 pr-4 py-4' : ''}`}>
           <SubscriptionGuard>
             {children}
           </SubscriptionGuard>
