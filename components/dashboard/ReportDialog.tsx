@@ -7,13 +7,12 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Loader2, FileText, Send } from "lucide-react";
 import { toast } from "sonner";
+import { sendReportEmail } from "@/actions/email-actions";
 
 export function ReportDialog() {
     const [open, setOpen] = useState(false);
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
-    import { sendReportEmail } from "@/actions/email-actions";
 
     const handleSendReport = async (e: React.FormEvent) => {
         e.preventDefault();
