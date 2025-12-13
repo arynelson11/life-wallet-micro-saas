@@ -12,7 +12,7 @@ export function MobileNav({ spaceId }: { spaceId: string }) {
     const isActive = (path: string) => pathname === path;
 
     return (
-        <div className="fixed bottom-6 left-4 right-4 z-50 md:hidden">
+        <div className="fixed bottom-6 left-5 right-5 z-50 md:hidden">
             {/* Container Principal "Soft UI" - iOS Dock Style */}
             <div className="bg-white/90 backdrop-blur-2xl rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/20 p-2 pb-3 relative">
 

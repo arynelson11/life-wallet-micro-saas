@@ -88,7 +88,7 @@ export default async function RootLayout({
           {user && <Sidebar />}
 
           {/* Conteúdo Principal */}
-          <main className={`min-h-screen transition-all duration-300 pb-24 md:pb-4 ${user ? 'md:pl-28 pr-4 py-4' : ''}`}>
+          <main className={`min-h-screen transition-all duration-300 pb-24 md:pb-4 ${user ? 'md:pl-28 px-5 py-6 md:pr-8' : ''}`}>
             <SubscriptionGuard>
               {children}
             </SubscriptionGuard>

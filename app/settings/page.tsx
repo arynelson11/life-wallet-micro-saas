@@ -54,7 +54,7 @@ export default async function SettingsPage() {
 
                 {/* --- SEÇÃO DE ASSINATURA --- */}
                 <div className="col-span-full">
-                    <div className="orvion-card p-8 bg-black text-white border-none relative overflow-hidden">
+                    <div className="orvion-card p-6 md:p-8 bg-black text-white border-none relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
 
                         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -120,7 +120,7 @@ export default async function SettingsPage() {
 
                 {/* --- COLUNA 1: PERFIL PESSOAL --- */}
                 <div className="space-y-6">
-                    <div className="glass-panel p-8 rounded-[2.5rem]">
+                    <div className="glass-panel p-6 md:p-8 rounded-[2.5rem]">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-primary/10 rounded-xl">
                                 <User className="h-5 w-5 text-primary" />
@@ -165,7 +165,7 @@ export default async function SettingsPage() {
 
                 {/* --- COLUNA 2: FAMÍLIA & CONVITES --- */}
                 <div className="space-y-6">
-                    <div className="glass-panel p-8 rounded-[2.5rem]">
+                    <div className="glass-panel p-6 md:p-8 rounded-[2.5rem]">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-primary/10 rounded-xl">
                                 <Users className="h-5 w-5 text-primary" />
@@ -189,7 +189,7 @@ export default async function SettingsPage() {
                         </div>
                     </div>
 
-                    <div className="glass-panel p-8 rounded-[2.5rem]">
+                    <div className="glass-panel p-6 md:p-8 rounded-[2.5rem]">
                         <div className="flex items-center gap-3 mb-6">
                             <div className="p-2 bg-zinc-100 rounded-xl">
                                 <Settings className="h-5 w-5 text-zinc-500" />

@@ -77,7 +77,7 @@ export default async function CalendarioPage() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* Sidebar / Summary */}
                 <div className="lg:col-span-3 space-y-6">
-                    <div className="orvion-card p-6 bg-black text-white border-none">
+                    <div className="orvion-card p-4 md:p-6 bg-black text-white border-none">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-primary/20 rounded-lg">
                                 <Wallet className="h-5 w-5 text-primary" />
@@ -91,7 +91,7 @@ export default async function CalendarioPage() {
                     </div>
 
                     {/* Dica ou Info Extra */}
-                    <div className="glass-panel p-6 rounded-[2rem]">
+                    <div className="glass-panel p-4 md:p-6 rounded-[2rem]">
                         <div className="flex items-center gap-2 mb-2 text-primary font-bold">
                             <CalendarIcon className="w-4 h-4" />
                             <span>Dica</span>
@@ -104,7 +104,7 @@ export default async function CalendarioPage() {
 
                 {/* Calendar Area */}
                 <div className="lg:col-span-9">
-                    <div className="glass-panel p-6 rounded-[2.5rem] min-h-[600px]">
+                    <div className="glass-panel p-2 md:p-6 rounded-[2rem] md:rounded-[2.5rem] min-h-[600px]">
                         <CalendarClient initialTransactions={allEvents} />
                     </div>
                 </div>
