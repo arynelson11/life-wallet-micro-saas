@@ -73,7 +73,7 @@ export default async function MetasPage() {
                     const progress = (goal.current_amount / goal.target_amount) * 100;
 
                     return (
-                        <GoalDetailsDialog key={goal.id} goal={goal}>
+                        <GoalDetailsDialog key={goal.id} goal={goal} spaceId={spaceId}>
                             <div className="orvion-card p-6 cursor-pointer group hover:scale-[1.02] transition-transform">
                                 <div className="flex justify-between items-start mb-6">
                                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${goal.color || 'bg-primary/20 text-primary'}`}>

@@ -3,10 +3,11 @@
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Plane, Car, Home, GraduationCap, Shield, Star, Plus, Trash2, ArrowUpRight } from "lucide-react";
+import { Plane, Car, Home, GraduationCap, Shield, Star, Plus, Trash2, ArrowUpRight, Pencil } from "lucide-react";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { GoalForm } from "@/components/dashboard/forms/GoalForm";
 
 // Função de ícones (reutilizada)
 const getIcon = (iconName: string) => {
@@ -22,7 +23,7 @@ const getIcon = (iconName: string) => {
 
 const formatCurrency = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
-export function GoalDetailsDialog({ goal, children }: { goal: any, children: React.ReactNode }) {
+export function GoalDetailsDialog({ goal, spaceId, children }: { goal: any, spaceId?: string, children: React.ReactNode }) {
     const [open, setOpen] = useState(false);
     const [addAmount, setAddAmount] = useState("");
     const [loading, setLoading] = useState(false);
@@ -78,6 +79,18 @@ export function GoalDetailsDialog({ goal, children }: { goal: any, children: Rea
                                 {getIcon(goal.icon)}
                             </div>
                             <div className="flex gap-2">
+                                {/* Edit Button */}
+                                {spaceId && (
+                                    <GoalForm
+                                        initialData={goal}
+                                        spaceId={spaceId}
+                                        trigger={
+                                            <button className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
+                                                <Pencil className="w-5 h-5" />
+                                            </button>
+                                        }
+                                    />
+                                )}
                                 <button onClick={handleDelete} className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-red-400 transition-colors">
                                     <Trash2 className="w-5 h-5" />
                                 </button>

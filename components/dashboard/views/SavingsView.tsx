@@ -1,6 +1,7 @@
 import { PiggyBank, TrendingUp, Target, Pencil } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { GoalForm } from "@/components/dashboard/forms/GoalForm";
+import { GoalDetailsDialog } from "@/components/GoalDetailsDialog";
 
 interface SavingsViewProps {
     goals: any[];
@@ -56,35 +57,25 @@ export function SavingsView({ goals = [], spaceId }: SavingsViewProps) {
                     {goals.map((goal, i) => {
                         const progress = goal.target_amount > 0 ? (goal.current_amount / goal.target_amount) * 100 : 0;
                         return (
-                            <div key={goal.id} className="orvion-card p-6 group relative">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-zinc-100 rounded-lg">
-                                            <Target className="w-5 h-5 text-zinc-600" />
+                            <GoalDetailsDialog key={goal.id} goal={goal} spaceId={spaceId}>
+                                <div className="orvion-card p-6 group relative cursor-pointer hover:scale-[1.02] transition-transform">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2 bg-zinc-100 rounded-lg">
+                                                <Target className="w-5 h-5 text-zinc-600" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold">{goal.title}</h4>
+                                                <p className="text-xs text-zinc-500">
+                                                    R$ {goal.current_amount} de R$ {goal.target_amount}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 className="font-bold">{goal.title}</h4>
-                                            <p className="text-xs text-zinc-500">
-                                                R$ {goal.current_amount} de R$ {goal.target_amount}
-                                            </p>
-                                        </div>
+                                        <span className="font-bold text-primary">{Math.round(progress)}%</span>
                                     </div>
-                                    <span className="font-bold text-primary">{Math.round(progress)}%</span>
+                                    <Progress value={progress} className="h-2" />
                                 </div>
-                                <Progress value={progress} className="h-2" />
-
-                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <GoalForm
-                                        initialData={goal}
-                                        spaceId={spaceId}
-                                        trigger={
-                                            <button className="text-zinc-400 hover:text-green-600 transition-colors">
-                                                <Pencil className="w-4 h-4" />
-                                            </button>
-                                        }
-                                    />
-                                </div>
-                            </div>
+                            </GoalDetailsDialog>
                         )
                     })}
                 </div>
