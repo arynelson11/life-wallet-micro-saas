@@ -126,14 +126,14 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
     return (
         <div>
             <div className="flex justify-between items-center mb-6 px-2">
-                <h2 className="text-2xl font-bold capitalize text-zinc-900">
+                <h2 className="text-2xl font-bold capitalize text-white">
                     {format(currentDate, "MMMM yyyy", { locale: ptBR })}
                 </h2>
                 <div className="flex gap-2">
-                    <Button variant="outline" size="icon" onClick={prevMonth} className="rounded-full hover:bg-blue-50 hover:text-blue-600 border-zinc-200">
+                    <Button variant="outline" size="icon" onClick={prevMonth} className="rounded-full bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white">
                         <ChevronLeft className="h-5 w-5" />
                     </Button>
-                    <Button variant="outline" size="icon" onClick={nextMonth} className="rounded-full hover:bg-blue-50 hover:text-blue-600 border-zinc-200">
+                    <Button variant="outline" size="icon" onClick={nextMonth} className="rounded-full bg-zinc-900 border-zinc-800 text-zinc-400 hover:bg-zinc-800 hover:text-white">
                         <ChevronRight className="h-5 w-5" />
                     </Button>
                 </div>
@@ -154,18 +154,20 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                     const dayEvents = getEventsForDay(day);
                     const isToday = isSameDay(day, new Date());
                     const isSelected = selectedDate && isSameDay(day, selectedDate);
+                    const isOtherMonth = !isSameMonth(day, currentDate);
 
                     return (
                         <div
                             key={day.toString()}
                             onClick={() => handleDayClick(day)}
                             className={`
-                                min-h-[80px] md:min-h-[120px] border rounded-2xl p-2 md:p-3 cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1 relative
-                                ${isToday ? "bg-blue-50 border-blue-500 ring-1 ring-blue-500" : "bg-white border-zinc-100"}
-                                ${isSelected ? "ring-2 ring-blue-300" : ""}
+                                min-h-[80px] md:min-h-[120px] rounded-2xl p-2 md:p-3 cursor-pointer transition-all duration-300 relative group
+                                ${isToday ? "bg-primary/20 border-2 border-primary" : "bg-zinc-900 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800"}
+                                ${isSelected ? "ring-2 ring-primary shadow-lg shadow-primary/20" : ""}
+                                ${isOtherMonth ? "opacity-30" : "opacity-100"}
                             `}
                         >
-                            <div className={`font-bold text-right mb-1 md:mb-2 text-sm md:text-base ${isToday ? 'text-blue-600' : 'text-zinc-700'}`}>
+                            <div className={`font-bold text-right mb-1 md:mb-2 text-sm md:text-base ${isToday ? 'text-primary' : 'text-zinc-400 group-hover:text-white'}`}>
                                 {format(day, "d")}
                             </div>
 
@@ -174,23 +176,23 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                                 {dayEvents.slice(0, 3).map((ev) => (
                                     <div
                                         key={ev.id}
-                                        className={`text-[10px] px-1.5 py-0.5 rounded-md truncate flex items-center gap-1
+                                        className={`text-[10px] px-1.5 py-1 rounded-md truncate flex items-center gap-1.5 backdrop-blur-sm
                                             ${ev.source === 'appointment'
-                                                ? (ev.isPaid ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700')
-                                                : 'bg-zinc-100 text-zinc-600'
+                                                ? (ev.isPaid ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20')
+                                                : (ev.amount < 0 ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-green-500/10 text-green-400 border border-green-500/20')
                                             }`}
                                     >
-                                        <div className={`w-1.5 h-1.5 rounded-full 
+                                        <div className={`w-1.5 h-1.5 rounded-full shrink-0
                                             ${ev.source === 'appointment'
-                                                ? (ev.isPaid ? 'bg-green-500' : 'bg-blue-500')
-                                                : 'bg-zinc-400'
+                                                ? (ev.isPaid ? 'bg-emerald-500' : 'bg-blue-500')
+                                                : (ev.amount < 0 ? 'bg-red-500' : 'bg-green-500')
                                             }`}
                                         />
                                         <span className="truncate font-medium">{ev.title}</span>
                                     </div>
                                 ))}
                                 {dayEvents.length > 3 && (
-                                    <div className="text-[10px] text-zinc-400 pl-1">+{dayEvents.length - 3}</div>
+                                    <div className="text-[10px] text-zinc-500 pl-1 group-hover:text-zinc-300">+{dayEvents.length - 3} mais</div>
                                 )}
                             </div>
 
@@ -199,8 +201,8 @@ export default function CalendarClient({ initialTransactions }: { initialTransac
                                 {dayEvents.map((ev, i) => (
                                     <div key={i} className={`w-1.5 h-1.5 rounded-full 
                                         ${ev.source === 'appointment'
-                                            ? (ev.isPaid ? 'bg-green-500' : 'bg-blue-500')
-                                            : 'bg-zinc-400'
+                                            ? (ev.isPaid ? 'bg-emerald-500' : 'bg-blue-500')
+                                            : (ev.amount < 0 ? 'bg-red-500' : 'bg-green-500')
                                         }`}
                                     />
                                 ))}

@@ -187,12 +187,28 @@ export async function getFullFinancialData(spaceId: string) {
 // --- TRANSACTIONS CRUD ---
 export async function createTransaction(data: any) {
     const supabase = await createClient();
-    const { error } = await supabase.from('transactions').insert(data);
-    if (error) {
-        console.error("Error creating transaction:", error);
-        return { success: false, error: error.message };
+
+    // Sanitize payload to remove undefined fields if any
+    const payload = Object.fromEntries(
+        Object.entries(data).filter(([_, v]) => v !== undefined && v !== null && v !== "")
+    );
+
+    try {
+        const { error } = await supabase.from('transactions').insert(payload);
+
+        if (error) {
+            console.error("Error creating transaction:", error);
+            // Check for potential schema mismatch
+            if (error.code === '42703') { // Undefined column
+                return { success: false, error: "Erro de Esquema: Coluna não encontrada. Execute o script SQL de atualização." };
+            }
+            return { success: false, error: error.message };
+        }
+        return { success: true };
+    } catch (err) {
+        console.error("Unexpected error in createTransaction:", err);
+        return { success: false, error: "Erro inesperado ao criar transação." };
     }
-    return { success: true };
 }
 
 export async function updateTransaction(id: string, data: any) {
