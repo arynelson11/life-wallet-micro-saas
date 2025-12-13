@@ -5,20 +5,20 @@ import { ArrowUpRight, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const data = [
-    { name: "Mon", value: 200 },
-    { name: "Tue", value: 400 },
-    { name: "Wed", value: 300 },
-    { name: "Thu", value: 600 },
-    { name: "Fri", value: 500 },
-    { name: "Sat", value: 700 },
-    { name: "Sun", value: 600 },
+    { name: "Seg", value: 200 },
+    { name: "Ter", value: 400 },
+    { name: "Qua", value: 300 },
+    { name: "Qui", value: 600 },
+    { name: "Sex", value: 500 },
+    { name: "Sab", value: 700 },
+    { name: "Dom", value: 600 },
 ];
 
 export function TotalSpend() {
     return (
         <div className="orvion-card p-6 h-full flex flex-col">
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Total Spend</h3>
+                <h3 className="text-lg font-semibold">Gasto Total</h3>
                 <div className="flex gap-2">
                     <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full bg-white/50 hover:bg-white">
                         <Settings2 className="w-4 h-4" />
@@ -30,21 +30,21 @@ export function TotalSpend() {
             </div>
 
             <div className="mb-4">
-                <div className="text-sm text-muted-foreground mb-1">Spend the week</div>
+                <div className="text-sm text-muted-foreground mb-1">Gasto na semana</div>
                 <div className="flex items-end gap-2">
-                    <span className="text-3xl font-bold">$278.86</span>
-                    <span className="text-sm text-muted-foreground mb-1">$432.00</span>
+                    <span className="text-3xl font-bold">R$ 278,86</span>
+                    <span className="text-sm text-muted-foreground mb-1">R$ 432,00</span>
                 </div>
             </div>
 
             <div className="flex gap-4 mb-4">
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-black" />
-                    <span className="text-xs text-muted-foreground">Wallets</span>
+                    <span className="text-xs text-muted-foreground">Carteiras</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-gray-300" />
-                    <span className="text-xs text-muted-foreground">Assets</span>
+                    <span className="text-xs text-muted-foreground">Ativos</span>
                 </div>
             </div>
 

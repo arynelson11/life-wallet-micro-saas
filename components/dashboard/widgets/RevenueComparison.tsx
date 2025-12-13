@@ -5,20 +5,20 @@ import { ArrowUpRight, MessageSquare, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const data = [
-    { name: "Mon", current: 4000, previous: 2400 },
-    { name: "Tue", current: 3000, previous: 1398 },
-    { name: "Wed", current: 2000, previous: 9800 },
-    { name: "Thu", current: 2780, previous: 3908 },
-    { name: "Fri", current: 1890, previous: 4800 },
-    { name: "Sat", current: 2390, previous: 3800 },
-    { name: "Sun", current: 3490, previous: 4300 },
+    { name: "Seg", current: 4000, previous: 2400 },
+    { name: "Ter", current: 3000, previous: 1398 },
+    { name: "Qua", current: 2000, previous: 9800 },
+    { name: "Qui", current: 2780, previous: 3908 },
+    { name: "Sex", current: 1890, previous: 4800 },
+    { name: "Sab", current: 2390, previous: 3800 },
+    { name: "Dom", current: 3490, previous: 4300 },
 ];
 
 export function RevenueComparison() {
     return (
         <div className="orvion-card p-6 h-full flex flex-col">
             <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold">Comparison of Revenue</h3>
+                <h3 className="text-lg font-semibold">Comparativo de Receita</h3>
                 <div className="flex gap-2">
                     <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full bg-black text-white hover:bg-black/90">
                         <Settings2 className="w-4 h-4" />
@@ -33,9 +33,9 @@ export function RevenueComparison() {
             </div>
 
             <div className="mb-6">
-                <div className="text-sm text-muted-foreground mb-1">Fior all time</div>
+                <div className="text-sm text-muted-foreground mb-1">Total Acumulado</div>
                 <div className="flex items-end gap-2">
-                    <span className="text-4xl font-bold">29,48m</span>
+                    <span className="text-4xl font-bold">R$ 29,48m</span>
                 </div>
             </div>
 

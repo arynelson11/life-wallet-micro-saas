@@ -37,11 +37,11 @@ export default async function DashboardPage() {
                     {/* Row 2 */}
                     <div className="md:col-span-3 h-[350px]">
                         {/* Placeholder or another widget if needed, using SalesPerformance style for now or empty */}
-                        <div className="orvion-card p-6 h-full flex flex-col justify-center items-center text-center">
-                            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 text-primary">
+                        <div className="orvion-card p-6 h-full flex flex-col justify-center items-center text-center hover:bg-zinc-50 transition-colors cursor-pointer group">
+                            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-black transition-all">
                                 <span className="text-2xl font-bold">+</span>
                             </div>
-                            <h3 className="font-semibold">Add New Widget</h3>
+                            <h3 className="font-semibold group-hover:text-primary transition-colors">Adicionar Novo Widget</h3>
                         </div>
                     </div>
                     <div className="md:col-span-5 h-[350px]">

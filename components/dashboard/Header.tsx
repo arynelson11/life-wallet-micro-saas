@@ -1,28 +1,30 @@
 "use client";
 
-import { Search, Bell, Calendar as CalendarIcon, ChevronDown, Plus } from "lucide-react";
+import { Search, Bell, Calendar as CalendarIcon, ChevronDown, Plus, LayoutGrid } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export function Header() {
     const [date, setDate] = useState<Date | undefined>(new Date());
+    const [isWidgetOpen, setIsWidgetOpen] = useState(false);
 
     return (
         <header className="flex items-center justify-between mb-8 pt-4">
             {/* Title Section */}
             <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <span>Sales</span>
+                    <span>Vendas</span>
                     <span>/</span>
-                    <span>Teach Products</span>
+                    <span>Produtos Digitais</span>
                 </div>
                 <h1 className="text-3xl font-bold text-black tracking-tight">
-                    Product Sales Performance
+                    Performance de Vendas
                 </h1>
             </div>
 
@@ -33,7 +35,7 @@ export function Header() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder="Buscar..."
                         className="h-10 pl-10 pr-4 rounded-full bg-white border-none shadow-sm w-64 focus:ring-2 focus:ring-primary/20 outline-none text-sm"
                     />
                 </div>
@@ -43,7 +45,7 @@ export function Header() {
                     <PopoverTrigger asChild>
                         <Button variant="outline" className="h-10 rounded-full border-none shadow-sm bg-black text-white hover:bg-black/90 px-4 gap-2">
                             <CalendarIcon className="w-4 h-4" />
-                            <span>{date ? format(date, "dd MMM yyyy", { locale: ptBR }) : "Pick a date"}</span>
+                            <span>{date ? format(date, "dd MMM yyyy", { locale: ptBR }) : "Escolha uma data"}</span>
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="end">
@@ -57,10 +59,42 @@ export function Header() {
                 </Popover>
 
                 {/* Add Widget Button */}
-                <Button variant="outline" className="h-10 rounded-full border-none shadow-sm bg-white hover:bg-gray-50 gap-2">
-                    <Plus className="w-4 h-4" />
-                    <span>Add widget</span>
-                </Button>
+                <Dialog open={isWidgetOpen} onOpenChange={setIsWidgetOpen}>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" className="h-10 rounded-full border-none shadow-sm bg-white hover:bg-gray-50 gap-2">
+                            <Plus className="w-4 h-4" />
+                            <span>Adicionar widget</span>
+                        </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Adicionar Novo Widget</DialogTitle>
+                            <DialogDescription>
+                                Escolha um widget para adicionar ao seu dashboard.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="flex items-center gap-4 p-4 border rounded-xl hover:bg-zinc-50 cursor-pointer transition-colors">
+                                <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center text-primary">
+                                    <LayoutGrid className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">Métricas de Vendas</h4>
+                                    <p className="text-sm text-muted-foreground">Gráfico de área com KPI</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-4 p-4 border rounded-xl hover:bg-zinc-50 cursor-pointer transition-colors">
+                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <CalendarIcon className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold">Calendário de Receita</h4>
+                                    <p className="text-sm text-muted-foreground">Visão mensal de entradas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </DialogContent>
+                </Dialog>
 
                 {/* Notifications */}
                 <Button size="icon" variant="ghost" className="rounded-full w-10 h-10 bg-white shadow-sm hover:bg-gray-50">
