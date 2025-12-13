@@ -17,8 +17,9 @@ export function OnboardingView() {
         try {
             const result = await createPersonalSpace();
             if (result.success) {
-                toast.success("Carteira criada com sucesso!");
-                router.refresh();
+                toast.success("Carteira criada com sucesso! Atualizando...");
+                // Force a hard reload to ensure server-side data is re-fetched effectively
+                window.location.reload();
             } else {
                 toast.error(result.error || "Erro ao criar carteira.");
             }
