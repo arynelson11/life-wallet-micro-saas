@@ -112,170 +112,169 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                 </div>
 
                 {/* 2. Despesas Summary */}
-                <div
-                    className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-red-500/30 transition-all border border-transparent"
-                    onClick={() => onTabChange("expenses")}
+                className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-red-500/30 transition-all border border-transparent"
+                onClick={() => onTabChange("variable-expenses")}
                 >
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-red-100/10 text-red-500 rounded-xl flex items-center justify-center border border-red-500/20">
-                                <ArrowDownRight className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">Despesas</h3>
-                                <p className="text-sm text-muted-foreground">Fixas vs Variáveis</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-8 items-end mb-2">
-                        <div>
-                            <p className="text-xs text-muted-foreground mb-1">Total Fixas</p>
-                            <span className="text-xl font-bold text-orange-500">{formatCurrency(summary.fixedExpenses)}</span>
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-red-100/10 text-red-500 rounded-xl flex items-center justify-center border border-red-500/20">
+                            <ArrowDownRight className="w-5 h-5" />
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground mb-1">Total Variáveis</p>
-                            <span className="text-xl font-bold text-purple-500">{formatCurrency(summary.variableExpenses)}</span>
-                        </div>
-                    </div>
-
-                    <div className="h-[12px] w-full flex rounded-full overflow-hidden mb-4">
-                        <div className="h-full bg-orange-500" style={{ width: `${(summary.fixedExpenses / (summary.expenses || 1)) * 100}%` }} />
-                        <div className="h-full bg-purple-500" style={{ width: `${(summary.variableExpenses / (summary.expenses || 1)) * 100}%` }} />
-                    </div>
-                    <p className="text-xs text-muted-foreground text-center">{formatCurrency(summary.expenses)} Total gasto este mês</p>
-                </div>
-
-
-                {/* 3. Dividas Summary */}
-                <div
-                    className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-rose-500/30 transition-all border border-transparent"
-                    onClick={() => onTabChange("debts")}
-                >
-                    <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-rose-100/10 text-rose-500 rounded-xl flex items-center justify-center border border-rose-500/20">
-                                <Zap className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">Dívidas</h3>
-                                <p className="text-sm text-muted-foreground">Status de Quitação</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="text-center mb-2">
-                        <span className="text-3xl font-bold">{formatCurrency(summary.debt.total - summary.debt.paid)}</span>
-                        <p className="text-sm text-muted-foreground">Restantes</p>
-                    </div>
-
-                    {/* Avoid division by zero */}
-                    {summary.debt.total > 0 && (
-                        <div className="relative h-[80px] w-full flex items-center justify-center">
-                            <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
-                                <span className="font-bold text-xl">{Math.round((summary.debt.paid / summary.debt.total) * 100)}%</span>
-                            </div>
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={[{ value: summary.debt.paid }, { value: summary.debt.total - summary.debt.paid }]}
-                                        innerRadius={30}
-                                        outerRadius={40}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                        startAngle={90}
-                                        endAngle={-270}
-                                    >
-                                        <Cell fill="#f43f5e" />
-                                        <Cell fill="#e4e4e7" />
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                    )}
-                    {summary.debt.total === 0 && (
-                        <div className="text-center text-sm text-muted-foreground mt-4">Sem dívidas cadastradas</div>
-                    )}
-                </div>
-
-                {/* 4. Cartões de Crédito Summary */}
-                <div
-                    className="orvion-card p-6 md:col-span-2 h-[280px] flex flex-col justify-between cursor-pointer hover:border-blue-500/30 transition-all border border-transparent"
-                    onClick={() => onTabChange("credit-card")}
-                >
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-blue-100/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
-                                <CreditCard className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg">Cartões</h3>
-                                <p className="text-sm text-muted-foreground">Limite Utilizado</p>
-                            </div>
-                        </div>
-                        {/* Calculate total used/limit for header */}
-                        <span className="text-xl font-bold">
-                            {formatCurrency(summary.cards.reduce((acc, c) => acc + c.used, 0))}
-                            <span className="text-sm text-muted-foreground font-normal"> / {formatCurrency(summary.cards.reduce((acc, c) => acc + c.limit, 0))}</span>
-                        </span>
-                    </div>
-
-                    <div className="space-y-6 overflow-y-auto pr-2 scrollbar-none">
-                        {summary.cards.length === 0 ? (
-                            <div className="text-center text-muted-foreground py-8">Nenhum cartão cadastrado</div>
-                        ) : (
-                            summary.cards.slice(0, 3).map((card, i) => ( // limit to 3 so it doesn't overflow
-                                <div key={i}>
-                                    <div className="flex justify-between mb-2 text-sm">
-                                        <span className="font-medium">{card.name}</span>
-                                        <span>{card.limit > 0 ? Math.round((card.used / card.limit) * 100) : 0}%</span>
-                                    </div>
-                                    <Progress value={card.limit > 0 ? (card.used / card.limit) * 100 : 0} className="h-3" />
-                                    <p className="text-right text-xs text-muted-foreground mt-1">{formatCurrency(card.used)} usados</p>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
-
-                {/* 5. Economias Summary */}
-                <div
-                    className="orvion-card p-6 h-[280px] bg-black text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition-transform"
-                    onClick={() => onTabChange("savings")}
-                >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl translate-x-10 -translate-y-10" />
-
-                    <div className="flex items-center gap-3 relative z-10">
-                        <div className="w-10 h-10 bg-white/10 text-primary rounded-xl flex items-center justify-center backdrop-blur-md">
-                            <PiggyBank className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-lg">Patrimônio</h3>
-                            <p className="text-sm text-zinc-400">Total Acumulado</p>
-                        </div>
-                    </div>
-
-                    <div className="relative z-10">
-                        <span className="text-4xl font-bold tracking-tight">{formatCurrency(summary.assets.total)}</span>
-                        <div className="flex items-center gap-2 text-primary mt-2">
-                            <Target className="w-4 h-4" />
-                            <span className="text-sm font-medium">{summary.assets.goalsCount} Metas Ativas</span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 relative z-10 mt-auto">
-                        <div className="bg-white/5 rounded-lg p-3">
-                            <p className="text-xs text-zinc-400">Renda Fixa</p>
-                            <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.fixed / summary.assets.total) * 100) : 0}%</p>
-                        </div>
-                        <div className="bg-white/5 rounded-lg p-3">
-                            <p className="text-xs text-zinc-400">Variável</p>
-                            <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.variable / summary.assets.total) * 100) : 0}%</p>
+                            <h3 className="font-bold text-lg">Despesas</h3>
+                            <p className="text-sm text-muted-foreground">Fixas vs Variáveis</p>
                         </div>
                     </div>
                 </div>
 
+                <div className="flex gap-8 items-end mb-2">
+                    <div>
+                        <p className="text-xs text-muted-foreground mb-1">Total Fixas</p>
+                        <span className="text-xl font-bold text-orange-500">{formatCurrency(summary.fixedExpenses)}</span>
+                    </div>
+                    <div>
+                        <p className="text-xs text-muted-foreground mb-1">Total Variáveis</p>
+                        <span className="text-xl font-bold text-purple-500">{formatCurrency(summary.variableExpenses)}</span>
+                    </div>
+                </div>
+
+                <div className="h-[12px] w-full flex rounded-full overflow-hidden mb-4">
+                    <div className="h-full bg-orange-500" style={{ width: `${(summary.fixedExpenses / (summary.expenses || 1)) * 100}%` }} />
+                    <div className="h-full bg-purple-500" style={{ width: `${(summary.variableExpenses / (summary.expenses || 1)) * 100}%` }} />
+                </div>
+                <p className="text-xs text-muted-foreground text-center">{formatCurrency(summary.expenses)} Total gasto este mês</p>
             </div>
+
+
+            {/* 3. Dividas Summary */}
+            <div
+                className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-rose-500/30 transition-all border border-transparent"
+                onClick={() => onTabChange("debts")}
+            >
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-rose-100/10 text-rose-500 rounded-xl flex items-center justify-center border border-rose-500/20">
+                            <Zap className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Dívidas</h3>
+                            <p className="text-sm text-muted-foreground">Status de Quitação</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="text-center mb-2">
+                    <span className="text-3xl font-bold">{formatCurrency(summary.debt.total - summary.debt.paid)}</span>
+                    <p className="text-sm text-muted-foreground">Restantes</p>
+                </div>
+
+                {/* Avoid division by zero */}
+                {summary.debt.total > 0 && (
+                    <div className="relative h-[80px] w-full flex items-center justify-center">
+                        <div className="absolute top-0 bottom-0 left-0 right-0 flex items-center justify-center">
+                            <span className="font-bold text-xl">{Math.round((summary.debt.paid / summary.debt.total) * 100)}%</span>
+                        </div>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                                <Pie
+                                    data={[{ value: summary.debt.paid }, { value: summary.debt.total - summary.debt.paid }]}
+                                    innerRadius={30}
+                                    outerRadius={40}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                    startAngle={90}
+                                    endAngle={-270}
+                                >
+                                    <Cell fill="#f43f5e" />
+                                    <Cell fill="#e4e4e7" />
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+                {summary.debt.total === 0 && (
+                    <div className="text-center text-sm text-muted-foreground mt-4">Sem dívidas cadastradas</div>
+                )}
+            </div>
+
+            {/* 4. Cartões de Crédito Summary */}
+            <div
+                className="orvion-card p-6 md:col-span-2 h-[280px] flex flex-col justify-between cursor-pointer hover:border-blue-500/30 transition-all border border-transparent"
+                onClick={() => onTabChange("credit-card")}
+            >
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-blue-100/10 text-blue-500 rounded-xl flex items-center justify-center border border-blue-500/20">
+                            <CreditCard className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg">Cartões</h3>
+                            <p className="text-sm text-muted-foreground">Limite Utilizado</p>
+                        </div>
+                    </div>
+                    {/* Calculate total used/limit for header */}
+                    <span className="text-xl font-bold">
+                        {formatCurrency(summary.cards.reduce((acc, c) => acc + c.used, 0))}
+                        <span className="text-sm text-muted-foreground font-normal"> / {formatCurrency(summary.cards.reduce((acc, c) => acc + c.limit, 0))}</span>
+                    </span>
+                </div>
+
+                <div className="space-y-6 overflow-y-auto pr-2 scrollbar-none">
+                    {summary.cards.length === 0 ? (
+                        <div className="text-center text-muted-foreground py-8">Nenhum cartão cadastrado</div>
+                    ) : (
+                        summary.cards.slice(0, 3).map((card, i) => ( // limit to 3 so it doesn't overflow
+                            <div key={i}>
+                                <div className="flex justify-between mb-2 text-sm">
+                                    <span className="font-medium">{card.name}</span>
+                                    <span>{card.limit > 0 ? Math.round((card.used / card.limit) * 100) : 0}%</span>
+                                </div>
+                                <Progress value={card.limit > 0 ? (card.used / card.limit) * 100 : 0} className="h-3" />
+                                <p className="text-right text-xs text-muted-foreground mt-1">{formatCurrency(card.used)} usados</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            {/* 5. Economias Summary */}
+            <div
+                className="orvion-card p-6 h-[280px] bg-black text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition-transform"
+                onClick={() => onTabChange("savings")}
+            >
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl translate-x-10 -translate-y-10" />
+
+                <div className="flex items-center gap-3 relative z-10">
+                    <div className="w-10 h-10 bg-white/10 text-primary rounded-xl flex items-center justify-center backdrop-blur-md">
+                        <PiggyBank className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-lg">Patrimônio</h3>
+                        <p className="text-sm text-zinc-400">Total Acumulado</p>
+                    </div>
+                </div>
+
+                <div className="relative z-10">
+                    <span className="text-4xl font-bold tracking-tight">{formatCurrency(summary.assets.total)}</span>
+                    <div className="flex items-center gap-2 text-primary mt-2">
+                        <Target className="w-4 h-4" />
+                        <span className="text-sm font-medium">{summary.assets.goalsCount} Metas Ativas</span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 relative z-10 mt-auto">
+                    <div className="bg-white/5 rounded-lg p-3">
+                        <p className="text-xs text-zinc-400">Renda Fixa</p>
+                        <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.fixed / summary.assets.total) * 100) : 0}%</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-3">
+                        <p className="text-xs text-zinc-400">Variável</p>
+                        <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.variable / summary.assets.total) * 100) : 0}%</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
+        </div >
     );
 }
