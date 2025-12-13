@@ -158,9 +158,9 @@ export function TransactionDialog({ spaceId }: { spaceId: string }) {
                     </div>
 
                     {/* Toggle Recorrente */}
-                    <div className="flex items-center justify-between p-4 bg-zinc-50 rounded-xl border border-zinc-100">
+                    <div className="flex items-center justify-between p-4 bg-zinc-900 rounded-xl border border-zinc-800">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-purple-100 rounded-lg text-purple-600">
+                            <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
                                 <Repeat className="h-4 w-4" />
                             </div>
                             <div className="space-y-0.5">
