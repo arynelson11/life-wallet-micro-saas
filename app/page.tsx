@@ -73,8 +73,8 @@ export default function LandingPage() {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="relative pt-20 pb-32 px-6 overflow-hidden">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
+        <section className="relative pt-12 pb-12 px-4 md:pt-20 md:pb-32 md:px-6 overflow-hidden">
+          <div className="hidden lg:block absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
 
           <div className="max-w-7xl mx-auto text-center relative z-10">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-zinc-200 shadow-sm mb-8 animate-fade-in-up">
@@ -82,7 +82,7 @@ export default function LandingPage() {
               <span className="text-sm font-medium text-zinc-600">Novo: Assistente Financeiro com IA 2.0</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-8 leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
               Domine Sua <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-600">
                 Liberdade Financeira
@@ -94,13 +94,13 @@ export default function LandingPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-              <Link href="/dashboard">
-                <Button className="h-14 px-8 rounded-full bg-black text-white hover:bg-zinc-800 text-lg font-medium shadow-xl shadow-black/10 transition-all hover:scale-105">
+              <Link href="/dashboard" className="w-full md:w-auto">
+                <Button className="w-full md:w-auto h-14 px-8 rounded-full bg-black text-white hover:bg-zinc-800 text-lg font-medium shadow-xl shadow-black/10 transition-all hover:scale-105">
                   Teste Grátis por 7 Dias
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Button variant="outline" className="h-14 px-8 rounded-full border-zinc-200 hover:bg-zinc-50 text-lg font-medium">
+              <Button variant="outline" className="w-full md:w-auto h-14 px-8 rounded-full border-zinc-200 hover:bg-zinc-50 text-lg font-medium">
                 Ver Demonstração
               </Button>
             </div>

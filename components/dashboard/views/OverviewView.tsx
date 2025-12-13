@@ -62,7 +62,7 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                         </div>
                     </div>
                     <div>
-                        <span className={`text-4xl font-bold tracking-tight ${summary.balance >= 0 ? 'text-foreground' : 'text-red-500'}`}>
+                        <span className={`text-3xl md:text-4xl font-bold tracking-tight ${summary.balance >= 0 ? 'text-foreground' : 'text-red-500'}`}>
                             {formatCurrency(summary.balance)}
                         </span>
                         <p className="text-sm text-muted-foreground mt-2">
@@ -96,7 +96,7 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                         <span className="text-3xl font-bold">{formatCurrency(summary.income)}</span>
                     </div>
 
-                    <div className="h-[100px] w-full mt-4">
+                    <div className="h-24 md:h-[100px] w-full mt-4">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={summary.incomeChartData}>
                                 <defs>
