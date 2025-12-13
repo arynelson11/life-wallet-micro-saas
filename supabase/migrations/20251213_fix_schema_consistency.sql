@@ -1,4 +1,13 @@
--- Migration: Fix Schema Consistency (Debts, Cards, Appointments)
+-- Migration: Fix Schema Consistency (Debts, Cards, Appointments, Transactions)
+
+-- 0. Fix Transactions Table (Missing profile_id)
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'profile_id') THEN 
+        ALTER TABLE public.transactions ADD COLUMN profile_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE; 
+        CREATE INDEX IF NOT EXISTS idx_transactions_profile_id ON public.transactions(profile_id);
+    END IF; 
+END $$;
 
 -- 1. Create APPOINTMENTS table (for Calendar/Fixed Bills)
 CREATE TABLE IF NOT EXISTS public.appointments (
@@ -17,65 +26,36 @@ CREATE TABLE IF NOT EXISTS public.appointments (
 -- Enable RLS for appointments
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view appointments in their spaces"
-  ON public.appointments FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.space_members
-      WHERE space_members.space_id = appointments.space_id
-      AND space_members.user_id = auth.uid()
-    ) OR
-    EXISTS (
-      SELECT 1 FROM public.spaces
-      WHERE spaces.id = appointments.space_id
-      AND spaces.owner_id = auth.uid()
-    )
-  );
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'Users can view appointments in their spaces') THEN
+        CREATE POLICY "Users can view appointments in their spaces" ON public.appointments FOR SELECT USING (
+            EXISTS (SELECT 1 FROM public.space_members WHERE space_members.space_id = appointments.space_id AND space_members.user_id = auth.uid()) OR
+            EXISTS (SELECT 1 FROM public.spaces WHERE spaces.id = appointments.space_id AND spaces.owner_id = auth.uid())
+        );
+    END IF;
 
-CREATE POLICY "Space members can create appointments"
-  ON public.appointments FOR INSERT
-  WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM public.space_members
-      WHERE space_members.space_id = appointments.space_id
-      AND space_members.user_id = auth.uid()
-    ) OR
-    EXISTS (
-      SELECT 1 FROM public.spaces
-      WHERE spaces.id = appointments.space_id
-      AND spaces.owner_id = auth.uid()
-    )
-  );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'Space members can create appointments') THEN
+        CREATE POLICY "Space members can create appointments" ON public.appointments FOR INSERT WITH CHECK (
+            EXISTS (SELECT 1 FROM public.space_members WHERE space_members.space_id = appointments.space_id AND space_members.user_id = auth.uid()) OR
+            EXISTS (SELECT 1 FROM public.spaces WHERE spaces.id = appointments.space_id AND spaces.owner_id = auth.uid())
+        );
+    END IF;
 
-CREATE POLICY "Space members can update appointments"
-  ON public.appointments FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.space_members
-      WHERE space_members.space_id = appointments.space_id
-      AND space_members.user_id = auth.uid()
-    ) OR
-    EXISTS (
-      SELECT 1 FROM public.spaces
-      WHERE spaces.id = appointments.space_id
-      AND spaces.owner_id = auth.uid()
-    )
-  );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'Space members can update appointments') THEN
+        CREATE POLICY "Space members can update appointments" ON public.appointments FOR UPDATE USING (
+            EXISTS (SELECT 1 FROM public.space_members WHERE space_members.space_id = appointments.space_id AND space_members.user_id = auth.uid()) OR
+            EXISTS (SELECT 1 FROM public.spaces WHERE spaces.id = appointments.space_id AND spaces.owner_id = auth.uid())
+        );
+    END IF;
 
-CREATE POLICY "Space members can delete appointments"
-  ON public.appointments FOR DELETE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.space_members
-      WHERE space_members.space_id = appointments.space_id
-      AND space_members.user_id = auth.uid()
-    ) OR
-    EXISTS (
-      SELECT 1 FROM public.spaces
-      WHERE spaces.id = appointments.space_id
-      AND spaces.owner_id = auth.uid()
-    )
-  );
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'Space members can delete appointments') THEN
+        CREATE POLICY "Space members can delete appointments" ON public.appointments FOR DELETE USING (
+            EXISTS (SELECT 1 FROM public.space_members WHERE space_members.space_id = appointments.space_id AND space_members.user_id = auth.uid()) OR
+            EXISTS (SELECT 1 FROM public.spaces WHERE spaces.id = appointments.space_id AND spaces.owner_id = auth.uid())
+        );
+    END IF;
+END $$;
 
 
 -- 2. Create DEBTS table (if not exists)
@@ -93,8 +73,6 @@ CREATE TABLE IF NOT EXISTS public.debts (
 
 -- Enable RLS for debts
 ALTER TABLE public.debts ENABLE ROW LEVEL SECURITY;
-
--- (Re-apply policies to be safe, using DO block to avoid errors if they exist, or just CREATE POLICY IF NOT EXISTS syntax if supported by Postgres version, but standard Postgres doesn't support IF NOT EXISTS for policies easily without a DO block. For simplicity in this env, we will try to create them, if they fail it's fine as long as table exists.)
 
 DO $$
 BEGIN
