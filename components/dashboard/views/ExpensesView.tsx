@@ -1,7 +1,8 @@
 "use client";
 
-import { ArrowDownRight, ShoppingBag, Home, Wifi, Zap, Droplets } from "lucide-react";
+import { ArrowDownRight, ShoppingBag, Home, Wifi, Zap, Droplets, Plus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface ExpensesViewProps {
     type: "fixed" | "variable";
@@ -29,37 +30,46 @@ export function ExpensesView({ type }: ExpensesViewProps) {
     const expenses = isFixed ? fixedExpenses : variableExpenses;
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 animate-fade-in-up">
-            {/* Summary Card */}
-            <div className="md:col-span-4 orvion-card p-8 bg-black text-white">
-                <h3 className="text-xl font-bold mb-8 text-zinc-400">{title}</h3>
-                <div className="mb-8">
-                    <p className="text-sm text-zinc-400 mb-2">Total este mês</p>
-                    <span className="text-5xl font-bold">{total}</span>
-                </div>
-                <div className="h-px w-full bg-zinc-800 my-8" />
-                <div className="flex justify-between items-center text-sm">
-                    <span className="text-zinc-400">Status</span>
-                    <span className="text-primary font-bold">Dentro do Orçamento</span>
-                </div>
+        <div className="space-y-6 animate-fade-in-up">
+            <div className="flex justify-end">
+                <Button className="rounded-full gap-2 font-semibold">
+                    <Plus className="w-4 h-4" />
+                    Adicionar Manualmente
+                </Button>
             </div>
 
-            {/* Expenses List */}
-            <div className="md:col-span-8 space-y-4">
-                {expenses.map((expense, i) => (
-                    <div key={i} className="orvion-card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isFixed ? 'bg-orange-100 text-orange-600' : 'bg-purple-100 text-purple-600'}`}>
-                            <expense.icon className="w-5 h-5" />
-                        </div>
-                        <div className="flex-1">
-                            <div className="flex justify-between mb-2">
-                                <h4 className="font-bold">{expense.name}</h4>
-                                <span className="font-medium text-zinc-600">R$ {expense.value} / R$ {expense.max}</span>
-                            </div>
-                            <Progress value={(expense.value / expense.max) * 100} className="h-2" />
-                        </div>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Summary Card */}
+                <div className="md:col-span-4 orvion-card p-8 bg-black text-white">
+                    <h3 className="text-xl font-bold mb-8 text-zinc-400">{title}</h3>
+                    <div className="mb-8">
+                        <p className="text-sm text-zinc-400 mb-2">Total este mês</p>
+                        <span className="text-5xl font-bold">{total}</span>
                     </div>
-                ))}
+                    <div className="h-px w-full bg-zinc-800 my-8" />
+                    <div className="flex justify-between items-center text-sm">
+                        <span className="text-zinc-400">Status</span>
+                        <span className="text-primary font-bold">Dentro do Orçamento</span>
+                    </div>
+                </div>
+
+                {/* Expenses List */}
+                <div className="md:col-span-8 space-y-4">
+                    {expenses.map((expense, i) => (
+                        <div key={i} className="orvion-card p-4 flex items-center gap-4 hover:shadow-md transition-shadow">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isFixed ? 'bg-orange-100 text-orange-600' : 'bg-purple-100 text-purple-600'}`}>
+                                <expense.icon className="w-5 h-5" />
+                            </div>
+                            <div className="flex-1">
+                                <div className="flex justify-between mb-2">
+                                    <h4 className="font-bold">{expense.name}</h4>
+                                    <span className="font-medium text-zinc-600">R$ {expense.value} / R$ {expense.max}</span>
+                                </div>
+                                <Progress value={(expense.value / expense.max) * 100} className="h-2" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
