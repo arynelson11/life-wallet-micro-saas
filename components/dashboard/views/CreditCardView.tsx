@@ -3,6 +3,7 @@
 import { CreditCard, CalendarClock, Plus, ChevronRight } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { TransactionDialog } from "@/components/dashboard/TransactionDialog";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -63,10 +64,14 @@ export function CreditCardView() {
         <div className="space-y-6 animate-fade-in-up">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Meus Cartões</h2>
-                <Button className="rounded-full gap-2 font-semibold">
-                    <Plus className="w-4 h-4" />
-                    Adicionar Cartão
-                </Button>
+                <TransactionDialog
+                    trigger={
+                        <Button className="rounded-full gap-2 font-semibold">
+                            <Plus className="w-4 h-4" />
+                            Adicionar Cartão
+                        </Button>
+                    }
+                />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8">

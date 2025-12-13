@@ -32,6 +32,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -75,22 +77,28 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} antialiased bg-background text-foreground`}>
+      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* Sidebar Global (Apenas Desktop) - Só aparece se logado */}
+          {user && <Sidebar />}
 
-        {/* Sidebar Global (Apenas Desktop) - Só aparece se logado */}
-        {user && <Sidebar />}
+          {/* Conteúdo Principal */}
+          <main className={`min-h-screen transition-all duration-300 ${user ? 'md:pl-28 pr-4 py-4' : ''}`}>
+            <SubscriptionGuard>
+              {children}
+            </SubscriptionGuard>
+          </main>
 
-        {/* Conteúdo Principal */}
-        <main className={`min-h-screen transition-all duration-300 ${user ? 'md:pl-28 pr-4 py-4' : ''}`}>
-          <SubscriptionGuard>
-            {children}
-          </SubscriptionGuard>
-        </main>
+          {/* Menu Inferior (Apenas Mobile) - Só aparece se logado */}
+          {user && <MobileNav spaceId={spaceId} />}
 
-        {/* Menu Inferior (Apenas Mobile) - Só aparece se logado */}
-        {user && <MobileNav spaceId={spaceId} />}
-
-        <Toaster />
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

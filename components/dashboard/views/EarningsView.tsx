@@ -3,6 +3,7 @@
 import { ArrowUpRight, TrendingUp, Wallet, Plus } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
 import { Button } from "@/components/ui/button";
+import { TransactionDialog } from "@/components/dashboard/TransactionDialog";
 
 const data = [
     { name: "Jan", value: 4000 },
@@ -17,10 +18,7 @@ export function EarningsView() {
     return (
         <div className="space-y-6 animate-fade-in-up">
             <div className="flex justify-end">
-                <Button className="rounded-full gap-2 font-semibold">
-                    <Plus className="w-4 h-4" />
-                    Adicionar Manualmente
-                </Button>
+                <TransactionDialog type="earning" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

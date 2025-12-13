@@ -65,100 +65,100 @@
 
   /* Orvion Light Mode */
   --background: #F5F5F7;
-  /* Light Gray Background */
-  --foreground: #000000;
+  --foreground: #09090b;
 
-  --card: rgba(255, 255, 255, 0.7);
-  --card-foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #09090b;
 
   --popover: #ffffff;
-  --popover-foreground: #000000;
+  --popover-foreground: #09090b;
 
-  /* Primary = Lime Green */
+  /* Primary = Lime Green. Foreground needs to be black for contrast */
   --primary: #C7F33C;
   --primary-foreground: #000000;
 
-  /* Secondary = Pale Lime */
   --secondary: #E1F2AE;
   --secondary-foreground: #000000;
 
-  --muted: #F5F5F7;
+  --muted: #f4f4f5;
   --muted-foreground: #71717a;
 
-  --accent: #E1F2AE;
-  --accent-foreground: #000000;
+  --accent: #f4f4f5;
+  --accent-foreground: #09090b;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
 
-  --border: rgba(0, 0, 0, 0.05);
-  --input: #ffffff;
-  --ring: #C7F33C;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #09090b;
 
-  /* Chart Colors matching the image */
+  --radius: 0.5rem;
+
+  /* Charts */
   --chart-1: #C7F33C;
-  /* Lime */
   --chart-2: #000000;
-  /* Black */
   --chart-3: #E1F2AE;
-  /* Pale Lime */
   --chart-4: #9CA3AF;
-  /* Gray */
   --chart-5: #F3F4F6;
-  /* Light Gray */
 
-  --sidebar: #F5F5F7;
-  --sidebar-foreground: #000000;
-  --sidebar-primary: #C7F33C;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #E1F2AE;
-  --sidebar-accent-foreground: #000000;
-  --sidebar-border: rgba(0, 0, 0, 0.05);
-  --sidebar-ring: #C7F33C;
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #09090b;
+  --sidebar-primary: #18181b;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #09090b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #09090b;
 }
 
 .dark {
-  /* Orvion Dark Mode (Optional, but good to have) */
-  --background: #000000;
-  --foreground: #ffffff;
+  /* Orvion Dark Mode */
+  --background: #09090b;
+  --foreground: #fafafa;
 
-  --card: rgba(24, 24, 27, 0.7);
-  --card-foreground: #ffffff;
+  --card: #18181b;
+  --card-foreground: #fafafa;
 
   --popover: #18181b;
-  --popover-foreground: #ffffff;
+  --popover-foreground: #fafafa;
 
   --primary: #C7F33C;
   --primary-foreground: #000000;
 
   --secondary: #27272a;
-  --secondary-foreground: #ffffff;
+  --secondary-foreground: #fafafa;
 
   --muted: #27272a;
   --muted-foreground: #a1a1aa;
 
   --accent: #27272a;
-  --accent-foreground: #ffffff;
+  --accent-foreground: #fafafa;
 
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
 
-  --border: rgba(255, 255, 255, 0.1);
+  --border: #27272a;
   --input: #27272a;
-  --ring: #C7F33C;
+  --ring: #d4d4d8;
 
+  /* Charts */
   --chart-1: #C7F33C;
   --chart-2: #ffffff;
   --chart-3: #E1F2AE;
   --chart-4: #52525b;
   --chart-5: #27272a;
 
-  --sidebar: #000000;
-  --sidebar-foreground: #ffffff;
+  /* Sidebar */
+  --sidebar: #18181b;
+  --sidebar-foreground: #fafafa;
   --sidebar-primary: #C7F33C;
   --sidebar-primary-foreground: #000000;
   --sidebar-accent: #27272a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #C7F33C;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #27272a;
+  --sidebar-ring: #d4d4d8;
 }
 
 @layer base {
@@ -172,19 +172,8 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Apple-style Typography */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-bold text-zinc-900;
-  }
-
-  /* Smooth Scrolling */
-  html {
-    scroll-behavior: smooth;
+  button {
+    @apply cursor-pointer;
   }
 }
 
@@ -195,22 +184,20 @@
     @apply bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-glass;
   }
 
-  /* Orvion Card */
+  /* Orvion Card - IMPROVED VISIBILITY */
   .orvion-card {
-    @apply bg-white/60 dark:bg-zinc-900/60 backdrop-blur-lg border border-white/40 dark:border-white/10 rounded-[2rem] shadow-sm hover:shadow-md transition-all duration-300;
+    @apply bg-card text-card-foreground border border-border rounded-[1.5rem] shadow-sm hover:shadow-md transition-all duration-300;
   }
 
-  /* Pill Button */
   .btn-pill {
     @apply rounded-full px-6 py-2.5 font-medium transition-all active:scale-95;
   }
 
-  /* Custom Scrollbar */
-  .no-scrollbar::-webkit-scrollbar {
+  .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
 
-  .no-scrollbar {
+  .scrollbar-none {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }

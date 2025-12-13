@@ -3,15 +3,13 @@
 import { AlertCircle, CheckCircle2, Plus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
+import { TransactionDialog } from "@/components/dashboard/TransactionDialog";
 
 export function DebtsView() {
     return (
         <div className="space-y-6 animate-fade-in-up">
             <div className="flex justify-end">
-                <Button className="rounded-full gap-2 font-semibold">
-                    <Plus className="w-4 h-4" />
-                    Adicionar Manualmente
-                </Button>
+                <TransactionDialog type="debt" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
