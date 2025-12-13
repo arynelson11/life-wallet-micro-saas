@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { OverviewView } from "@/components/dashboard/views/OverviewView";
 import { EarningsView } from "@/components/dashboard/views/EarningsView";
 import { ExpensesView } from "@/components/dashboard/views/ExpensesView";
@@ -25,8 +25,24 @@ interface DashboardTabsProps {
 }
 
 export function DashboardTabs({ summary, fullData, spaceId, profileId }: DashboardTabsProps) {
-    const [activeTab, setActiveTab] = useState("overview");
     const searchParams = useSearchParams();
+    const router = useRouter(); // Import needed
+    const tabParam = searchParams.get('tab');
+
+    // Default to 'overview' if no tab param
+    const [activeTab, setActiveTabInternal] = useState(tabParam || "overview");
+
+    const setActiveTab = (tab: string) => {
+        setActiveTabInternal(tab);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('tab', tab);
+        // Shallow update to URL without reload
+        router.push(`?${params.toString()}`, { scroll: false });
+    };
+
+    // Effect to sync URL -> State (e.g. back button)
+    // Actually simplicity: Just use param as source of truth? 
+    // Optimization: Controlled component with local state synced to URL on change.
     const query = searchParams.get('q')?.toLowerCase() || "";
 
     const filterList = (list: any[]) => {

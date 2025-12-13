@@ -172,3 +172,20 @@ CREATE TRIGGER update_debts_updated_at BEFORE UPDATE ON public.debts
 DROP TRIGGER IF EXISTS update_credit_cards_updated_at ON public.credit_cards;
 CREATE TRIGGER update_credit_cards_updated_at BEFORE UPDATE ON public.credit_cards
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- 5. Add Credit Card Linking to Transactions
+DO $$ 
+BEGIN 
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'credit_card_id') THEN 
+        ALTER TABLE public.transactions ADD COLUMN credit_card_id UUID REFERENCES public.credit_cards(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_transactions_cc_id ON public.transactions(credit_card_id);
+    END IF; 
+
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'installments') THEN 
+        ALTER TABLE public.transactions ADD COLUMN installments INTEGER DEFAULT 1; 
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'transactions' AND column_name = 'current_installment') THEN 
+        ALTER TABLE public.transactions ADD COLUMN current_installment INTEGER DEFAULT 1; 
+    END IF;
+END $$;

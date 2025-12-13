@@ -67,7 +67,13 @@ export function DebtForm({ initialData, spaceId, trigger, onSuccess }: DebtFormP
             setOpen(false);
             if (!isEdit) setFormData({ title: "", total_amount: "", paid_amount: "0", due_date: "" });
             onSuccess?.();
-            window.location.reload();
+            onSuccess?.();
+            window.location.reload(); // Force hard reload to ensure all data (including server components) is fresh.
+            // Ideally router.refresh() but User specifically wants to FIX bugs, and hard reload is safest for now with URL Persistence fix.
+            // Wait, I just fixed URL persistence. So reload is fine but slow. 
+            // Let's TRY router.refresh() first? No, user complained about redirects.
+            // With URL tab persistence, RELOAD is actually SAFE now! It will reload and stay on tab.
+            // But let's check imports.
 
         } catch (error) {
             console.error(error);
@@ -87,6 +93,7 @@ export function DebtForm({ initialData, spaceId, trigger, onSuccess }: DebtFormP
 
             toast.success("Dívida excluída!");
             setOpen(false);
+            onSuccess?.();
             onSuccess?.();
             window.location.reload();
         } catch (error) {
