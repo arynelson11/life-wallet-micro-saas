@@ -134,7 +134,7 @@ export default function LandingPage() {
               <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full z-0 group-hover:bg-primary/30 transition-all duration-1000" />
               <div className="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl bg-zinc-900/50 backdrop-blur-sm p-2 z-10 transition-transform duration-500 hover:scale-[1.01]">
                 <img
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop"
+                  src="/assets/dashboard-preview.png"
                   alt="Dashboard Preview"
                   className="rounded-[1.5rem] w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity"
                 />
