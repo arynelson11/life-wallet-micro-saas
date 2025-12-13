@@ -126,6 +126,7 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
                 <CreditCardView
                     cards={filteredCards}
                     spaceId={spaceId}
+                    profileId={profileId}
                 />
             </TabsContent>
 
@@ -137,11 +138,11 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
             </TabsContent>
 
             <TabsContent value="monthly">
-                <MonthlyView />
+                <MonthlyView transactions={fullData.transactions} />
             </TabsContent>
 
             <TabsContent value="annual">
-                <AnnualView />
+                <AnnualView transactions={fullData.transactions} />
             </TabsContent>
         </Tabs>
     );

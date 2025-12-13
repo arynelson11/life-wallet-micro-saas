@@ -34,7 +34,7 @@ export default async function MetasPage() {
     const { data: goals } = await supabase
         .from("goals")
         .select("*")
-        .eq("user_id", user.id)
+        .eq("space_id", spaceId)
         .order("created_at", { ascending: false });
 
     const getIcon = (iconName: string) => {

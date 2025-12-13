@@ -8,9 +8,13 @@ import { cn } from "@/lib/utils";
 interface CreditCardViewProps {
     cards: any[];
     spaceId: string;
+    profileId: string;
 }
 
-export function CreditCardView({ cards = [], spaceId }: CreditCardViewProps) {
+import { TransactionForm } from "@/components/dashboard/forms/TransactionForm";
+import { Plus } from "lucide-react";
+
+export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardViewProps) {
     const [selectedCardId, setSelectedCardId] = useState<string | number>(cards[0]?.id || 0);
     const selectedCard = cards.find(c => c.id === selectedCardId) || cards[0];
 
@@ -21,7 +25,21 @@ export function CreditCardView({ cards = [], spaceId }: CreditCardViewProps) {
         <div className="space-y-6 animate-fade-in-up">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Meus Cartões</h2>
-                <CreditCardForm spaceId={spaceId} />
+                <div className="flex gap-2">
+                    <TransactionForm
+                        type="expense"
+                        spaceId={spaceId}
+                        profileId={profileId}
+                        creditCardId={selectedCard?.id}
+                        trigger={
+                            <Button className="rounded-full gap-2 font-semibold bg-zinc-900 text-white hover:bg-zinc-800">
+                                <Plus className="w-4 h-4" />
+                                Nova Compra
+                            </Button>
+                        }
+                    />
+                    <CreditCardForm spaceId={spaceId} />
+                </div>
             </div>
 
             {cards.length === 0 ? (

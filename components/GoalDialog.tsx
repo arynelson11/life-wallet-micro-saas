@@ -53,7 +53,7 @@ export function GoalDialog({ spaceId, children }: GoalDialogProps) {
                 )}
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md bg-white rounded-[2rem] border-zinc-100 shadow-xl">
+            <DialogContent className="sm:max-w-md rounded-[2rem] border-border shadow-xl">
                 <DialogHeader>
                     <DialogTitle className="text-xl font-bold">Nova Meta 🚀</DialogTitle>
                 </DialogHeader>
@@ -63,13 +63,13 @@ export function GoalDialog({ spaceId, children }: GoalDialogProps) {
                     {/* Nome da Meta */}
                     <div className="space-y-2">
                         <Label>Nome do Objetivo</Label>
-                        <Input name="title" placeholder="Ex: Viagem para Disney" required className="rounded-xl bg-zinc-50 border-zinc-200" />
+                        <Input name="title" placeholder="Ex: Viagem para Disney" required className="rounded-xl" />
                     </div>
 
                     {/* Valor */}
                     <div className="space-y-2">
                         <Label>Valor Alvo (R$)</Label>
-                        <Input name="target_amount" type="number" placeholder="5000" required className="rounded-xl bg-zinc-50 border-zinc-200" />
+                        <Input name="target_amount" type="number" placeholder="5000" required className="rounded-xl" />
                     </div>
 
                     {/* Seleção de Ícone */}
@@ -88,7 +88,7 @@ export function GoalDialog({ spaceId, children }: GoalDialogProps) {
                                         onClick={() => { setSelectedIcon(item.id); setCustomEmoji(""); }}
                                         className={`flex flex-col items-center justify-center p-2 rounded-xl border transition-all ${isSelected
                                             ? "border-primary bg-primary/10 text-primary ring-2 ring-primary ring-offset-1"
-                                            : "border-zinc-200 hover:bg-zinc-50 text-zinc-500"
+                                            : "border-border hover:bg-secondary text-muted-foreground"
                                             }`}
                                     >
                                         <Icon className="h-6 w-6 mb-1" />
@@ -101,11 +101,11 @@ export function GoalDialog({ spaceId, children }: GoalDialogProps) {
                         {/* Input de Emoji Customizado */}
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center pl-3 pointer-events-none">
-                                <span className="text-zinc-400 text-sm">Ou digite um emoji:</span>
+                                <span className="text-muted-foreground text-sm">Ou digite um emoji:</span>
                             </div>
                             <Input
                                 placeholder="Ex: 💻, 💍, 🐶"
-                                className="pl-36 text-lg rounded-xl bg-zinc-50 border-zinc-200"
+                                className="pl-36 text-lg rounded-xl"
                                 value={customEmoji}
                                 onChange={(e) => setCustomEmoji(e.target.value)}
                                 maxLength={2}
@@ -114,7 +114,7 @@ export function GoalDialog({ spaceId, children }: GoalDialogProps) {
                     </div>
 
                     {/* Botão Salvar */}
-                    <Button disabled={isLoading} type="submit" className="w-full bg-black hover:bg-black/90 text-white font-bold h-12 rounded-xl">
+                    <Button disabled={isLoading} type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-bold h-12 rounded-xl">
                         {isLoading ? <Loader2 className="animate-spin" /> : "Criar Meta"}
                     </Button>
 

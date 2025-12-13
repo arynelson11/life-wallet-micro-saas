@@ -13,17 +13,31 @@ export function ReportDialog() {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    import { sendReportEmail } from "@/actions/email-actions";
+
     const handleSendReport = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Simple HTML generation
+        const html = `
+            <h1>Relatório Financeiro LifeWallet</h1>
+            <p>Este é um resumo das suas finanças.</p>
+            <p>Data: ${new Date().toLocaleDateString()}</p>
+            <hr />
+            <p>Acesse seu dashboard para ver os detalhes completos.</p>
+        `;
 
-        toast.success(`Relatório enviado para ${email}!`);
+        const result = await sendReportEmail(email, html);
+
+        if (result.success) {
+            toast.success(result.message || `Relatório enviado para ${email}!`);
+            setOpen(false);
+            setEmail("");
+        } else {
+            toast.error(result.error || "Erro ao enviar relatório.");
+        }
         setIsLoading(false);
-        setOpen(false);
-        setEmail("");
     };
 
     return (

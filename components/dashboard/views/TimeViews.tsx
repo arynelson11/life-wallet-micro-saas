@@ -10,46 +10,67 @@ import {
     TableRow
 } from "@/components/ui/table"; // Assuming table component exists or I will verify availability, if not I use div
 
-export function MonthlyView() {
+interface TimeViewProps {
+    transactions: any[];
+}
+
+import { format, isSameMonth, isSameYear, parseISO, startOfYear, eachMonthOfInterval, endOfYear } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
+export function MonthlyView({ transactions = [] }: TimeViewProps) {
+    const now = new Date();
+    // Filter for current month
+    const monthlyTransactions = transactions.filter(t => isSameMonth(parseISO(t.date), now));
+
+    const income = monthlyTransactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0);
+    const expense = monthlyTransactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0);
+    // "Investido" logic - assuming category 'Investimentos' or type 'expense' + category 'Economias'?
+    // For now, let's look for category
+    const invested = monthlyTransactions.filter(t => t.category === 'Investimentos' || t.category === 'Economias').reduce((acc, t) => acc + Number(t.amount), 0);
+
+    // Balance calculation
+    const balance = income - expense;
+
     return (
         <div className="space-y-6 animate-fade-in-up">
             <div className="orvion-card p-8">
-                <h2 className="text-2xl font-bold mb-6">Resumo de Dezembro</h2>
+                <h2 className="text-2xl font-bold mb-6">Resumo de {format(now, 'MMMM', { locale: ptBR })}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="p-4 bg-zinc-50 rounded-xl">
-                        <p className="text-zinc-500 text-sm">Entradas</p>
-                        <p className="text-xl font-bold text-green-600">R$ 12.500</p>
+                    <div className="p-4 bg-secondary/50 rounded-xl">
+                        <p className="text-muted-foreground text-sm">Entradas</p>
+                        <p className="text-xl font-bold text-green-500">R$ {income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
-                    <div className="p-4 bg-zinc-50 rounded-xl">
-                        <p className="text-zinc-500 text-sm">Saídas</p>
-                        <p className="text-xl font-bold text-red-600">R$ 8.200</p>
+                    <div className="p-4 bg-secondary/50 rounded-xl">
+                        <p className="text-muted-foreground text-sm">Saídas</p>
+                        <p className="text-xl font-bold text-red-500">R$ {expense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
-                    <div className="p-4 bg-zinc-50 rounded-xl">
-                        <p className="text-zinc-500 text-sm">Investido</p>
-                        <p className="text-xl font-bold text-blue-600">R$ 2.000</p>
+                    <div className="p-4 bg-secondary/50 rounded-xl">
+                        <p className="text-muted-foreground text-sm">Investido</p>
+                        <p className="text-xl font-bold text-blue-500">R$ {invested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
-                    <div className="p-4 bg-zinc-900 rounded-xl text-white">
-                        <p className="text-zinc-400 text-sm">Saldo Final</p>
-                        <p className="text-xl font-bold">+ R$ 2.300</p>
+                    <div className={`p-4 rounded-xl text-white ${balance >= 0 ? 'bg-primary/20 text-primary' : 'bg-red-500/10 text-red-500'}`}>
+                        <p className="text-xs opacity-75">Saldo Final</p>
+                        <p className="text-xl font-bold">+ R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     </div>
                 </div>
 
                 <h3 className="font-bold mb-4">Extrato do Mês</h3>
-                <div className="border rounded-xl">
-                    {/* Simplified Table Structure since Table components might not be setup or I want to be safe */}
-                    <div className="grid grid-cols-1 divide-y">
-                        {[
-                            { day: "12/12", desc: "Pagamento Cliente A", cat: "Receita", val: "+ 2.500,00", color: "text-green-600" },
-                            { day: "10/12", desc: "Supermercado Extra", cat: "Alimentação", val: "- 450,00", color: "text-red-600" },
-                            { day: "05/12", desc: "Aluguel", cat: "Moradia", val: "- 2.000,00", color: "text-red-600" },
-                        ].map((t, i) => (
-                            <div key={i} className="flex justify-between p-4 hover:bg-zinc-50">
-                                <span className="text-zinc-500 font-mono text-sm w-16">{t.day}</span>
-                                <span className="flex-1 font-medium">{t.desc}</span>
-                                <span className="text-sm text-zinc-400 w-32 hidden md:block">{t.cat}</span>
-                                <span className={`font-bold ${t.color}`}>{t.val}</span>
-                            </div>
-                        ))}
+                <div className="border border-border rounded-xl bg-card">
+                    <div className="grid grid-cols-1 divide-y divide-border">
+                        {monthlyTransactions.length === 0 ? (
+                            <div className="p-6 text-center text-muted-foreground">Nenhuma movimentação este mês.</div>
+                        ) : (
+                            monthlyTransactions.map((t, i) => (
+                                <div key={i} className="flex justify-between p-4 hover:bg-secondary/20 transition-colors">
+                                    <span className="text-muted-foreground font-mono text-sm w-16">{format(parseISO(t.date), 'dd/MM')}</span>
+                                    <span className="flex-1 font-medium">{t.description}</span>
+                                    <span className="text-sm text-muted-foreground w-32 hidden md:block">{t.category}</span>
+                                    <span className={`font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+                                        {t.type === 'income' ? '+' : '-'} {Number(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                                    </span>
+                                </div>
+                            ))
+                        )}
                     </div>
                 </div>
             </div>
@@ -57,23 +78,38 @@ export function MonthlyView() {
     );
 }
 
-export function AnnualView() {
+export function AnnualView({ transactions = [] }: TimeViewProps) {
+    const now = new Date();
+    // Generate months of current year
+    const months = eachMonthOfInterval({ start: startOfYear(now), end: endOfYear(now) });
+
+    const monthlyData = months.map(month => {
+        const monthTrans = transactions.filter(t => isSameMonth(parseISO(t.date), month) && isSameYear(parseISO(t.date), month));
+        const income = monthTrans.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0);
+        return {
+            month: format(month, 'MMM', { locale: ptBR }).toUpperCase(),
+            value: income,
+            fullDate: month
+        };
+    });
+
+    const maxVal = Math.max(...monthlyData.map(d => d.value), 100); // 100 to avoid div by zero
+
     return (
         <div className="space-y-6 animate-fade-in-up">
             <div className="orvion-card p-8">
-                <h2 className="text-2xl font-bold mb-6">Panorama 2025</h2>
-                <div className="h-64 flex items-end justify-between gap-2 px-4 border-b border-zinc-200 pb-2">
-                    {[30, 45, 32, 50, 60, 40, 70, 65, 55, 60, 80, 75].map((h, i) => (
-                        <div key={i} className="w-full bg-primary/20 hover:bg-primary transition-colors rounded-t-sm relative group" style={{ height: `${h}%` }}>
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                R$ {h}k
+                <h2 className="text-2xl font-bold mb-6">Panorama {format(now, 'yyyy')}</h2>
+                <div className="h-64 flex items-end justify-between gap-2 px-4 border-b border-border pb-2">
+                    {monthlyData.map((d, i) => (
+                        <div key={i} className="w-full bg-primary/20 hover:bg-primary transition-all rounded-t-sm relative group" style={{ height: `${(d.value / maxVal) * 100}%`, minHeight: '4px' }}>
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md">
+                                R$ {d.value.toLocaleString('pt-BR', { maximumFractionDigits: 0 })}
                             </div>
                         </div>
                     ))}
                 </div>
-                <div className="flex justify-between px-4 mt-2 text-xs text-zinc-500 font-mono">
-                    <span>JAN</span><span>FEV</span><span>MAR</span><span>ABR</span><span>MAI</span><span>JUN</span>
-                    <span>JUL</span><span>AGO</span><span>SET</span><span>OUT</span><span>NOV</span><span>DEZ</span>
+                <div className="flex justify-between px-4 mt-2 text-xs text-muted-foreground font-mono">
+                    {monthlyData.map(d => <span key={d.month}>{d.month}</span>)}
                 </div>
             </div>
         </div>

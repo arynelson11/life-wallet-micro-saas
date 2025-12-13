@@ -22,11 +22,12 @@ interface TransactionFormProps {
     };
     spaceId: string; // Required to link to user space
     profileId: string; // Required for RLS
+    creditCardId?: string; // Optional link to credit card
     trigger?: React.ReactNode;
     onSuccess?: () => void;
 }
 
-export function TransactionForm({ type, initialData, spaceId, profileId, trigger, onSuccess }: TransactionFormProps) {
+export function TransactionForm({ type, initialData, spaceId, profileId, creditCardId, trigger, onSuccess }: TransactionFormProps) {
     const isEdit = !!initialData;
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -54,7 +55,8 @@ export function TransactionForm({ type, initialData, spaceId, profileId, trigger
                 amount: Number(formData.amount),
                 date: new Date(formData.date).toISOString(), // Ensure UTC for consistency
                 category: formData.category,
-                type: type
+                type: type,
+                credit_card_id: creditCardId || null
             };
 
             if (!spaceId) {
