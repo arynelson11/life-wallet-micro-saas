@@ -10,7 +10,19 @@ export async function getFinancialSummary(spaceId: string) {
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
 
-    // 1. Transactions (Income/Expense)
+    // 0. Balance (All Time)
+    const { data: allTransactions } = await supabase
+        .from("transactions")
+        .select("amount, type")
+        .eq("space_id", spaceId);
+
+    let totalBalance = 0;
+    allTransactions?.forEach(t => {
+        if (t.type === 'income') totalBalance += Number(t.amount);
+        else totalBalance -= Number(t.amount);
+    });
+
+    // 1. Transactions (Income/Expense) - MONTHLY for charts
     const { data: transactions } = await supabase
         .from("transactions")
         .select("*")
@@ -93,6 +105,7 @@ export async function getFinancialSummary(spaceId: string) {
     });
 
     return {
+        balance: totalBalance,
         income: totalIncome,
         expenses: totalExpenses,
         fixedExpenses,

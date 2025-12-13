@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface OverviewViewProps {
     summary: {
+        balance: number;
         income: number;
         expenses: number;
         fixedExpenses: number;
@@ -47,6 +48,33 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
 
+                {/* 0. Saldo Total Summary (NEW) */}
+                <div className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-primary/30 transition-all border border-transparent bg-secondary/5">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center border border-primary/20">
+                                <Wallet className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Saldo Geral</h3>
+                                <p className="text-sm text-muted-foreground">Acumulado (Receitas - Despesas)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span className={`text-4xl font-bold tracking-tight ${summary.balance >= 0 ? 'text-foreground' : 'text-red-500'}`}>
+                            {formatCurrency(summary.balance)}
+                        </span>
+                        <p className="text-sm text-muted-foreground mt-2">
+                            Considerando todas as movimentações.
+                        </p>
+                    </div>
+                    {/* Visual bar just for decoration or ratio */}
+                    <div className="w-full bg-muted rounded-full h-1.5 mt-4 overflow-hidden">
+                        <div className={`h-full ${summary.balance >= 0 ? 'bg-primary' : 'bg-red-500'}`} style={{ width: '100%' }} />
+                    </div>
+                </div>
+
                 {/* 1. Ganhos Summary */}
                 <div
                     className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-green-500/30 transition-all border border-transparent"
@@ -58,8 +86,8 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                                 <TrendingUp className="w-5 h-5" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-lg">Ganhos</h3>
-                                <p className="text-sm text-muted-foreground">Receita Mensal</p>
+                                <h3 className="font-bold text-lg">Receita Mensal</h3>
+                                <p className="text-sm text-muted-foreground">Ganhos deste mês</p>
                             </div>
                         </div>
                     </div>
