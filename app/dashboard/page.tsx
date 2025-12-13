@@ -21,9 +21,29 @@ export default async function DashboardPage() {
         .eq('type', 'PERSONAL')
         .single();
 
-    // Fallback se não tiver space (edge case) ou criar on the fly?
-    // Inicialmente o usuario ganha um space no signup.
-    const spaceId = space?.id;
+    // Fallback se não tiver space (edge case) ou criar on the fly
+    let spaceId = space?.id;
+
+    if (!spaceId) {
+        // Create Default Personal Space if it doesn't exist
+        const { data: newSpace, error: createError } = await supabase
+            .from('spaces')
+            .insert({
+                name: 'Minha Carteira',
+                type: 'PERSONAL',
+                owner_id: user.id
+            })
+            .select('id')
+            .single();
+
+        if (newSpace) {
+            spaceId = newSpace.id;
+        } else {
+            console.error("Critical: Failed to create default space", createError);
+            // Optionally redirect to an error page or show a setup state, 
+            // but for now let's hope it works or the user sees the empty state with issues.
+        }
+    }
 
     // Se não tiver spaceId, talvez redirecionar para setup ou lidar com erro.
     // Vamos assumir que existe para não bloquear o fluxo agora.
