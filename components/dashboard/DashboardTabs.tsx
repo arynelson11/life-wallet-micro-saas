@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSearchParams } from "next/navigation";
 import { OverviewView } from "@/components/dashboard/views/OverviewView";
 import { EarningsView } from "@/components/dashboard/views/EarningsView";
 import { ExpensesView } from "@/components/dashboard/views/ExpensesView";
@@ -25,9 +26,26 @@ interface DashboardTabsProps {
 
 export function DashboardTabs({ summary, fullData, spaceId, profileId }: DashboardTabsProps) {
     const [activeTab, setActiveTab] = useState("overview");
+    const searchParams = useSearchParams();
+    const query = searchParams.get('q')?.toLowerCase() || "";
 
-    const incomeTransactions = fullData.transactions.filter(t => t.type === 'income');
-    const expenseTransactions = fullData.transactions.filter(t => t.type === 'expense');
+    const filterList = (list: any[]) => {
+        if (!query) return list;
+        return list.filter(item =>
+            item.description?.toLowerCase().includes(query) ||
+            item.name?.toLowerCase().includes(query) ||
+            item.title?.toLowerCase().includes(query) ||
+            item.category?.toLowerCase().includes(query)
+        );
+    };
+
+    const filteredTransactions = filterList(fullData.transactions);
+    const filteredDebts = filterList(fullData.debts);
+    const filteredCards = filterList(fullData.cards);
+    const filteredGoals = filterList(fullData.goals);
+
+    const incomeTransactions = filteredTransactions.filter(t => t.type === 'income');
+    const expenseTransactions = filteredTransactions.filter(t => t.type === 'expense');
     const fixedExpenses = expenseTransactions.filter(t => ['Moradia', 'Educação', 'Seguros', 'Assinaturas', 'Saúde'].includes(t.category) || t.category === 'Fixa'); // Simple heuristic
     const variableExpenses = expenseTransactions.filter(t => !['Moradia', 'Educação', 'Seguros', 'Assinaturas', 'Saúde'].includes(t.category) && t.category !== 'Fixa');
 
@@ -83,21 +101,21 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
 
             <TabsContent value="debts">
                 <DebtsView
-                    debts={fullData.debts}
+                    debts={filteredDebts}
                     spaceId={spaceId}
                 />
             </TabsContent>
 
             <TabsContent value="credit-card">
                 <CreditCardView
-                    cards={fullData.cards}
+                    cards={filteredCards}
                     spaceId={spaceId}
                 />
             </TabsContent>
 
             <TabsContent value="savings">
                 <SavingsView
-                    goals={fullData.goals}
+                    goals={filteredGoals}
                     spaceId={spaceId}
                 />
             </TabsContent>

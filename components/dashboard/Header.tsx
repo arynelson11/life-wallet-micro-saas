@@ -1,19 +1,53 @@
 "use client";
 
-import { Search, Bell, Calendar as CalendarIcon, Plus, LayoutGrid } from "lucide-react";
+import { Search, Bell, Calendar as CalendarIcon, Plus, LayoutGrid, LogOut, Settings, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ModeToggle } from "@/components/mode-toggle";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
-export function Header() {
+interface HeaderProps {
+    user?: any;
+}
+
+export function Header({ user }: HeaderProps) {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+
+    // Search
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace, push } = useRouter();
+
+    const handleSearch = (term: string) => {
+        const params = new URLSearchParams(searchParams);
+        if (term) {
+            params.set('q', term);
+        } else {
+            params.delete('q');
+        }
+        replace(`${pathname}?${params.toString()}`);
+    };
+
+    // Logout
+    const handleLogout = async () => {
+        const supabase = createClient();
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            toast.error("Erro ao sair.");
+        } else {
+            push("/login");
+        }
+    };
 
     return (
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 pt-4 gap-4">
@@ -36,8 +70,10 @@ export function Header() {
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
                         type="text"
-                        placeholder="Buscar..."
+                        placeholder="Buscar transações..."
                         className="h-10 pl-10 pr-4 rounded-full bg-background border border-input shadow-sm w-64 focus:ring-2 focus:ring-primary/20 outline-none text-sm"
+                        defaultValue={searchParams.get('q')?.toString()}
+                        onChange={(e) => handleSearch(e.target.value)}
                     />
                 </div>
 
@@ -98,17 +134,76 @@ export function Header() {
                 </Dialog>
 
                 {/* Notifications */}
-                <Button size="icon" variant="ghost" className="rounded-full w-10 h-10 bg-background border border-input shadow-sm hover:bg-accent">
-                    <Bell className="w-4 h-4" />
-                </Button>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button size="icon" variant="ghost" className="rounded-full w-10 h-10 bg-background border border-input shadow-sm hover:bg-accent relative">
+                            <Bell className="w-4 h-4" />
+                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80" align="end">
+                        <div className="space-y-4">
+                            <h4 className="font-medium leading-none">Notificações</h4>
+                            <div className="grid gap-4">
+                                <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                                    <div className="w-2 h-2 mt-2 bg-blue-500 rounded-full" />
+                                    <div>
+                                        <p className="text-sm font-medium">Conta de Luz Vencendo</p>
+                                        <p className="text-xs text-muted-foreground">Sua fatura de R$ 250 vence amanhã.</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                                    <div className="w-2 h-2 mt-2 bg-green-500 rounded-full" />
+                                    <div>
+                                        <p className="text-sm font-medium">Meta Atingida!</p>
+                                        <p className="text-xs text-muted-foreground">Você atingiu 50% da meta "Viagem".</p>
+                                    </div>
+                                </div>
+                                <Button variant="ghost" size="sm" className="w-full text-xs">
+                                    Marcar todas como lidas
+                                </Button>
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+
 
                 {/* User Profile */}
                 <div className="flex items-center gap-3 pl-2">
                     <ModeToggle />
-                    <Avatar className="w-10 h-10 border-2 border-background shadow-sm cursor-pointer">
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                        <AvatarFallback>CN</AvatarFallback>
-                    </Avatar>
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Avatar className="w-10 h-10 border-2 border-background shadow-sm cursor-pointer hover:opacity-80 transition-opacity">
+                                <AvatarImage src={user?.user_metadata?.avatar_url || "https://github.com/shadcn.png"} />
+                                <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase() || "CN"}</AvatarFallback>
+                            </Avatar>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel>
+                                <div className="flex flex-col space-y-1">
+                                    <p className="text-sm font-medium leading-none">{user?.user_metadata?.full_name || "Usuário"}</p>
+                                    <p className="text-xs leading-none text-muted-foreground">
+                                        {user?.email}
+                                    </p>
+                                </div>
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => push('/perfil')}>
+                                <User className="mr-2 h-4 w-4" />
+                                <span>Perfil</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => push('/settings')}>
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Configurações</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleLogout} className="text-red-600 focus:text-red-600 focus:bg-red-50">
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Sair</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
         </header>

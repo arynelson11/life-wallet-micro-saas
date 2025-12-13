@@ -43,7 +43,7 @@ export default async function DashboardPage() {
 
             {/* Main Content */}
             <div className="max-w-[1600px] mx-auto px-4 md:px-8">
-                <Header />
+                <Header user={user} />
                 <DashboardTabs
                     summary={summary}
                     fullData={fullData}
