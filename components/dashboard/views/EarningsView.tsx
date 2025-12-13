@@ -76,19 +76,19 @@ export function EarningsView({ transactions = [], spaceId, profileId }: Earnings
                         </div>
                     ) : (
                         transactions.map((t) => (
-                            <div key={t.id} className="orvion-card p-6 flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-primary/20 text-primary rounded-xl flex items-center justify-center">
-                                        <Wallet className="w-6 h-6" />
+                            <div key={t.id} className="orvion-card p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div className="flex items-center gap-4 w-full sm:w-auto min-w-0">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/20 text-primary rounded-xl flex-shrink-0 flex items-center justify-center">
+                                        <Wallet className="w-5 h-5 md:w-6 md:h-6" />
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-lg">{t.description}</h4>
-                                        <p className="text-muted-foreground">{t.category} • {new Date(t.date).toLocaleDateString()}</p>
+                                    <div className="min-w-0 overflow-hidden">
+                                        <h4 className="font-bold text-base md:text-lg truncate">{t.description}</h4>
+                                        <p className="text-muted-foreground text-sm truncate">{t.category} • {new Date(t.date).toLocaleDateString()}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right">
-                                        <p className="font-bold text-xl text-green-600">
+                                <div className="flex items-center justify-between w-full sm:w-auto gap-4">
+                                    <div className="text-right flex-1 sm:flex-initial">
+                                        <p className="font-bold text-lg md:text-xl text-green-600">
                                             + {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.amount)}
                                         </p>
                                     </div>

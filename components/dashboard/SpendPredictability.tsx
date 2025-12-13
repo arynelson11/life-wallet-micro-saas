@@ -8,9 +8,9 @@ const data = [
     { day: "05", actual: 250, limit: 500 },
     { day: "10", actual: 600, limit: 1000 },
     { day: "15", actual: 950, limit: 1500 },
-    { day: "20", actual: 1600, limit: 2000 }, // Slight overspend trend
-    { day: "25", actual: null, limit: 2500, projected: 2100 },
-    { day: "30", actual: null, limit: 3000, projected: 2800 },
+    { day: "20", actual: 1600, limit: 2000 },
+    { day: "25", actual: 2050, limit: 2500, projected: 2100 },
+    { day: "30", actual: 2600, limit: 3000, projected: 2800 },
 ];
 
 export function SpendPredictability() {

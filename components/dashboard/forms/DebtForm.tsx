@@ -47,13 +47,22 @@ export function DebtForm({ initialData, spaceId, trigger, onSuccess }: DebtFormP
                 due_date: formData.due_date ? new Date(formData.due_date).toISOString() : null
             };
 
-            if (isEdit && initialData) {
-                await updateDebt(initialData.id, payload);
-                toast.success("Dívida atualizada!");
-            } else {
-                await createDebt(payload);
-                toast.success("Dívida adicionada!");
+            if (!spaceId) {
+                toast.error("Erro: Espaço não identificado.");
+                setIsLoading(false);
+                return;
             }
+
+            let result;
+            if (isEdit && initialData) {
+                result = await updateDebt(initialData.id, payload);
+            } else {
+                result = await createDebt(payload);
+            }
+
+            if (!result.success) throw new Error(result.error);
+
+            toast.success(isEdit ? "Dívida atualizada!" : "Dívida criada!");
 
             setOpen(false);
             if (!isEdit) setFormData({ title: "", total_amount: "", paid_amount: "0", due_date: "" });
@@ -61,7 +70,8 @@ export function DebtForm({ initialData, spaceId, trigger, onSuccess }: DebtFormP
             window.location.reload();
 
         } catch (error) {
-            toast.error("Erro ao salvar dívida");
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao salvar dívida");
         } finally {
             setIsLoading(false);
         }
@@ -72,13 +82,16 @@ export function DebtForm({ initialData, spaceId, trigger, onSuccess }: DebtFormP
         if (!confirm("Excluir esta dívida?")) return;
         setIsLoading(true);
         try {
-            await deleteDebt(initialData.id);
-            toast.success("Dívida excluída");
+            const result = await deleteDebt(initialData.id);
+            if (!result.success) throw new Error(result.error);
+
+            toast.success("Dívida excluída!");
             setOpen(false);
             onSuccess?.();
             window.location.reload();
-        } catch {
-            toast.error("Erro ao excluir");
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao excluir");
         } finally {
             setIsLoading(false);
         }

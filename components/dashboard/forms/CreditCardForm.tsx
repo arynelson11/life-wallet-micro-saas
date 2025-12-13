@@ -51,19 +51,29 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                 color: formData.color
             };
 
-            if (isEdit && initialData) {
-                await updateCreditCard(initialData.id, payload);
-                toast.success("Cartão atualizado!");
-            } else {
-                await createCreditCard(payload);
-                toast.success("Cartão adicionado!");
+            if (!spaceId) {
+                toast.error("Erro: Espaço não identificado.");
+                setIsLoading(false);
+                return;
             }
+
+            let result;
+            if (isEdit && initialData) {
+                result = await updateCreditCard(initialData.id, payload);
+            } else {
+                result = await createCreditCard(payload);
+            }
+
+            if (!result.success) throw new Error(result.error);
+
+            toast.success(isEdit ? "Cartão atualizado!" : "Cartão criado!");
             setOpen(false);
             if (!isEdit) setFormData({ name: "", limit_amount: "", closing_day: "", due_day: "", color: "#000000" });
             onSuccess?.();
             window.location.reload();
-        } catch {
-            toast.error("Erro ao salvar cartão");
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao salvar cartão");
         } finally {
             setIsLoading(false);
         }
@@ -74,13 +84,16 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
         if (!confirm("Excluir este cartão?")) return;
         setIsLoading(true);
         try {
-            await deleteCreditCard(initialData.id);
-            toast.success("Cartão excluído");
+            const result = await deleteCreditCard(initialData.id);
+            if (!result.success) throw new Error(result.error);
+
+            toast.success("Cartão excluído!");
             setOpen(false);
             onSuccess?.();
             window.location.reload();
-        } catch {
-            toast.error("Erro ao excluir");
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao excluir");
         } finally {
             setIsLoading(false);
         }

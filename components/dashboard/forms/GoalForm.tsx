@@ -46,19 +46,29 @@ export function GoalForm({ initialData, spaceId, trigger, onSuccess }: GoalFormP
                 status: 'active'
             };
 
-            if (isEdit && initialData) {
-                await updateGoal(initialData.id, payload);
-                toast.success("Meta atualizada!");
-            } else {
-                await createGoal(payload);
-                toast.success("Meta criada!");
+            if (!spaceId) {
+                toast.error("Erro: Espaço não identificado.");
+                setIsLoading(false);
+                return;
             }
+
+            let result;
+            if (isEdit && initialData) {
+                result = await updateGoal(initialData.id, payload);
+            } else {
+                result = await createGoal(payload);
+            }
+
+            if (!result.success) throw new Error(result.error);
+
+            toast.success(isEdit ? "Meta atualizada!" : "Meta criada!");
             setOpen(false);
             if (!isEdit) setFormData({ title: "", target_amount: "", current_amount: "" });
             onSuccess?.();
             window.location.reload();
-        } catch {
-            toast.error("Erro ao salvar meta");
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao salvar meta");
         } finally {
             setIsLoading(false);
         }
@@ -69,13 +79,16 @@ export function GoalForm({ initialData, spaceId, trigger, onSuccess }: GoalFormP
         if (!confirm("Excluir esta meta?")) return;
         setIsLoading(true);
         try {
-            await deleteGoal(initialData.id);
-            toast.success("Meta excluída");
+            const result = await deleteGoal(initialData.id);
+            if (!result.success) throw new Error(result.error);
+
+            toast.success("Meta excluída!");
             setOpen(false);
             onSuccess?.();
             window.location.reload();
-        } catch {
-            toast.error("Erro ao excluir");
+        } catch (error) {
+            console.error(error);
+            toast.error(error instanceof Error ? error.message : "Erro ao excluir");
         } finally {
             setIsLoading(false);
         }

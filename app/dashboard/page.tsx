@@ -42,7 +42,7 @@ export default async function DashboardPage() {
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-black">
 
             {/* Main Content */}
-            <div className="max-w-[1600px] mx-auto">
+            <div className="max-w-[1600px] mx-auto px-4 md:px-8">
                 <Header />
                 <DashboardTabs
                     summary={summary}

@@ -52,18 +52,30 @@ export function TransactionForm({ type, initialData, spaceId, profileId, trigger
                 profile_id: profileId,
                 description: formData.description,
                 amount: Number(formData.amount),
-                date: new Date(formData.date).toISOString(),
+                date: new Date(formData.date).toISOString(), // Ensure UTC for consistency
                 category: formData.category,
                 type: type
             };
 
-            if (isEdit && initialData) {
-                await updateTransaction(initialData.id, payload);
-                toast.success("Transação atualizada com sucesso!");
-            } else {
-                await createTransaction(payload);
-                toast.success("Transação criada com sucesso!");
+            if (!spaceId) {
+                toast.error("Erro: Espaço não identificado. Recarregue a página.");
+                setIsLoading(false);
+                return;
             }
+
+            let result;
+
+            if (isEdit && initialData) {
+                result = await updateTransaction(initialData.id, payload);
+            } else {
+                result = await createTransaction(payload);
+            }
+
+            if (!result.success) {
+                throw new Error(result.error);
+            }
+
+            toast.success(isEdit ? "Transação atualizada!" : "Transação criada!");
 
             setOpen(false);
             if (!isEdit) { // Reset form only on create
@@ -75,7 +87,7 @@ export function TransactionForm({ type, initialData, spaceId, profileId, trigger
 
         } catch (error) {
             console.error(error);
-            toast.error("Erro ao salvar transação");
+            toast.error(error instanceof Error ? error.message : "Erro ao salvar transação");
         } finally {
             setIsLoading(false);
         }
@@ -87,13 +99,15 @@ export function TransactionForm({ type, initialData, spaceId, profileId, trigger
 
         setIsLoading(true);
         try {
-            await deleteTransaction(initialData.id);
+            const result = await deleteTransaction(initialData.id);
+            if (!result.success) throw new Error(result.error);
+
             toast.success("Transação excluída!");
             setOpen(false);
             onSuccess?.();
             window.location.reload();
         } catch (error) {
-            toast.error("Erro ao excluir");
+            toast.error(error instanceof Error ? error.message : "Erro ao excluir");
         } finally {
             setIsLoading(false);
         }

@@ -175,21 +175,30 @@ export async function getFullFinancialData(spaceId: string) {
 export async function createTransaction(data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('transactions').insert(data);
-    if (error) throw error;
+    if (error) {
+        console.error("Error creating transaction:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function updateTransaction(id: string, data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('transactions').update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error updating transaction:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function deleteTransaction(id: string) {
     const supabase = await createClient();
     const { error } = await supabase.from('transactions').delete().eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error deleting transaction:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
@@ -197,21 +206,30 @@ export async function deleteTransaction(id: string) {
 export async function createDebt(data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('debts').insert(data);
-    if (error) throw error;
+    if (error) {
+        console.error("Error creating debt:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function updateDebt(id: string, data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('debts').update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error updating debt:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function deleteDebt(id: string) {
     const supabase = await createClient();
     const { error } = await supabase.from('debts').delete().eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error deleting debt:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
@@ -219,21 +237,30 @@ export async function deleteDebt(id: string) {
 export async function createCreditCard(data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('credit_cards').insert(data);
-    if (error) throw error;
+    if (error) {
+        console.error("Error creating card:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function updateCreditCard(id: string, data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('credit_cards').update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error updating card:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function deleteCreditCard(id: string) {
     const supabase = await createClient();
     const { error } = await supabase.from('credit_cards').delete().eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error deleting card:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
@@ -241,20 +268,29 @@ export async function deleteCreditCard(id: string) {
 export async function createGoal(data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('goals').insert(data);
-    if (error) throw error;
+    if (error) {
+        console.error("Error creating goal:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function updateGoal(id: string, data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('goals').update(data).eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error updating goal:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }
 
 export async function deleteGoal(id: string) {
     const supabase = await createClient();
     const { error } = await supabase.from('goals').delete().eq('id', id);
-    if (error) throw error;
+    if (error) {
+        console.error("Error deleting goal:", error);
+        return { success: false, error: error.message };
+    }
     return { success: true };
 }

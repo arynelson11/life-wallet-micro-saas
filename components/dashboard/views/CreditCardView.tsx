@@ -36,7 +36,7 @@ export function CreditCardView({ cards = [], spaceId }: CreditCardViewProps) {
                         {selectedCard && (
                             <div
                                 className={cn(
-                                    "w-full aspect-[1.586] rounded-[2rem] p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-500",
+                                    "w-full aspect-[1.586] rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-500",
                                 )}
                                 style={{ background: `linear-gradient(135deg, ${selectedCard.color} 0%, #000 100%)` }}
                             >
@@ -98,7 +98,7 @@ export function CreditCardView({ cards = [], spaceId }: CreditCardViewProps) {
                     {/* Fatura e Detalhes */}
                     {selectedCard && (
                         <div className="md:col-span-7 space-y-6">
-                            <div className="orvion-card p-8">
+                            <div className="orvion-card p-4 md:p-8">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="p-3 bg-primary/20 rounded-xl text-primary-dark">
                                         <CalendarClock className="w-6 h-6" />

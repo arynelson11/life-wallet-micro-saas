@@ -16,7 +16,7 @@ export function Header() {
     const [isWidgetOpen, setIsWidgetOpen] = useState(false);
 
     return (
-        <header className="flex items-center justify-between mb-8 pt-4">
+        <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 pt-4 gap-4">
             {/* Title Section */}
             <div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
@@ -24,7 +24,7 @@ export function Header() {
                     <span>/</span>
                     <span>Produtos Digitais</span>
                 </div>
-                <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                     Performance de Vendas
                 </h1>
             </div>

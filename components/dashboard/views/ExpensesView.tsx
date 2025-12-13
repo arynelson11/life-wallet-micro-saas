@@ -40,7 +40,7 @@ export function ExpensesView({ type, transactions = [], spaceId, profileId }: Ex
 
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 {/* Summary Card */}
-                <div className="md:col-span-4 orvion-card p-8 bg-black text-white h-fit">
+                <div className="md:col-span-4 orvion-card p-4 md:p-8 bg-black text-white h-fit">
                     <h3 className="text-xl font-bold mb-8 text-zinc-400">{title}</h3>
                     <div className="mb-8">
                         <p className="text-sm text-zinc-400 mb-2">Total este mês</p>
@@ -61,23 +61,25 @@ export function ExpensesView({ type, transactions = [], spaceId, profileId }: Ex
                         </div>
                     ) : (
                         transactions.map((t, i) => (
-                            <div key={t.id} className="orvion-card p-4 flex items-center gap-4 hover:shadow-md transition-shadow group">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${isFixed ? 'bg-orange-100 text-orange-600' : 'bg-purple-100 text-purple-600'}`}>
-                                    {/* Simple Icon Mapping based on category string match or default */}
-                                    {t.category === 'Moradia' ? <Home className="w-5 h-5" /> :
-                                        t.category === 'Alimentação' ? <ShoppingBag className="w-5 h-5" /> :
-                                            <ArrowDownRight className="w-5 h-5" />}
-                                </div>
-                                <div className="flex-1">
-                                    <div className="flex justify-between mb-1">
-                                        <h4 className="font-bold">{t.description}</h4>
-                                        <span className="font-medium text-zinc-600">
-                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.amount)}
-                                        </span>
+                            <div key={t.id} className="orvion-card p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:shadow-md transition-shadow group">
+                                <div className="flex items-center gap-4 w-full">
+                                    <div className={`w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-xl flex items-center justify-center ${isFixed ? 'bg-orange-100 text-orange-600' : 'bg-purple-100 text-purple-600'}`}>
+                                        {/* Simple Icon Mapping based on category string match or default */}
+                                        {t.category === 'Moradia' ? <Home className="w-5 h-5" /> :
+                                            t.category === 'Alimentação' ? <ShoppingBag className="w-5 h-5" /> :
+                                                <ArrowDownRight className="w-5 h-5" />}
                                     </div>
-                                    <div className="flex justify-between text-xs text-zinc-400">
-                                        <span>{t.category}</span>
-                                        <span>{new Date(t.date).toLocaleDateString()}</span>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex justify-between items-start mb-1 gap-2">
+                                            <h4 className="font-bold truncate text-sm md:text-base">{t.description}</h4>
+                                            <span className="font-medium text-zinc-600 whitespace-nowrap">
+                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(t.amount)}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between text-xs text-zinc-400">
+                                            <span>{t.category}</span>
+                                            <span>{new Date(t.date).toLocaleDateString()}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <TransactionForm
