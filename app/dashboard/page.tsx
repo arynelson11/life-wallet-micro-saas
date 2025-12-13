@@ -1,16 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/dashboard/Header";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-// Views
-import { OverviewView } from "@/components/dashboard/views/OverviewView";
-import { EarningsView } from "@/components/dashboard/views/EarningsView";
-import { ExpensesView } from "@/components/dashboard/views/ExpensesView";
-import { DebtsView } from "@/components/dashboard/views/DebtsView";
-import { CreditCardView } from "@/components/dashboard/views/CreditCardView";
-import { SavingsView } from "@/components/dashboard/views/SavingsView";
-import { MonthlyView, AnnualView } from "@/components/dashboard/views/TimeViews";
+import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
+import { getFinancialSummary } from "@/actions/finance-actions";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -19,65 +11,35 @@ export default async function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
+    // 2. Fetch de Dados Reais
+    // Precisamos do Space ID. Por enquanto vamos assumir o primeiro space Pessoal dele.
+    const { data: space } = await supabase
+        .from('spaces')
+        .select('id')
+        .eq('owner_id', user.id)
+        .eq('type', 'PERSONAL')
+        .single();
+
+    // Fallback se não tiver space (edge case) ou criar on the fly?
+    // Inicialmente o usuario ganha um space no signup.
+    const spaceId = space?.id;
+
+    // Se não tiver spaceId, talvez redirecionar para setup ou lidar com erro.
+    // Vamos assumir que existe para não bloquear o fluxo agora.
+
+    const summary = spaceId ? await getFinancialSummary(spaceId) : {
+        income: 0, expenses: 0, fixedExpenses: 0, variableExpenses: 0,
+        incomeChartData: [], debt: { total: 0, paid: 0 }, cards: [],
+        assets: { total: 0, fixed: 0, variable: 0, goalsCount: 0 }
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-black">
 
             {/* Main Content */}
             <div className="max-w-[1600px] mx-auto">
                 <Header />
-
-                <Tabs defaultValue="overview" className="space-y-8">
-                    <div className="w-full overflow-x-auto pb-2 scrollbar-none">
-                        <TabsList className="bg-white/50 backdrop-blur-sm border border-zinc-200 p-1 h-12 rounded-full inline-flex min-w-max">
-                            <TabsTrigger value="overview" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Visão Geral</TabsTrigger>
-                            <TabsTrigger value="earnings" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Ganhos</TabsTrigger>
-                            <TabsTrigger value="fixed-expenses" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Despesas Fixas</TabsTrigger>
-                            <TabsTrigger value="variable-expenses" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Variáveis</TabsTrigger>
-                            <TabsTrigger value="debts" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Dívidas</TabsTrigger>
-                            <TabsTrigger value="credit-card" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Cartão de Crédito</TabsTrigger>
-                            <TabsTrigger value="savings" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-primary hover:text-black transition-colors">Economias</TabsTrigger>
-                            <div className="w-px h-6 bg-zinc-300 mx-2" />
-                            <TabsTrigger value="monthly" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-white hover:text-black transition-colors">Visão Mensal</TabsTrigger>
-                            <TabsTrigger value="annual" className="rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-white hover:text-black transition-colors">Visão Anual</TabsTrigger>
-                        </TabsList>
-                    </div>
-
-                    <TabsContent value="overview" className="space-y-6">
-                        <OverviewView />
-                    </TabsContent>
-
-                    <TabsContent value="earnings">
-                        <EarningsView />
-                    </TabsContent>
-
-                    <TabsContent value="fixed-expenses">
-                        <ExpensesView type="fixed" />
-                    </TabsContent>
-
-                    <TabsContent value="variable-expenses">
-                        <ExpensesView type="variable" />
-                    </TabsContent>
-
-                    <TabsContent value="debts">
-                        <DebtsView />
-                    </TabsContent>
-
-                    <TabsContent value="credit-card">
-                        <CreditCardView />
-                    </TabsContent>
-
-                    <TabsContent value="savings">
-                        <SavingsView />
-                    </TabsContent>
-
-                    <TabsContent value="monthly">
-                        <MonthlyView />
-                    </TabsContent>
-
-                    <TabsContent value="annual">
-                        <AnnualView />
-                    </TabsContent>
-                </Tabs>
+                <DashboardTabs summary={summary} />
             </div>
         </div>
     );
