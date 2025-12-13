@@ -14,6 +14,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { ReportDialog } from "@/components/dashboard/ReportDialog";
 
 interface HeaderProps {
     user?: any;
@@ -49,6 +50,19 @@ export function Header({ user }: HeaderProps) {
         }
     };
 
+    // Notifications State
+    const [unreadCount, setUnreadCount] = useState(2);
+    const [notifications, setNotifications] = useState([
+        { id: 1, title: "Conta de Luz Vencendo", desc: "Sua fatura de R$ 250 vence amanhã.", color: "bg-blue-500", read: false },
+        { id: 2, title: "Meta Atingida!", desc: "Você atingiu 50% da meta 'Viagem'.", color: "bg-green-500", read: false }
+    ]);
+
+    const markAllAsRead = () => {
+        setNotifications(notifications.map(n => ({ ...n, read: true })));
+        setUnreadCount(0);
+        toast.success("Todas as notificações marcadas como lidas.");
+    };
+
     return (
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 pt-4 gap-4">
             {/* Title Section */}
@@ -76,6 +90,9 @@ export function Header({ user }: HeaderProps) {
                         onChange={(e) => handleSearch(e.target.value)}
                     />
                 </div>
+
+                {/* Report Dialog */}
+                <ReportDialog />
 
                 {/* Date Picker */}
                 <Popover>
@@ -138,28 +155,29 @@ export function Header({ user }: HeaderProps) {
                     <PopoverTrigger asChild>
                         <Button size="icon" variant="ghost" className="rounded-full w-10 h-10 bg-background border border-input shadow-sm hover:bg-accent relative">
                             <Bell className="w-4 h-4" />
-                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                            {unreadCount > 0 && (
+                                <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                            )}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-80" align="end">
                         <div className="space-y-4">
-                            <h4 className="font-medium leading-none">Notificações</h4>
-                            <div className="grid gap-4">
-                                <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                    <div className="w-2 h-2 mt-2 bg-blue-500 rounded-full" />
-                                    <div>
-                                        <p className="text-sm font-medium">Conta de Luz Vencendo</p>
-                                        <p className="text-xs text-muted-foreground">Sua fatura de R$ 250 vence amanhã.</p>
+                            <div className="flex justify-between items-center">
+                                <h4 className="font-medium leading-none">Notificações</h4>
+                                {unreadCount > 0 && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">{unreadCount} novas</span>}
+                            </div>
+                            <div className="grid gap-4 max-h-[300px] overflow-y-auto">
+                                {notifications.length > 0 ? notifications.map(n => (
+                                    <div key={n.id} className={`flex items-start gap-4 p-3 rounded-lg transition-colors ${n.read ? 'opacity-50' : 'hover:bg-muted/50'}`}>
+                                        <div className={`w-2 h-2 mt-2 rounded-full ${n.color}`} />
+                                        <div>
+                                            <p className="text-sm font-medium">{n.title}</p>
+                                            <p className="text-xs text-muted-foreground">{n.desc}</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="flex items-start gap-4 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                    <div className="w-2 h-2 mt-2 bg-green-500 rounded-full" />
-                                    <div>
-                                        <p className="text-sm font-medium">Meta Atingida!</p>
-                                        <p className="text-xs text-muted-foreground">Você atingiu 50% da meta "Viagem".</p>
-                                    </div>
-                                </div>
-                                <Button variant="ghost" size="sm" className="w-full text-xs">
+                                )) : <p className="text-sm text-center text-muted-foreground py-4">Nenhuma notificação.</p>}
+
+                                <Button variant="ghost" size="sm" className="w-full text-xs" onClick={markAllAsRead} disabled={unreadCount === 0}>
                                     Marcar todas como lidas
                                 </Button>
                             </div>
