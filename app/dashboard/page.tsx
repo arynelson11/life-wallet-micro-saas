@@ -6,6 +6,8 @@ import { getFinancialSummary, getFullFinancialData } from "@/actions/finance-act
 import { OnboardingView } from "@/components/dashboard/OnboardingView";
 
 
+export const dynamic = 'force-dynamic';
+
 export default async function DashboardPage() {
     const supabase = await createClient();
 
@@ -14,12 +16,12 @@ export default async function DashboardPage() {
     if (!user) redirect("/login");
 
     // 2. Fetch de Dados Reais
-    // Precisamos do Space ID. Por enquanto vamos assumir o primeiro space Pessoal dele.
+    // Relaxed Query: Get ANY space owned by the user, regardless of type.
     const { data: space } = await supabase
         .from('spaces')
         .select('id')
         .eq('owner_id', user.id)
-        .eq('type', 'PERSONAL')
+        .limit(1)
         .single();
 
     // 3. Fallback: Se não tiver space, mostrar OnboardingView
