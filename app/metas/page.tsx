@@ -74,34 +74,47 @@ export default async function MetasPage() {
 
                     return (
                         <GoalDetailsDialog key={goal.id} goal={goal} spaceId={spaceId}>
-                            <div className="orvion-card p-6 cursor-pointer group hover:scale-[1.02] transition-transform">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${goal.color || 'bg-primary/20 text-primary'}`}>
-                                        <Icon className="w-6 h-6" />
+                            <div className="orvion-card p-6 cursor-pointer group hover:scale-[1.02] transition-transform relative overflow-hidden min-h-[180px] flex flex-col justify-between">
+                                {/* Background Image if exists */}
+                                {goal.image_url && (
+                                    <>
+                                        <div
+                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
+                                            style={{ backgroundImage: `url(${goal.image_url})` }}
+                                        />
+                                        <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors" />
+                                    </>
+                                )}
+
+                                <div className="relative z-10">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${goal.image_url ? 'bg-white/20 backdrop-blur-md text-white' : (goal.color || 'bg-primary/20 text-primary')}`}>
+                                            <Icon className="w-6 h-6" />
+                                        </div>
+                                        <div className={`text-right ${goal.image_url ? 'text-white' : ''}`}>
+                                            <p className={`text-xs uppercase font-bold tracking-wider mb-1 ${goal.image_url ? 'text-zinc-300' : 'text-muted-foreground'}`}>Alvo</p>
+                                            <p className="font-bold text-lg">
+                                                {new Intl.NumberFormat("pt-BR", {
+                                                    style: "currency",
+                                                    currency: "BRL",
+                                                }).format(goal.target_amount)}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Alvo</p>
-                                        <p className="font-bold text-lg">
-                                            {new Intl.NumberFormat("pt-BR", {
+
+                                    <h3 className={`text-xl font-bold mb-1 ${goal.image_url ? 'text-white' : ''}`}>{goal.title}</h3>
+                                    <div className="flex justify-between items-end mb-4">
+                                        <p className={`text-sm ${goal.image_url ? 'text-zinc-300' : 'text-muted-foreground'}`}>
+                                            Guardado: <span className={`font-medium ${goal.image_url ? 'text-white' : 'text-foreground'}`}>{new Intl.NumberFormat("pt-BR", {
                                                 style: "currency",
                                                 currency: "BRL",
-                                            }).format(goal.target_amount)}
+                                            }).format(goal.current_amount)}</span>
                                         </p>
+                                        <span className="text-sm font-bold text-primary">{progress.toFixed(0)}%</span>
                                     </div>
                                 </div>
 
-                                <h3 className="text-xl font-bold mb-1">{goal.title}</h3>
-                                <div className="flex justify-between items-end mb-4">
-                                    <p className="text-sm text-muted-foreground">
-                                        Guardado: <span className="text-foreground font-medium">{new Intl.NumberFormat("pt-BR", {
-                                            style: "currency",
-                                            currency: "BRL",
-                                        }).format(goal.current_amount)}</span>
-                                    </p>
-                                    <span className="text-sm font-bold text-primary">{progress.toFixed(0)}%</span>
-                                </div>
-
-                                <Progress value={progress} className="h-3 bg-gray-100" />
+                                <Progress value={progress} className="h-3 bg-gray-100/20 relative z-10" />
                             </div>
                         </GoalDetailsDialog>
                     );

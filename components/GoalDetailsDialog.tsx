@@ -73,38 +73,54 @@ export function GoalDetailsDialog({ goal, spaceId, children }: { goal: any, spac
             <DialogContent className="p-0 border-none bg-transparent shadow-none max-w-md w-full">
                 <div className="w-full bg-zinc-950 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-800">
                     {/* 1. TOPO (THEME DARK) */}
-                    <div className="p-8 bg-zinc-900/50 relative">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="bg-zinc-800 p-4 rounded-2xl border border-zinc-700">
-                                {getIcon(goal.icon)}
+                    <div className="relative h-64 bg-zinc-900/50 overflow-hidden">
+                        {goal.image_url ? (
+                            <div className="absolute inset-0">
+                                <img
+                                    src={goal.image_url}
+                                    alt={goal.title}
+                                    className="w-full h-full object-cover opacity-60"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                                <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/50 to-transparent"></div>
                             </div>
-                            <div className="flex gap-2">
-                                {/* Edit Button */}
-                                {spaceId && (
-                                    <GoalForm
-                                        initialData={goal}
-                                        spaceId={spaceId}
-                                        trigger={
-                                            <button className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-white transition-colors">
-                                                <Pencil className="w-5 h-5" />
-                                            </button>
-                                        }
-                                    />
-                                )}
-                                <button onClick={handleDelete} className="p-2 rounded-full hover:bg-zinc-800 text-zinc-400 hover:text-red-400 transition-colors">
-                                    <Trash2 className="w-5 h-5" />
-                                </button>
-                                <div className="bg-emerald-500/10 px-3 py-1 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center border border-emerald-500/20">
-                                    Ativo
+                        ) : (
+                            <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-900"></div>
+                        )}
+
+                        <div className="absolute inset-0 p-8 flex flex-col justify-between">
+                            <div className="flex justify-between items-start">
+                                <div className="bg-black/30 backdrop-blur-md p-3 rounded-2xl border border-white/10 shadow-lg">
+                                    {getIcon(goal.icon)}
+                                </div>
+                                <div className="flex gap-2">
+                                    {/* Edit Button */}
+                                    {spaceId && (
+                                        <GoalForm
+                                            initialData={goal}
+                                            spaceId={spaceId}
+                                            trigger={
+                                                <button className="p-2 rounded-full bg-black/30 backdrop-blur-md hover:bg-black/50 text-white/80 hover:text-white transition-all border border-white/10">
+                                                    <Pencil className="w-5 h-5" />
+                                                </button>
+                                            }
+                                        />
+                                    )}
+                                    <button onClick={handleDelete} className="p-2 rounded-full bg-black/30 backdrop-blur-md hover:bg-red-500/20 text-white/80 hover:text-red-400 transition-all border border-white/10">
+                                        <Trash2 className="w-5 h-5" />
+                                    </button>
+                                    <div className="bg-emerald-500/20 backdrop-blur-md px-3 py-1 rounded-full text-emerald-400 text-xs font-bold uppercase tracking-wider flex items-center border border-emerald-500/30">
+                                        Ativo
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <DialogTitle className="text-2xl font-bold text-white">{goal.title}</DialogTitle>
-                            <p className="text-zinc-400 text-sm font-medium mt-1">Alvo total</p>
-                            <div className="flex items-baseline gap-2 mt-1">
-                                <span className="text-3xl font-bold text-emerald-400">{formatCurrency(goal.target_amount)}</span>
+                            <div>
+                                <DialogTitle className="text-3xl font-bold text-white shadow-black/50 drop-shadow-lg">{goal.title}</DialogTitle>
+                                <div className="flex items-baseline gap-2 mt-2">
+                                    <p className="text-white/60 text-sm font-medium mr-1">Alvo:</p>
+                                    <span className="text-2xl font-bold text-emerald-400 drop-shadow-md">{formatCurrency(goal.target_amount)}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

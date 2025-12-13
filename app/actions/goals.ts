@@ -12,6 +12,7 @@ export async function createGoal(formData: FormData) {
     const title = formData.get("title") as string;
     const targetAmount = formData.get("target_amount");
     const icon = formData.get("icon") as string;
+    const imageUrl = formData.get("image_url") as string | null;
 
     // Tenta pegar o Space ID enviado pelo form
     let spaceId = formData.get("space_id") as string;
@@ -61,7 +62,8 @@ export async function createGoal(formData: FormData) {
         current_amount: 0,
         icon,
         space_id: spaceId,
-        status: 'active'
+        status: 'active',
+        image_url: imageUrl
     });
 
     if (error) {
