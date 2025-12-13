@@ -1,15 +1,22 @@
-"use client";
-
-import { PiggyBank, TrendingUp, Target, Plus } from "lucide-react";
+import { PiggyBank, TrendingUp, Target, Pencil } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { TransactionDialog } from "@/components/dashboard/TransactionDialog";
+import { GoalForm } from "@/components/dashboard/forms/GoalForm";
 
-export function SavingsView() {
+interface SavingsViewProps {
+    goals: any[];
+    spaceId: string;
+}
+
+export function SavingsView({ goals = [], spaceId }: SavingsViewProps) {
+
+    // Aggregations based on goals (which double as assets/savings for now)
+    const totalCurrent = goals.reduce((acc, g) => acc + Number(g.current_amount), 0);
+    const totalTarget = goals.reduce((acc, g) => acc + Number(g.target_amount), 0);
+
     return (
         <div className="space-y-6 animate-fade-in-up">
             <div className="flex justify-end">
-                <TransactionDialog type="investment" />
+                <GoalForm spaceId={spaceId} />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -23,54 +30,63 @@ export function SavingsView() {
                             </div>
                             <div>
                                 <h3 className="font-bold text-lg">Patrimônio Total</h3>
-                                <p className="text-zinc-400">Investimentos e Reservas</p>
+                                <p className="text-zinc-400">Acumulado em Metas</p>
                             </div>
                         </div>
 
                         <div className="mb-8">
-                            <h2 className="text-4xl font-bold mb-2">R$ 150.000,00</h2>
+                            <h2 className="text-4xl font-bold mb-2">
+                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalCurrent)}
+                            </h2>
                             <div className="flex items-center gap-2 text-green-400 bg-green-900/30 w-fit px-3 py-1 rounded-full text-sm">
                                 <TrendingUp className="w-4 h-4" />
-                                <span>+2.4% este mês</span>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                                <p className="text-zinc-400 text-sm mb-1">Renda Fixa</p>
-                                <p className="font-bold text-lg">R$ 100k</p>
-                            </div>
-                            <div className="p-4 bg-white/5 rounded-xl border border-white/10">
-                                <p className="text-zinc-400 text-sm mb-1">Renda Variável</p>
-                                <p className="font-bold text-lg">R$ 50k</p>
+                                <span>Alvo: {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalTarget)}</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 scrollbar-thin">
                     <h3 className="font-bold text-lg mb-2">Metas Financeiras</h3>
-                    {[
-                        { name: "Reserva de Emergência", current: 15000, target: 20000, icon: Target },
-                        { name: "Viagem Fim de Ano", current: 5000, target: 12000, icon: Target },
-                        { name: "Troca de Carro", current: 45000, target: 80000, icon: Target },
-                    ].map((goal, i) => (
-                        <div key={i} className="orvion-card p-6">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-zinc-100 rounded-lg">
-                                        <goal.icon className="w-5 h-5 text-zinc-600" />
+
+                    {goals.length === 0 && (
+                        <div className="text-zinc-500 text-sm py-4">Nenhuma meta cadastrada.</div>
+                    )}
+
+                    {goals.map((goal, i) => {
+                        const progress = goal.target_amount > 0 ? (goal.current_amount / goal.target_amount) * 100 : 0;
+                        return (
+                            <div key={goal.id} className="orvion-card p-6 group relative">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-zinc-100 rounded-lg">
+                                            <Target className="w-5 h-5 text-zinc-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold">{goal.title}</h4>
+                                            <p className="text-xs text-zinc-500">
+                                                R$ {goal.current_amount} de R$ {goal.target_amount}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold">{goal.name}</h4>
-                                        <p className="text-xs text-zinc-500">R$ {goal.current} de R$ {goal.target}</p>
-                                    </div>
+                                    <span className="font-bold text-primary">{Math.round(progress)}%</span>
                                 </div>
-                                <span className="font-bold text-primary">{Math.round((goal.current / goal.target) * 100)}%</span>
+                                <Progress value={progress} className="h-2" />
+
+                                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <GoalForm
+                                        initialData={goal}
+                                        spaceId={spaceId}
+                                        trigger={
+                                            <button className="text-zinc-400 hover:text-green-600 transition-colors">
+                                                <Pencil className="w-4 h-4" />
+                                            </button>
+                                        }
+                                    />
+                                </div>
                             </div>
-                            <Progress value={(goal.current / goal.target) * 100} className="h-2" />
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
         </div>

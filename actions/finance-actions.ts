@@ -119,3 +119,142 @@ export async function getFinancialSummary(spaceId: string) {
         }
     };
 }
+
+export async function getFullFinancialData(spaceId: string) {
+    const supabase = await createClient();
+
+    // Fetch Last 6 Months Transactions for detailed analysis
+    const now = new Date();
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(now.getMonth() - 6);
+
+    const { data: transactions } = await supabase
+        .from("transactions")
+        .select("*")
+        .eq("space_id", spaceId)
+        .gte("date", sixMonthsAgo.toISOString())
+        .order('date', { ascending: false });
+
+    // Fetch All Debts
+    const { data: debts } = await supabase
+        .from("debts")
+        .select("*")
+        .eq("space_id", spaceId)
+        .order('created_at', { ascending: false });
+
+    // Fetch All Cards
+    const { data: cards } = await supabase
+        .from("credit_cards")
+        .select("*")
+        .eq("space_id", spaceId);
+
+    // Fetch All Goals
+    const { data: goals } = await supabase
+        .from("goals")
+        .select("*")
+        .eq("space_id", spaceId);
+
+    return {
+        transactions: transactions || [],
+        debts: debts || [],
+        cards: cards?.map(c => ({
+            ...c,
+            limit: Number(c.limit_amount), // Normalize for frontend
+            closingDay: c.closing_day,
+            dueDay: c.due_day
+        })) || [],
+        goals: goals?.map(g => ({
+            ...g,
+            current: Number(g.current_amount),
+            target: Number(g.target_amount)
+        })) || []
+    };
+}
+
+// --- TRANSACTIONS CRUD ---
+export async function createTransaction(data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('transactions').insert(data);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function updateTransaction(id: string, data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('transactions').update(data).eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function deleteTransaction(id: string) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('transactions').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+// --- DEBTS CRUD ---
+export async function createDebt(data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('debts').insert(data);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function updateDebt(id: string, data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('debts').update(data).eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function deleteDebt(id: string) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('debts').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+// --- CREDIT CARDS CRUD ---
+export async function createCreditCard(data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('credit_cards').insert(data);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function updateCreditCard(id: string, data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('credit_cards').update(data).eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function deleteCreditCard(id: string) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('credit_cards').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+// --- GOALS CRUD ---
+export async function createGoal(data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('goals').insert(data);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function updateGoal(id: string, data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('goals').update(data).eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}
+
+export async function deleteGoal(id: string) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('goals').delete().eq('id', id);
+    if (error) throw error;
+    return { success: true };
+}

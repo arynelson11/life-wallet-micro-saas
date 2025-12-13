@@ -2,7 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/dashboard/Header";
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
-import { getFinancialSummary } from "@/actions/finance-actions";
+import { getFinancialSummary, getFullFinancialData } from "@/actions/finance-actions";
+
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -33,13 +34,22 @@ export default async function DashboardPage() {
         assets: { total: 0, fixed: 0, variable: 0, goalsCount: 0 }
     };
 
+    const fullData = spaceId ? await getFullFinancialData(spaceId) : {
+        transactions: [], debts: [], cards: [], goals: []
+    };
+
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-black">
 
             {/* Main Content */}
             <div className="max-w-[1600px] mx-auto">
                 <Header />
-                <DashboardTabs summary={summary} />
+                <DashboardTabs
+                    summary={summary}
+                    fullData={fullData}
+                    spaceId={spaceId!}
+                    profileId={user.id}
+                />
             </div>
         </div>
     );
