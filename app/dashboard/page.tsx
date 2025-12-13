@@ -1,11 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Header } from "@/components/dashboard/Header";
-import { SalesPerformance } from "@/components/dashboard/widgets/SalesPerformance";
-import { Activity } from "@/components/dashboard/widgets/Activity";
-import { RevenueComparison } from "@/components/dashboard/widgets/RevenueComparison";
-import { TotalSpend } from "@/components/dashboard/widgets/TotalSpend";
-import { VirtualCards } from "@/components/dashboard/widgets/VirtualCards";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Views
+import { OverviewView } from "@/components/dashboard/views/OverviewView";
+import { EarningsView } from "@/components/dashboard/views/EarningsView";
+import { ExpensesView } from "@/components/dashboard/views/ExpensesView";
+import { DebtsView } from "@/components/dashboard/views/DebtsView";
+import { CreditCardView } from "@/components/dashboard/views/CreditCardView";
+import { SavingsView } from "@/components/dashboard/views/SavingsView";
+import { MonthlyView, AnnualView } from "@/components/dashboard/views/TimeViews";
 
 export default async function DashboardPage() {
     const supabase = await createClient();
@@ -21,36 +26,58 @@ export default async function DashboardPage() {
             <div className="max-w-[1600px] mx-auto">
                 <Header />
 
-                {/* Bento Grid Layout */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    {/* Row 1 */}
-                    <div className="md:col-span-4 h-[400px]">
-                        <SalesPerformance />
-                    </div>
-                    <div className="md:col-span-4 h-[400px]">
-                        <Activity />
-                    </div>
-                    <div className="md:col-span-4 h-[400px]">
-                        <RevenueComparison />
+                <Tabs defaultValue="overview" className="space-y-8">
+                    <div className="w-full overflow-x-auto pb-2 scrollbar-none">
+                        <TabsList className="bg-white/50 backdrop-blur-sm border border-zinc-200 p-1 h-12 rounded-full inline-flex min-w-max">
+                            <TabsTrigger value="overview" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Visão Geral</TabsTrigger>
+                            <TabsTrigger value="earnings" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Ganhos</TabsTrigger>
+                            <TabsTrigger value="fixed-expenses" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Despesas Fixas</TabsTrigger>
+                            <TabsTrigger value="variable-expenses" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Variáveis</TabsTrigger>
+                            <TabsTrigger value="debts" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Dívidas</TabsTrigger>
+                            <TabsTrigger value="credit-card" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Cartão de Crédito</TabsTrigger>
+                            <TabsTrigger value="savings" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-primary">Economias</TabsTrigger>
+                            <div className="w-px h-6 bg-zinc-300 mx-2" />
+                            <TabsTrigger value="monthly" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-white">Visão Mensal</TabsTrigger>
+                            <TabsTrigger value="annual" className="rounded-full px-6 h-10 data-[state=active]:bg-black data-[state=active]:text-white">Visão Anual</TabsTrigger>
+                        </TabsList>
                     </div>
 
-                    {/* Row 2 */}
-                    <div className="md:col-span-3 h-[350px]">
-                        {/* Placeholder or another widget if needed, using SalesPerformance style for now or empty */}
-                        <div className="orvion-card p-6 h-full flex flex-col justify-center items-center text-center hover:bg-zinc-50 transition-colors cursor-pointer group">
-                            <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 text-primary group-hover:bg-primary group-hover:text-black transition-all">
-                                <span className="text-2xl font-bold">+</span>
-                            </div>
-                            <h3 className="font-semibold group-hover:text-primary transition-colors">Adicionar Novo Widget</h3>
-                        </div>
-                    </div>
-                    <div className="md:col-span-5 h-[350px]">
-                        <TotalSpend />
-                    </div>
-                    <div className="md:col-span-4 h-[350px]">
-                        <VirtualCards />
-                    </div>
-                </div>
+                    <TabsContent value="overview" className="space-y-6">
+                        <OverviewView />
+                    </TabsContent>
+
+                    <TabsContent value="earnings">
+                        <EarningsView />
+                    </TabsContent>
+
+                    <TabsContent value="fixed-expenses">
+                        <ExpensesView type="fixed" />
+                    </TabsContent>
+
+                    <TabsContent value="variable-expenses">
+                        <ExpensesView type="variable" />
+                    </TabsContent>
+
+                    <TabsContent value="debts">
+                        <DebtsView />
+                    </TabsContent>
+
+                    <TabsContent value="credit-card">
+                        <CreditCardView />
+                    </TabsContent>
+
+                    <TabsContent value="savings">
+                        <SavingsView />
+                    </TabsContent>
+
+                    <TabsContent value="monthly">
+                        <MonthlyView />
+                    </TabsContent>
+
+                    <TabsContent value="annual">
+                        <AnnualView />
+                    </TabsContent>
+                </Tabs>
             </div>
         </div>
     );
