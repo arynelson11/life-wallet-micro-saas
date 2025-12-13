@@ -31,39 +31,40 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function LandingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-black overflow-x-hidden">
+    <div className="min-h-screen bg-black text-white font-sans selection:bg-primary selection:text-black overflow-x-hidden">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 glass-header border-b border-white/10">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-xl border-b border-white/5">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-primary shadow-lg shadow-primary/20">
+            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary shadow-lg shadow-primary/20 border border-primary/20">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
-            <span className="text-xl font-bold tracking-tight">LifeWallet</span>
+            <span className="text-xl font-bold tracking-tight text-white">LifeWallet</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-muted-foreground">
-            <a href="#funcionalidades" className="hover:text-foreground transition-colors">Funcionalidades</a>
-            <a href="#depoimentos" className="hover:text-foreground transition-colors">Depoimentos</a>
-            <a href="#planos" className="hover:text-foreground transition-colors">Planos</a>
-            <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
+          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-zinc-400">
+            <a href="#funcionalidades" className="hover:text-white transition-colors">Funcionalidades</a>
+            <a href="#depoimentos" className="hover:text-white transition-colors">Depoimentos</a>
+            <a href="#planos" className="hover:text-white transition-colors">Planos</a>
+            <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link href="/login" className="hidden md:block text-sm font-medium hover:text-primary transition-colors">
+            <Link href="/login" className="hidden md:block text-sm font-medium text-zinc-300 hover:text-white transition-colors">
               Entrar
             </Link>
             <Link href="/dashboard">
-              <Button className="bg-black text-white hover:bg-black/80 rounded-full px-6 h-10 font-medium shadow-lg hover:shadow-xl transition-all">
+              <Button className="bg-primary text-black hover:bg-primary/90 rounded-full px-6 h-10 font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105">
                 Começar Agora
               </Button>
             </Link>
@@ -73,130 +74,136 @@ export default function LandingPage() {
 
       <main className="pt-20">
         {/* Hero Section */}
-        <section className="relative pt-12 pb-12 px-4 md:pt-20 md:pb-32 md:px-6 overflow-hidden">
-          <div className="hidden lg:block absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/10 rounded-full blur-[120px] -z-10" />
+        <section className="relative pt-20 pb-20 px-4 md:pt-32 md:pb-32 md:px-6 overflow-hidden">
+          {/* Background Blobs */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-primary/20 rounded-full blur-[120px] -z-10 opacity-30" />
+          <div className="absolute bottom-0 right-0 w-[800px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] -z-10 opacity-20" />
 
           <div className="max-w-7xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-zinc-200 shadow-sm mb-8 animate-fade-in-up">
-              <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-              <span className="text-sm font-medium text-zinc-600">Novo: Assistente Financeiro com IA 2.0</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-sm mb-8 animate-fade-in-up hover:bg-white/10 transition-colors cursor-default">
+              <span className="flex h-2 w-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#C7F33C]"></span>
+              <span className="text-sm font-medium text-zinc-300">Novo: Assistente Financeiro com IA 2.0</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-8 leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tighter mb-8 leading-[1.1] animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
               Domine Sua <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-emerald-400 drop-shadow-sm">
                 Liberdade Financeira
               </span>
             </h1>
 
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-              Pare de sobreviver e comece a viver. O LifeWallet é o sistema definitivo para você organizar suas finanças, eliminar dívidas e construir riqueza real.
+            <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+              O sistema operacional financeiro definitivo. Organize suas finanças, elimine dívidas e construa riqueza real com inteligência.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
               <Link href="/dashboard" className="w-full md:w-auto">
-                <Button className="w-full md:w-auto h-14 px-8 rounded-full bg-black text-white hover:bg-zinc-800 text-lg font-medium shadow-xl shadow-black/10 transition-all hover:scale-105">
-                  Teste Grátis por 7 Dias
+                <Button className="w-full md:w-auto h-14 px-8 rounded-full bg-white text-black hover:bg-zinc-200 text-lg font-bold shadow-xl shadow-white/10 transition-all hover:scale-105">
+                  Teste Grátis Agora
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Button variant="outline" className="w-full md:w-auto h-14 px-8 rounded-full border-zinc-200 hover:bg-zinc-50 text-lg font-medium">
+              <Button variant="outline" className="w-full md:w-auto h-14 px-8 rounded-full border-zinc-800 bg-black/50 hover:bg-zinc-900 text-white text-lg font-medium backdrop-blur-sm">
                 Ver Demonstração
               </Button>
             </div>
 
-            {/* Social Proof - Trust Badges */}
-            <div className="mt-12 flex flex-col items-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-              <p className="text-sm text-zinc-500 font-medium">Junte-se a mais de 10.000 usuários que mudaram de vida</p>
-              <div className="flex items-center gap-2">
-                <div className="flex -space-x-3">
+            {/* Social Proof */}
+            <div className="mt-16 flex flex-col items-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+              <p className="text-sm text-zinc-500 font-medium tracking-wide uppercase">Junte-se a elite financeira</p>
+              <div className="flex items-center gap-4 p-2 pr-6 bg-zinc-900/50 rounded-full border border-zinc-800 backdrop-blur-md">
+                <div className="flex -space-x-4 pl-2">
                   {[1, 2, 3, 4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-zinc-200 flex items-center justify-center overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" />
+                    <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center overflow-hidden grayscale hover:grayscale-0 transition-all z-0 hover:z-10 hover:scale-110">
+                      <img src={`https://i.pravatar.cc/100?img=${i + 15}`} alt="user" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
-                <div className="flex items-center gap-1 pl-2">
-                  <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                  <span className="font-bold">4.9/5</span>
-                  <span className="text-zinc-500 text-sm">(2.4k avaliações)</span>
+                <div className="flex items-center gap-1 border-l border-zinc-700 pl-4">
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-4 h-4 fill-primary text-primary" />)}
+                  </div>
+                  <span className="font-bold text-white ml-2">4.9/5</span>
                 </div>
               </div>
             </div>
 
 
             {/* Dashboard Preview */}
-            <div className="mt-20 relative mx-auto max-w-6xl animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10" />
-              <div className="rounded-[2rem] overflow-hidden border border-zinc-200 shadow-2xl bg-white/50 backdrop-blur-sm p-2">
+            <div className="mt-24 relative mx-auto max-w-6xl animate-fade-in-up group" style={{ animationDelay: '0.5s' }}>
+              <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full z-0 group-hover:bg-primary/30 transition-all duration-1000" />
+              <div className="relative rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl bg-zinc-900/50 backdrop-blur-sm p-2 z-10 transition-transform duration-500 hover:scale-[1.01]">
                 <img
                   src="https://cdn.dribbble.com/userupload/13332476/file/original-d5c6b9f8f9f8f9f8f9f8f9f8f9f8f9f8.png?resize=1600x1200"
                   alt="Dashboard Preview"
-                  className="rounded-[1.5rem] w-full h-auto object-cover"
+                  className="rounded-[1.5rem] w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity"
                 />
+
+                {/* Overlay Gradient for smooth blend */}
+                <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
               </div>
             </div>
           </div>
         </section>
 
         {/* Features Grid */}
-        <section id="funcionalidades" className="py-32 px-6 bg-zinc-50/50">
+        <section id="funcionalidades" className="py-32 px-6 bg-zinc-950/50 relative">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                Tudo o que você precisa. <br />
-                <span className="text-zinc-400">Nada que você não use.</span>
+            <div className="text-center mb-24">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 text-white">
+                Poderoso. Simples. <br />
+                <span className="text-zinc-500">Essencial.</span>
               </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Desenhado para ser simples, poderoso e direto ao ponto. Sem planilhas complexas, apenas resultados.
+              <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
+                Removemos toda a complexidade. Focamos apenas no que faz o seu dinheiro crescer.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-6">
               {[
                 {
                   icon: LayoutDashboard,
-                  title: "Painel Inteligente",
-                  desc: "Visualize toda a sua vida financeira em um único lugar com nosso layout intuitivo Bento Grid.",
+                  title: "Painel Bento Grid",
+                  desc: "Visão holística de gastos, investimentos e metas em uma única tela.",
                   color: "bg-primary text-black"
                 },
                 {
                   icon: TrendingUp,
                   title: "Análise em Tempo Real",
-                  desc: "Acompanhe seus gastos, receitas e metas evoluindo em tempo real. Saiba exatamente para onde vai seu dinheiro.",
-                  color: "bg-black text-primary"
+                  desc: "Gráficos interativos que mostram exatamente para onde seu dinheiro está indo.",
+                  color: "bg-zinc-800 text-white border border-zinc-700"
                 },
                 {
                   icon: Shield,
-                  title: "Segurança Bancária",
-                  desc: "Seus dados são criptografados com padrões militares (AES-256). Sua privacidade é nossa prioridade absoluta.",
-                  color: "bg-zinc-200 text-zinc-800"
+                  title: "Blindagem de Dados",
+                  desc: "Criptografia militar AES-256. Seus dados são seus e de mais ninguém.",
+                  color: "bg-zinc-800 text-white border border-zinc-700"
                 },
                 {
                   icon: Users,
-                  title: "Gestão Familiar",
-                  desc: "Compartilhe carteiras e metas com seu parceiro(a) ou família. Mantenha todos na mesma página.",
-                  color: "bg-green-100 text-green-700"
+                  title: "Modo Família",
+                  desc: "Gerencie as finanças da casa em conjunto com carteiras compartilhadas.",
+                  color: "bg-zinc-800 text-white border border-zinc-700"
                 },
                 {
                   icon: Zap,
-                  title: "Automação",
-                  desc: "Configure pagamentos recorrentes e nunca mais pague juros por atraso de boletos.",
-                  color: "bg-yellow-100 text-yellow-700"
+                  title: "Automação Inteligente",
+                  desc: "Esqueça datas de vencimento. O LifeWallet avisa e organiza para você.",
+                  color: "bg-zinc-800 text-white border border-zinc-700"
                 },
                 {
                   icon: Globe,
-                  title: "Acesso Global",
-                  desc: "Acesse suas finanças de qualquer lugar, em qualquer dispositivo. Seus dados sempre com você.",
-                  color: "bg-blue-100 text-blue-700"
+                  title: "Universal",
+                  desc: "Acesse via Web, Tablet ou Mobile. Sincronização instantânea.",
+                  color: "bg-zinc-800 text-white border border-zinc-700"
                 }
               ].map((feature, i) => (
-                <div key={i} className="group p-8 rounded-[2.5rem] bg-white border border-zinc-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <div key={i} className="group p-8 rounded-[2.5rem] bg-zinc-900/50 border border-zinc-800/50 hover:border-primary/50 hover:bg-zinc-900 transition-all duration-500 hover:-translate-y-1">
                   <div className={`w-14 h-14 rounded-2xl ${feature.color} flex items-center justify-center mb-6 shadow-lg`}>
                     <feature.icon className="w-7 h-7" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">
+                  <h3 className="text-2xl font-bold mb-4 text-white">{feature.title}</h3>
+                  <p className="text-zinc-400 leading-relaxed group-hover:text-zinc-300 transition-colors">
                     {feature.desc}
                   </p>
                 </div>
@@ -206,40 +213,42 @@ export default function LandingPage() {
         </section>
 
         {/* Testimonials */}
-        <section id="depoimentos" className="py-32 px-6">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-16">O que dizem nossos membros</h2>
+        <section id="depoimentos" className="py-32 px-6 bg-black relative overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto relative z-10">
+            <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 text-white">Quem usa, enriquece.</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
-                  name: "Ricardo Silva",
-                  role: "Empresário",
-                  text: "O LifeWallet mudou completamente como eu vejo meu dinheiro. Antes eu não sabia para onde ia meu salário. Hoje tenho total controle.",
-                  img: 15
+                  name: "Roberta M.",
+                  role: "Designer Sênior",
+                  text: "Eu sempre terminava o mês no vermelho. Com o LifeWallet, consegui juntar R$ 15k em 6 meses. É bizarro de bom.",
+                  img: 45
                 },
                 {
-                  name: "Juliana Costa",
-                  role: "Freelancer",
-                  text: "A simplicidade é o ponto forte. Tentei usar planilhas e outros apps, mas sempre desistia. O LifeWallet é viciante de usar.",
-                  img: 25
+                  name: "Carlos E.",
+                  role: "Desenvolvedor Software",
+                  text: "A interface é muito superior aos apps de banco. Limpa, rápida e sem anúncios chatos. Vale cada centavo.",
+                  img: 68
                 },
                 {
-                  name: "Marcelo e Ana",
-                  role: "Casal",
-                  text: "Usamos o plano Casal para organizar nossas contas conjuntas e metas de viagem. Nunca estivemos tão alinhados financeiramente.",
-                  img: 65
+                  name: "Ana & Felipe",
+                  role: "Plano Casal",
+                  text: "Paramos de brigar por dinheiro. O plano casal alinhou nossas metas e agora estamos planejando nosso casamento com tranquilidade.",
+                  img: 32
                 }
               ].map((t, i) => (
-                <div key={i} className="bg-zinc-50 p-8 rounded-[2rem] border border-zinc-100">
-                  <div className="flex items-center gap-1 mb-4 text-yellow-400">
-                    {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-4 h-4 fill-current" />)}
+                <div key={i} className="bg-zinc-900 p-8 rounded-[2rem] border border-zinc-800 hover:border-zinc-700 transition-all">
+                  <div className="flex items-center gap-1 mb-6">
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-4 h-4 fill-primary text-primary" />)}
                   </div>
-                  <p className="text-lg text-zinc-700 mb-6 font-medium">"{t.text}"</p>
+                  <p className="text-lg text-zinc-300 mb-8 font-medium italic leading-relaxed">"{t.text}"</p>
                   <div className="flex items-center gap-4">
-                    <img src={`https://i.pravatar.cc/100?img=${t.img}`} alt={t.name} className="w-12 h-12 rounded-full object-cover" />
+                    <img src={`https://i.pravatar.cc/100?img=${t.img}`} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-primary/20" />
                     <div>
-                      <p className="font-bold">{t.name}</p>
-                      <p className="text-sm text-muted-foreground">{t.role}</p>
+                      <p className="font-bold text-white">{t.name}</p>
+                      <p className="text-sm text-zinc-500">{t.role}</p>
                     </div>
                   </div>
                 </div>
@@ -249,223 +258,186 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="planos" className="py-32 px-6 bg-black text-white rounded-[3rem] mx-4 md:mx-10 shadow-2xl overflow-hidden relative">
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-            <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[100px]" />
-            <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px]" />
-          </div>
+        <section id="planos" className="py-32 px-4">
+          <div className="max-w-7xl mx-auto bg-zinc-900 rounded-[3rem] p-8 md:p-20 relative overflow-hidden ring-1 ring-white/10">
+            {/* Ambient Light */}
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
-              <div>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                  Investimento Transparente
-                </h2>
-                <p className="text-xl text-zinc-400">
-                  Escolha o plano ideal para o seu momento de vida.
-                </p>
-              </div>
-              <div className="flex items-center gap-2 bg-zinc-900 p-1 rounded-full border border-zinc-800">
-                <Button
-                  variant={isAnnual ? "ghost" : "secondary"}
-                  onClick={() => setIsAnnual(false)}
-                  className={`rounded-full px-6 transition-all ${!isAnnual ? 'bg-zinc-800 text-white' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'}`}
-                >
-                  Mensal
-                </Button>
-                <Button
-                  variant={isAnnual ? "secondary" : "ghost"}
-                  onClick={() => setIsAnnual(true)}
-                  className={`rounded-full px-6 transition-all ${isAnnual ? 'bg-primary text-black hover:bg-primary/90' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'}`}
-                >
-                  Anual <span className="ml-2 text-[10px] bg-white/20 px-2 py-0.5 rounded-full text-white">-20%</span>
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Solteiro */}
-              <Card className="rounded-[2.5rem] bg-zinc-900/50 border-zinc-800 text-zinc-100 backdrop-blur-sm">
-                <CardHeader className="p-8 pb-0">
-                  <CardTitle className="text-2xl font-bold">Solteiro</CardTitle>
-                  <CardDescription className="text-zinc-400">Para quem quer organizar a própria vida.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-8">
-                  <div className="mb-8 flex items-baseline gap-1">
-                    <span className="text-5xl font-bold text-white">R$ {isAnnual ? "15,90" : "19,90"}</span>
-                    <span className="text-zinc-500">/mês</span>
-                  </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Painel de Controle Individual",
-                      "Controle de Gastos e Ganhos",
-                      "Metas Financeiras Ilimitadas",
-                      "Importação de Extrato Bancário"
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-zinc-300">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter className="p-8 pt-0">
-                  <Button variant="outline" className="w-full h-12 rounded-full font-semibold border-zinc-700 bg-transparent hover:bg-zinc-800 text-white hover:text-white">Começar Agora</Button>
-                </CardFooter>
-              </Card>
-
-              {/* Casal */}
-              <Card className="rounded-[2.5rem] border-primary shadow-[0_0_50px_-12px_rgba(34,197,94,0.3)] bg-zinc-900 text-white p-2 relative overflow-hidden transform md:-translate-y-4">
-                <div className="absolute top-0 right-0 w-24 h-24 bg-primary text-black font-bold flex items-center justify-center text-xs rotate-45 translate-x-8 -translate-y-8 z-20 shadow-lg">
-                  MAIS VENDIDO
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+                <div>
+                  <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">
+                    Simples. Transparente.
+                  </h2>
+                  <p className="text-xl text-zinc-400">
+                    Comece grátis, faça upgrade quando crescer.
+                  </p>
                 </div>
-                <CardHeader className="p-8 pb-0 relative z-10">
-                  <div className="flex justify-between items-center mb-2">
-                    <CardTitle className="text-3xl font-bold text-primary">Casal</CardTitle>
-                  </div>
-                  <CardDescription className="text-zinc-400">Perfeito para alinhar as finanças a dois.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-8 relative z-10">
-                  <div className="mb-8 flex items-baseline gap-1">
-                    <span className="text-6xl font-bold">R$ {isAnnual ? "23,90" : "29,90"}</span>
-                    <span className="text-zinc-400">/mês</span>
-                  </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Tudo do plano Solteiro",
-                      "Até 2 Usuários Conectados",
-                      "Carteiras Compartilhadas",
-                      "Metas em Conjunto",
-                      "Suporte Prioritário por WhatsApp"
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-3">
-                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                          <Check className="w-3.5 h-3.5 text-black font-bold" />
-                        </div>
-                        <span className="text-white font-medium">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter className="p-8 pt-0 relative z-10">
-                  <Button className="w-full h-14 rounded-full font-bold text-lg bg-primary text-black hover:bg-primary/90 shadow-lg shadow-primary/20">Quero o Plano Casal</Button>
-                </CardFooter>
-              </Card>
 
-              {/* Família */}
-              <Card className="rounded-[2.5rem] bg-zinc-900/50 border-zinc-800 text-zinc-100 backdrop-blur-sm">
-                <CardHeader className="p-8 pb-0">
-                  <CardTitle className="text-2xl font-bold">Família</CardTitle>
-                  <CardDescription className="text-zinc-400">Educação financeira para todos.</CardDescription>
-                </CardHeader>
-                <CardContent className="p-8">
-                  <div className="mb-8 flex items-baseline gap-1">
-                    <span className="text-5xl font-bold text-white">R$ {isAnnual ? "26,90" : "32,90"}</span>
-                    <span className="text-zinc-500">/mês</span>
-                  </div>
-                  <ul className="space-y-4">
-                    {[
-                      "Tudo do plano Casal",
-                      "Até 5 Usuários",
-                      "Controle de Mesada",
-                      "Relatórios Consolidados",
-                      "Gestor de Conta Dedicado"
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full bg-zinc-800 flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-zinc-300">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </CardContent>
-                <CardFooter className="p-8 pt-0">
-                  <Button variant="outline" className="w-full h-12 rounded-full font-semibold border-zinc-700 bg-transparent hover:bg-zinc-800 text-white hover:text-white">Assinar Plano Família</Button>
-                </CardFooter>
-              </Card>
+                {/* Toggle Anual/Mensal */}
+                <div className="flex items-center gap-1 bg-black p-1.5 rounded-full border border-zinc-800">
+                  <button
+                    onClick={() => setIsAnnual(false)}
+                    className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all ${!isAnnual ? 'bg-zinc-800 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    Mensal
+                  </button>
+                  <button
+                    onClick={() => setIsAnnual(true)}
+                    className={`px-6 py-2.5 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${isAnnual ? 'bg-primary text-black shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    Anual <span className="text-[10px] bg-white/20 text-white px-2 py-0.5 rounded-full">-20%</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Solteiro */}
+                <Card className="rounded-[2.5rem] bg-black/50 border-zinc-800 text-zinc-100 backdrop-blur-sm hover:bg-black/80 transition-all">
+                  <CardHeader className="p-8 pb-0">
+                    <CardTitle className="text-2xl font-bold">Solteiro</CardTitle>
+                    <CardDescription className="text-zinc-400 text-base">Controle individual.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="mb-8 flex items-baseline gap-1">
+                      <span className="text-5xl font-bold text-white">R$ {isAnnual ? "15,90" : "19,90"}</span>
+                    </div>
+                    <ul className="space-y-4">
+                      {["Painel Individual", "Metas Ilimitadas", "Importação Bancária", "Suporte Básico"].map((item) => (
+                        <li key={item} className="flex items-center gap-3">
+                          <Check className="w-5 h-5 text-zinc-600" />
+                          <span className="text-zinc-300">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="p-8 pt-0">
+                    <Button variant="outline" className="w-full h-12 rounded-full font-bold border-zinc-700 bg-transparent hover:bg-zinc-800 text-white">Escolher Plano</Button>
+                  </CardFooter>
+                </Card>
+
+                {/* Casal - Destaque */}
+                <Card className="rounded-[2.5rem] border-primary/50 shadow-[0_0_40px_-10px_rgba(199,243,60,0.2)] bg-black text-white p-1 relative overflow-hidden transform md:-translate-y-4">
+                  <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
+                  <CardHeader className="p-8 pb-0 relative z-10">
+                    <div className="inline-block px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-bold mb-4 border border-primary/20">MAIS POPULAR</div>
+                    <CardTitle className="text-3xl font-bold text-white">Casal</CardTitle>
+                    <CardDescription className="text-zinc-400 text-base">Para construir juntos.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8 relative z-10">
+                    <div className="mb-8 flex items-baseline gap-1">
+                      <span className="text-6xl font-bold text-primary">R$ {isAnnual ? "23,90" : "29,90"}</span>
+                    </div>
+                    <ul className="space-y-4">
+                      {["Tudo do Solteiro", "2 Usuários", "Carteiras Compartilhadas", "Suporte VIP WhatsApp"].map((item) => (
+                        <li key={item} className="flex items-center gap-3">
+                          <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                            <Check className="w-3 h-3 text-black font-bold" />
+                          </div>
+                          <span className="text-white font-medium">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="p-8 pt-0 relative z-10">
+                    <Button className="w-full h-14 rounded-full font-bold text-lg bg-primary text-black hover:bg-primary/90 hover:scale-105 transition-all">Começar Agora</Button>
+                  </CardFooter>
+                </Card>
+
+                {/* Família */}
+                <Card className="rounded-[2.5rem] bg-black/50 border-zinc-800 text-zinc-100 backdrop-blur-sm hover:bg-black/80 transition-all">
+                  <CardHeader className="p-8 pb-0">
+                    <CardTitle className="text-2xl font-bold">Família</CardTitle>
+                    <CardDescription className="text-zinc-400 text-base">Até 5 pessoas.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    <div className="mb-8 flex items-baseline gap-1">
+                      <span className="text-5xl font-bold text-white">R$ {isAnnual ? "26,90" : "32,90"}</span>
+                    </div>
+                    <ul className="space-y-4">
+                      {["Tudo do Casal", "Até 5 Usuários", "Gestão de Mesada", "Relatórios Consolidados"].map((item) => (
+                        <li key={item} className="flex items-center gap-3">
+                          <Check className="w-5 h-5 text-zinc-600" />
+                          <span className="text-zinc-300">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="p-8 pt-0">
+                    <Button variant="outline" className="w-full h-12 rounded-full font-bold border-zinc-700 bg-transparent hover:bg-zinc-800 text-white">Escolher Plano</Button>
+                  </CardFooter>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="py-32 px-6 bg-white">
+        <section id="faq" className="py-24 px-6 bg-black border-t border-zinc-900">
           <div className="max-w-3xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-12">Dúvidas Frequentes</h2>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger className="text-lg font-semibold">É seguro colocar meus dados?</AccordionTrigger>
-                <AccordionContent className="text-zinc-600">
-                  Sim, absolutamente. Utilizamos criptografia de ponta a ponta (AES-256), a mesma utilizada pelos grandes bancos. Nós não temos acesso às suas senhas bancárias e não vendemos seus dados para terceiros.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger className="text-lg font-semibold">Posso cancelar quando quiser?</AccordionTrigger>
-                <AccordionContent className="text-zinc-600">
-                  Com certeza. No plano mensal, você pode cancelar a qualquer momento sem multa. No plano anual, você tem 7 dias de garantia incondicional para testar e pedir reembolso total se não gostar.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger className="text-lg font-semibold">Como funciona o plano familiar?</AccordionTrigger>
-                <AccordionContent className="text-zinc-600">
-                  No plano familiar, você pode convidar até 4 outras pessoas (totalizando 5). Cada um tem seu acesso individual, mas vocês podem criar carteiras compartilhadas para despesas da casa, e o administrador pode ver relatórios consolidados da família.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-4">
-                <AccordionTrigger className="text-lg font-semibold">Preciso inserir meus gastos manualmente?</AccordionTrigger>
-                <AccordionContent className="text-zinc-600">
-                  Você escolhe! O LifeWallet permite inserção manual super rápida, mas também oferecemos importação de extratos OFX e, em breve, integração automática via Open Finance.
-                </AccordionContent>
-              </AccordionItem>
+            <h2 className="text-4xl font-bold text-center mb-4 text-white">Dúvidas Frequentes</h2>
+            <p className="text-zinc-500 text-center mb-12">Tudo o que você precisa saber, explicado.</p>
+
+            <Accordion type="single" collapsible className="w-full space-y-4">
+              {[
+                { q: "É seguro colocar meus dados?", a: "Sim, absolutamente. Utilizamos criptografia de ponta a ponta (AES-256), a mesma utilizada pelos grandes bancos. Nós não temos acesso às suas senhas bancárias." },
+                { q: "Posso cancelar quando quiser?", a: "Com certeza. No plano mensal, você pode cancelar a qualquer momento sem multa. No anual, te damos 7 dias para testar." },
+                { q: "Existe aplicativo para celular?", a: "O LifeWallet é um PWA (Progressive Web App). Você pode instalar no seu iPhone ou Android e usar como um app nativo, sem ocupar espaço na memória." },
+                { q: "Como funciona a importação bancária?", a: "Aceitamos arquivos OFX que todos os bancos fornecem. Basta baixar do seu banco e arrastar para o LifeWallet. Em breve teremos conexão automática." }
+              ].map((item, i) => (
+                <AccordionItem key={i} value={`item-${i}`} className="border border-zinc-800 rounded-2xl px-6 bg-zinc-900/50">
+                  <AccordionTrigger className="text-lg font-medium text-white hover:no-underline hover:text-primary transition-colors py-6">
+                    {item.q}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-zinc-400 text-base pb-6 leading-relaxed">
+                    {item.a}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
             </Accordion>
           </div>
         </section>
 
         {/* Footer */}
-        <footer className="bg-zinc-50 border-t border-zinc-200 py-20 px-6">
+        <footer className="bg-zinc-950 border-t border-zinc-900 py-20 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="grid md:grid-cols-4 gap-12 mb-16">
               <div className="col-span-2">
                 <div className="flex items-center gap-2 mb-6">
-                  <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-primary">
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-black">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M2 17L12 22L22 17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                       <path d="M2 12L12 17L22 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </div>
-                  <span className="text-xl font-bold">LifeWallet</span>
+                  <span className="text-2xl font-bold text-white">LifeWallet</span>
                 </div>
-                <p className="text-zinc-500 max-w-sm">
-                  O sistema operacional financeiro para a web moderna. Feito para velocidade, desenhado para clareza.
+                <p className="text-zinc-500 max-w-sm leading-relaxed">
+                  O sistema operacional financeiro para a web moderna. Feito para velocidade, desenhado para clareza e focado no seu crescimento.
                 </p>
               </div>
               <div>
-                <h4 className="font-bold mb-6">Produto</h4>
+                <h4 className="font-bold text-white mb-6">Produto</h4>
                 <ul className="space-y-4 text-zinc-500">
-                  <li><a href="#funcionalidades" className="hover:text-black transition-colors">Funcionalidades</a></li>
-                  <li><a href="#planos" className="hover:text-black transition-colors">Preços</a></li>
-                  <li><a href="#" className="hover:text-black transition-colors">Changelog</a></li>
-                  <li><a href="#" className="hover:text-black transition-colors">Docs</a></li>
+                  <li><a href="#funcionalidades" className="hover:text-primary transition-colors">Funcionalidades</a></li>
+                  <li><a href="#planos" className="hover:text-primary transition-colors">Preços</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Changelog</a></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold mb-6">Empresa</h4>
+                <h4 className="font-bold text-white mb-6">Legal</h4>
                 <ul className="space-y-4 text-zinc-500">
-                  <li><a href="#" className="hover:text-black transition-colors">Sobre</a></li>
-                  <li><a href="#" className="hover:text-black transition-colors">Carreiras</a></li>
-                  <li><a href="#" className="hover:text-black transition-colors">Blog</a></li>
-                  <li><a href="#" className="hover:text-black transition-colors">Contato</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Termos de Uso</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Privacidade</a></li>
+                  <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
                 </ul>
               </div>
             </div>
-            <div className="pt-8 border-t border-zinc-200 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-500">
+            <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-zinc-600">
               <p>© 2025 LifeWallet Inc. Todos os direitos reservados.</p>
-              <div className="flex gap-6">
-                <a href="#" className="hover:text-black transition-colors">Termos de Uso</a>
-                <a href="#" className="hover:text-black transition-colors">Privacidade</a>
+              <div className="flex gap-4">
+                <p>Feito com ⚡ em São Paulo</p>
               </div>
             </div>
           </div>
