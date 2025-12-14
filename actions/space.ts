@@ -12,7 +12,27 @@ export async function createPersonalSpace() {
     }
 
     try {
-        // Double check if space already exists to avoid duplicates
+        // 0. SELF-HEALING: Ensure Profile Exists
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', user.id)
+            .single();
+
+        if (!profile) {
+            console.log("⚠️ Profile missing. Creating now...");
+            const { error: profileError } = await supabase.from('profiles').insert({
+                id: user.id,
+                email: user.email,
+                full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+                avatar_url: user.user_metadata?.avatar_url
+            });
+            if (profileError) {
+                console.error("Error creating profile:", profileError);
+            }
+        }
+
+        // 1. Double check if space already exists
         const { data: existingSpace } = await supabase
             .from('spaces')
             .select('id')
@@ -35,10 +55,9 @@ export async function createPersonalSpace() {
 
         if (error) {
             console.error("Error creating space:", error);
-            return { success: false, error: "Erro ao criar carteira. Tente novamente." };
+            return { success: false, error: error.message || "Erro ao criar carteira." };
         }
 
-        // Add user as admin (redundant if trigger exists, but safe)
         const { error: memberError } = await supabase
             .from('space_members')
             .insert({
@@ -49,7 +68,6 @@ export async function createPersonalSpace() {
 
         if (memberError) {
             console.error("Error adding member:", memberError);
-            // Non-critical, trigger usually handles this or RLS allows owner access
         }
 
         revalidatePath("/dashboard");
