@@ -1,12 +1,19 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { SettingsNav } from "./SettingsNav";
 import { User, Users, Shield, CreditCard } from "lucide-react";
 
-interface SettingsLayoutProps {
-    children: React.ReactNode;
-}
+// Components passed as props or imported?
+// To make it fully client-side switching without prop drilling hell from page, 
+// we will accept the *data* as props and render the tabs here.
+// But `SettingsPage` was passing children. 
+// We will change the pattern: SettingsPage passes DATA, SettingsLayout renders TABS.
+
+import { ProfileTab } from "./ProfileTab";
+import { SubscriptionTab } from "./SubscriptionTab";
+import { SecurityTab } from "./SecurityTab";
+import { FamilyTab } from "./FamilyTab";
 
 export const SETTINGS_TABS = [
     { id: "profile", label: "Perfil", icon: User },
@@ -15,9 +22,15 @@ export const SETTINGS_TABS = [
     { id: "family", label: "Família/Time", icon: Users },
 ];
 
-export function SettingsLayout({ children }: SettingsLayoutProps) {
-    const searchParams = useSearchParams();
-    const activeTab = searchParams.get("tab") || "profile";
+interface SettingsLayoutProps {
+    user: any;
+    profile: any;
+    inviteCode: string;
+    isStripeConfigured: boolean;
+}
+
+export function SettingsLayout({ user, profile, inviteCode, isStripeConfigured }: SettingsLayoutProps) {
+    const [activeTab, setActiveTab] = useState("profile");
 
     return (
         <div className="max-w-[1600px] mx-auto space-y-8 animate-in fade-in duration-500">
@@ -37,13 +50,16 @@ export function SettingsLayout({ children }: SettingsLayoutProps) {
             <div className="grid md:grid-cols-12 gap-8">
                 {/* Left Sidebar (Navigation) */}
                 <div className="md:col-span-3 lg:col-span-2">
-                    <SettingsNav activeTab={activeTab} />
+                    <SettingsNav activeTab={activeTab} onTabChange={setActiveTab} />
                 </div>
 
                 {/* Right Content */}
                 <div className="md:col-span-9 lg:col-span-10">
                     <div className="glass-panel p-8 rounded-[2rem] border-white/5 bg-black/40 min-h-[600px]">
-                        {children}
+                        {activeTab === 'profile' && <ProfileTab user={user} profile={profile} />}
+                        {activeTab === 'subscription' && <SubscriptionTab profile={profile} isStripeConfigured={isStripeConfigured} />}
+                        {activeTab === 'security' && <SecurityTab />}
+                        {activeTab === 'family' && <FamilyTab inviteCode={inviteCode} />}
                     </div>
                 </div>
             </div>

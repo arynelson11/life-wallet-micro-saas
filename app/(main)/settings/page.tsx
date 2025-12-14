@@ -1,16 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { SettingsLayout } from "@/components/settings/SettingsLayout";
-import { ProfileTab } from "@/components/settings/ProfileTab";
-import { SubscriptionTab } from "@/components/settings/SubscriptionTab";
-import { SecurityTab } from "@/components/settings/SecurityTab";
-import { FamilyTab } from "@/components/settings/FamilyTab";
 
-interface SettingsPageProps {
-    searchParams: { tab?: string };
-}
-
-export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+export default async function SettingsPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -30,15 +22,12 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
     const inviteCode = spaceMember?.spaces?.invite_code || "---";
     const isStripeConfigured = !!process.env.STRIPE_SECRET_KEY;
 
-    // Determine Active Content
-    const tab = searchParams?.tab || "profile";
-
     return (
-        <SettingsLayout>
-            {tab === "profile" && <ProfileTab user={user} profile={profile} />}
-            {tab === "subscription" && <SubscriptionTab profile={profile} isStripeConfigured={isStripeConfigured} />}
-            {tab === "security" && <SecurityTab />}
-            {tab === "family" && <FamilyTab inviteCode={inviteCode} />}
-        </SettingsLayout>
+        <SettingsLayout
+            user={user}
+            profile={profile}
+            inviteCode={inviteCode}
+            isStripeConfigured={isStripeConfigured}
+        />
     );
 }
