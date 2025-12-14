@@ -294,6 +294,9 @@ export async function deleteCreditCard(id: string) {
 }
 
 // --- GOALS CRUD ---
+import { revalidatePath } from "next/cache";
+
+// --- GOALS CRUD ---
 export async function createGoal(data: any) {
     const supabase = await createClient();
     const { error } = await supabase.from('goals').insert(data);
@@ -301,6 +304,8 @@ export async function createGoal(data: any) {
         console.error("Error creating goal:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/metas");
+    revalidatePath("/dashboard");
     return { success: true };
 }
 
@@ -311,6 +316,8 @@ export async function updateGoal(id: string, data: any) {
         console.error("Error updating goal:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/metas");
+    revalidatePath("/dashboard");
     return { success: true };
 }
 
@@ -321,5 +328,7 @@ export async function deleteGoal(id: string) {
         console.error("Error deleting goal:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/metas");
+    revalidatePath("/dashboard");
     return { success: true };
 }
