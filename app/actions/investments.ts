@@ -82,6 +82,65 @@ export async function createAsset(formData: FormData) {
     revalidatePath("/dashboard");
 }
 
+export async function updateAsset(formData: FormData) {
+    const supabase = await createClient();
+    const id = formData.get("id") as string;
+    const type = formData.get("type") as string; // 'contribution' | 'edit'
+
+    if (type === 'contribution') {
+        // --- CONTRIBUTION LOGIC ---
+        const addedQuantity = parseFloat(formData.get("added_quantity") as string);
+        const pricePaid = parseFloat(formData.get("price_paid") as string);
+        // purchase_date could be used for history log if we had one, but for now just updating current state
+
+        const transactionValue = addedQuantity * pricePaid;
+
+        // Fetch current state
+        const { data: currentAsset, error: fetchError } = await supabase
+            .from("investments")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (fetchError || !currentAsset) throw new Error("Asset not found");
+
+        const currentQty = Number(currentAsset.quantity) || 0;
+        const currentTotalValue = Number(currentAsset.amount) || 0;
+
+        const newTotalQty = currentQty + addedQuantity;
+        const newTotalValue = currentTotalValue + transactionValue;
+        const newAveragePrice = newTotalQty > 0 ? (newTotalValue / newTotalQty) : 0;
+
+        const { error } = await supabase
+            .from("investments")
+            .update({
+                quantity: newTotalQty,
+                amount: newTotalValue,
+                unit_price: newAveragePrice
+            })
+            .eq("id", id);
+
+        if (error) throw new Error(error.message);
+
+    } else {
+        // --- EDIT LOGIC (Simple) ---
+        const name = formData.get("name") as string;
+        const category = formData.get("category") as string;
+
+        const { error } = await supabase
+            .from("investments")
+            .update({
+                name,
+                category
+            })
+            .eq("id", id);
+
+        if (error) throw new Error(error.message);
+    }
+
+    revalidatePath("/dashboard");
+}
+
 export async function deleteAsset(id: string) {
     const supabase = await createClient();
 
