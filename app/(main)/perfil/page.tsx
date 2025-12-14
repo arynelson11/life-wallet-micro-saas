@@ -42,7 +42,10 @@ export default async function ProfilePage() {
                             <CardDescription>Atualize seu nome e veja seu email de cadastro.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <form action={updateProfile} className="space-y-4">
+                            <form action={async (formData) => {
+                                "use server";
+                                await updateProfile(formData);
+                            }} className="space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="email">Email</Label>
                                     <div className="relative">
