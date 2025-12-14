@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, Wallet, Plus, PieChart, Settings } from "lucide-react";
+import { LayoutDashboard, Wallet, Plus, PieChart, Calendar } from "lucide-react";
 import { TransactionDialog } from "./TransactionDialog";
 import { cn } from "@/lib/utils";
 
@@ -54,12 +54,12 @@ export function MobileNav({ spaceId }: { spaceId: string }) {
                     <span className={cn("text-[10px] font-medium transition-colors", isActive('/metas') ? 'text-primary' : 'text-zinc-500')}>Metas</span>
                 </Link>
 
-                {/* 5. CONFIGURAÇÕES */}
-                <Link href="/settings" className="flex-1 flex flex-col items-center justify-end pb-2 gap-1 h-full touch-manipulation">
-                    <div className={cn("transition-colors duration-300", isActive('/settings') ? 'text-primary' : 'text-zinc-500')}>
-                        <Settings className="w-6 h-6" strokeWidth={isActive('/settings') ? 2.5 : 2} />
+                {/* 5. CALENDÁRIO */}
+                <Link href="/calendario" className="flex-1 flex flex-col items-center justify-end pb-2 gap-1 h-full touch-manipulation">
+                    <div className={cn("transition-colors duration-300", isActive('/calendario') ? 'text-primary' : 'text-zinc-500')}>
+                        <Calendar className="w-6 h-6" strokeWidth={isActive('/calendario') ? 2.5 : 2} />
                     </div>
-                    <span className={cn("text-[10px] font-medium transition-colors", isActive('/settings') ? 'text-primary' : 'text-zinc-500')}>Config</span>
+                    <span className={cn("text-[10px] font-medium transition-colors", isActive('/calendario') ? 'text-primary' : 'text-zinc-500')}>Agenda</span>
                 </Link>
 
             </div>
