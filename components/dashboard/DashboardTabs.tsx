@@ -10,6 +10,7 @@ import { DebtsView } from "@/components/dashboard/views/DebtsView";
 import { CreditCardView } from "@/components/dashboard/views/CreditCardView";
 import { SavingsView } from "@/components/dashboard/views/SavingsView";
 import { MonthlyView, AnnualView } from "@/components/dashboard/views/TimeViews";
+import { InvestmentsView } from "@/components/dashboard/views/InvestmentsView";
 
 interface DashboardTabsProps {
     summary: any;  // Type defined in OverviewView but kept loose here to avoid circular dep issues or duplication. 
@@ -131,8 +132,7 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
             </TabsContent>
 
             <TabsContent value="savings">
-                <SavingsView
-                    goals={filteredGoals}
+                <InvestmentsView
                     spaceId={spaceId}
                 />
             </TabsContent>
