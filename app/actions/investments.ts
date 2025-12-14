@@ -9,8 +9,10 @@ export async function createAsset(formData: FormData) {
     const category = formData.get("category") as string;
     const space_id = formData.get("space_id") as string;
 
-    // New fields
-    const ticker = (formData.get("ticker") as string)?.toUpperCase();
+    // New fields: Normalize Ticker (Trim + Upper)
+    const rawTicker = formData.get("ticker") as string;
+    const ticker = rawTicker ? rawTicker.trim().toUpperCase() : null;
+
     const quantity = parseFloat(formData.get("quantity") as string);
     const unit_price = parseFloat(formData.get("unit_price") as string);
     const purchase_date = formData.get("purchase_date") as string;
@@ -23,22 +25,21 @@ export async function createAsset(formData: FormData) {
         const { data: existingAsset } = await supabase
             .from("investments")
             .select("*")
-            .eq("space_id", space_id) // Fix: space_id variable name was missing locally
+            .eq("space_id", space_id)
             .eq("ticker", ticker)
-            .maybeSingle(); // Use maybeSingle to avoid error if not found
+            .maybeSingle();
 
         if (existingAsset) {
             // --- CONSOLIDATION LOGIC (Average Price) ---
 
             const currentQty = Number(existingAsset.quantity) || 0;
-            const currentTotalValue = Number(existingAsset.amount) || 0; // Assuming 'amount' stores total value
+            const currentTotalValue = Number(existingAsset.amount) || 0;
 
             // Calculate New Totals
             const newTotalQty = currentQty + quantity;
             const newTotalValue = currentTotalValue + transactionAmount;
 
             // Calculate New Average Price
-            // Avoid division by zero
             const newAveragePrice = newTotalQty > 0 ? (newTotalValue / newTotalQty) : 0;
 
             // Update Existing Asset
@@ -47,9 +48,9 @@ export async function createAsset(formData: FormData) {
                 .update({
                     quantity: newTotalQty,
                     amount: newTotalValue,
-                    unit_price: newAveragePrice, // Update to new Average Price
-                    // We don't update purchase_date to keep the original or maybe last update? 
-                    // Usually PM doesn't change date, but let's leave it as is.
+                    unit_price: newAveragePrice,
+                    name: name || existingAsset.name,
+                    category: category || existingAsset.category
                 })
                 .eq("id", existingAsset.id);
 

@@ -14,6 +14,7 @@ import { toast } from "sonner";
 interface AddAssetModalProps {
     spaceId: string;
     children?: React.ReactNode;
+    onSuccess?: () => void;
 }
 
 // Mock Price Fetcher
@@ -32,7 +33,7 @@ const mockFetchPrice = async (ticker: string) => {
     return 100 + Math.random() * 50; // Fallback
 };
 
-export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
+export function AddAssetModal({ spaceId, children, onSuccess }: AddAssetModalProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetchingPrice, setIsFetchingPrice] = useState(false);
@@ -78,7 +79,10 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
 
             await createAsset(formData);
             toast.success("Ativo adicionado e consolidado com sucesso!");
+
             router.refresh();
+            if (onSuccess) onSuccess(); // Trigger client-side refresh
+
             setOpen(false);
 
             // Reset form
@@ -154,10 +158,10 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-zinc-400">Nome do Ativo</Label>
+                        <Label className="text-zinc-400">Nome do Ativo (Descrição)</Label>
                         <Input
                             name="name"
-                            placeholder="Ex: Petrobras PN"
+                            placeholder="Ex: Petrobras PN, Bitcoin"
                             required
                             className="h-12 rounded-xl bg-zinc-900 border-zinc-800 focus:ring-primary"
                         />
