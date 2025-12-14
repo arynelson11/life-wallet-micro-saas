@@ -39,8 +39,18 @@ export default async function DashboardPage() {
         );
     }
 
-    const summary = await getFinancialSummary(spaceId);
-    const fullData = await getFullFinancialData(spaceId);
+    let summary = null;
+    let fullData: any = { transactions: [], debts: [], cards: [], goals: [] };
+
+    try {
+        if (spaceId) {
+            summary = await getFinancialSummary(spaceId);
+            fullData = await getFullFinancialData(spaceId);
+        }
+    } catch (error) {
+        console.error("Dashboard Data Fetch Error:", error);
+        // Fallback to empty data to avoid crashing the page
+    }
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-black">
