@@ -1,10 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { Plus, Target, Trophy, Car, Home, Plane } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { GoalDialog } from "@/components/GoalDialog";
-import { GoalDetailsDialog } from "@/components/GoalDetailsDialog";
+import { InvestmentSummary } from "@/components/investments/InvestmentSummary";
+import { AssetList } from "@/components/investments/AssetList";
+import { AddAssetModal } from "@/components/investments/AddAssetModal";
+import { InvestmentTips } from "@/components/investments/InvestmentTips";
+import { deleteAsset } from "@/app/actions/investments";
 
 export default async function MetasPage() {
     const supabase = await createClient();
@@ -31,111 +31,50 @@ export default async function MetasPage() {
         if (owner) spaceId = owner.id;
     }
 
-    const { data: goals } = await supabase
-        .from("goals")
-        .select("*")
-        .eq("space_id", spaceId)
-        .order("created_at", { ascending: false });
+    // Fetch Assets (Investments) with Error Handling for missing table
+    let assets = [];
+    try {
+        const { data, error } = await supabase
+            .from("investments")
+            .select("*")
+            .eq("space_id", spaceId)
+            .order("amount", { ascending: false });
 
-    const getIcon = (iconName: string) => {
-        switch (iconName) {
-            case "car": return Car;
-            case "home": return Home;
-            case "plane": return Plane;
-            default: return Target;
+        if (!error && data) {
+            assets = data;
         }
-    };
+    } catch (e) {
+        console.error("Investments table might not exist yet.");
+    }
 
     return (
         <div className="max-w-[1600px] mx-auto">
+            {/* Header Area */}
             <div className="flex items-center justify-between mb-8 pt-4">
                 <div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
                         <span>Dashboard</span>
                         <span>/</span>
-                        <span>Metas</span>
+                        <span>Economias</span>
                     </div>
                     <h1 className="text-3xl font-bold text-black tracking-tight">
-                        Metas & Sonhos
+                        Meus Investimentos
                     </h1>
                 </div>
-                <GoalDialog spaceId={spaceId}>
-                    <Button className="h-10 rounded-full bg-black text-white hover:bg-black/90 px-6 shadow-lg shadow-black/10">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Nova Meta
-                    </Button>
-                </GoalDialog>
+                {/* Manual Entry Button */}
+                <AddAssetModal spaceId={spaceId} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {goals?.map((goal) => {
-                    const Icon = getIcon(goal.icon);
-                    const progress = (goal.current_amount / goal.target_amount) * 100;
+            {/* Dashboard Content */}
+            <div className="space-y-8">
+                {/* 1. Summary & Charts */}
+                <InvestmentSummary assets={assets} />
 
-                    return (
-                        <GoalDetailsDialog key={goal.id} goal={goal} spaceId={spaceId}>
-                            <div className="orvion-card p-6 cursor-pointer group hover:scale-[1.02] transition-transform relative overflow-hidden min-h-[180px] flex flex-col justify-between">
-                                {/* Background Image if exists */}
-                                {goal.image_url && (
-                                    <>
-                                        <div
-                                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                                            style={{ backgroundImage: `url(${goal.image_url})` }}
-                                        />
-                                        <div className="absolute inset-0 bg-black/60 group-hover:bg-black/50 transition-colors" />
-                                    </>
-                                )}
+                {/* 2. Asset List Table */}
+                <AssetList assets={assets} onDelete={deleteAsset} />
 
-                                <div className="relative z-10">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${goal.image_url ? 'bg-white/20 backdrop-blur-md text-white' : (goal.color || 'bg-primary/20 text-primary')}`}>
-                                            <Icon className="w-6 h-6" />
-                                        </div>
-                                        <div className={`text-right ${goal.image_url ? 'text-white' : ''}`}>
-                                            <p className={`text-xs uppercase font-bold tracking-wider mb-1 ${goal.image_url ? 'text-zinc-300' : 'text-muted-foreground'}`}>Alvo</p>
-                                            <p className="font-bold text-lg">
-                                                {new Intl.NumberFormat("pt-BR", {
-                                                    style: "currency",
-                                                    currency: "BRL",
-                                                }).format(goal.target_amount)}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <h3 className={`text-xl font-bold mb-1 ${goal.image_url ? 'text-white' : ''}`}>{goal.title}</h3>
-                                    <div className="flex justify-between items-end mb-4">
-                                        <p className={`text-sm ${goal.image_url ? 'text-zinc-300' : 'text-muted-foreground'}`}>
-                                            Guardado: <span className={`font-medium ${goal.image_url ? 'text-white' : 'text-foreground'}`}>{new Intl.NumberFormat("pt-BR", {
-                                                style: "currency",
-                                                currency: "BRL",
-                                            }).format(goal.current_amount)}</span>
-                                        </p>
-                                        <span className="text-sm font-bold text-primary">{progress.toFixed(0)}%</span>
-                                    </div>
-                                </div>
-
-                                <Progress value={progress} className="h-3 bg-gray-100/20 relative z-10" />
-                            </div>
-                        </GoalDetailsDialog>
-                    );
-                })}
-
-                {(!goals || goals.length === 0) && (
-                    <div className="col-span-full flex flex-col items-center justify-center py-20 text-center glass-panel rounded-[2.5rem]">
-                        <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                            <Trophy className="w-10 h-10 text-gray-400" />
-                        </div>
-                        <h3 className="text-xl font-bold mb-2">Nenhuma meta ainda</h3>
-                        <p className="text-muted-foreground max-w-md mb-8">
-                            Comece a planejar seus sonhos hoje mesmo. Defina um objetivo e acompanhe seu progresso.
-                        </p>
-                        <GoalDialog spaceId={spaceId}>
-                            <Button className="h-12 rounded-full bg-primary text-black hover:bg-primary/90 px-8 font-bold">
-                                Criar Primeira Meta
-                            </Button>
-                        </GoalDialog>
-                    </div>
-                )}
+                {/* 3. Education/Tips */}
+                <InvestmentTips />
             </div>
         </div>
     );
