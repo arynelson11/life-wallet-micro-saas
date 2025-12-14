@@ -6,24 +6,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Loader2, CalendarIcon } from "lucide-react";
+import { Plus, Loader2, CalendarIcon, Search, RefreshCw } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createAsset } from "@/app/actions/investments";
 import { toast } from "sonner";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 
 interface AddAssetModalProps {
     spaceId: string;
     children?: React.ReactNode;
 }
 
+// Mock Price Fetcher
+const mockFetchPrice = async (ticker: string) => {
+    // Simulating API delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Returns random realistic prices based on ticker pattern
+    const t = ticker.toUpperCase();
+    if (t.includes("BTC")) return 350000 + Math.random() * 5000;
+    if (t.includes("ETH")) return 12000 + Math.random() * 500;
+    if (t.includes("11")) return 90 + Math.random() * 20; // FIIs usually around 100
+    if (t.length === 5 && t.endsWith("4")) return 30 + Math.random() * 10; // Stocks
+    if (t.length === 5 && t.endsWith("3")) return 30 + Math.random() * 10; // Stocks
+
+    return 100 + Math.random() * 50; // Fallback
+};
+
 export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetchingPrice, setIsFetchingPrice] = useState(false);
     const router = useRouter();
 
-    // Form States for calculation
+    // Form States
+    const [ticker, setTicker] = useState("");
     const [quantity, setQuantity] = useState<string>("");
     const [unitPrice, setUnitPrice] = useState<string>("");
     const [totalValue, setTotalValue] = useState<string>("0.00");
@@ -39,19 +55,34 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
         }
     }, [quantity, unitPrice]);
 
+    const handleTickerBlur = async () => {
+        if (!ticker || ticker.length < 3) return;
+
+        setIsFetchingPrice(true);
+        try {
+            const price = await mockFetchPrice(ticker);
+            setUnitPrice(price.toFixed(2));
+            toast.info(`Cotação encontrada para ${ticker}: R$ ${price.toFixed(2)}`);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setIsFetchingPrice(false);
+        }
+    };
+
     async function handleSubmit(formData: FormData) {
         setIsLoading(true);
         try {
             formData.append("space_id", spaceId);
-            // Ensure calculated total is sent if not manually overridden (though typically we trust the server or recalc there, here we just send what we have)
-            // Actually, we should probably send the total amount to the 'amount' column for backward compatibility/simplicity
             formData.set("amount", totalValue);
 
             await createAsset(formData);
-            toast.success("Ativo adicionado com sucesso!");
+            toast.success("Ativo adicionado e consolidado com sucesso!");
             router.refresh();
             setOpen(false);
+
             // Reset form
+            setTicker("");
             setQuantity("");
             setUnitPrice("");
             setTotalValue("0.00");
@@ -83,7 +114,7 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
 
                 <form action={handleSubmit} className="p-8 space-y-6">
 
-                    {/* Linha 1: Nome e Ticker */}
+                    {/* Linha 1: Categoria e Ticker */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <Label className="text-zinc-400">Categoria</Label>
@@ -104,26 +135,36 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
 
                         <div className="space-y-2">
                             <Label className="text-zinc-400">Ticker / Símbolo</Label>
-                            <Input
-                                name="ticker"
-                                placeholder="Ex: PETR4, BTC, CDB Banco X"
-                                className="h-12 rounded-xl bg-zinc-900 border-zinc-800 focus:ring-primary uppercase placeholder:normal-case"
-                            />
+                            <div className="relative">
+                                <Input
+                                    name="ticker"
+                                    value={ticker}
+                                    onChange={(e) => setTicker(e.target.value)}
+                                    onBlur={handleTickerBlur}
+                                    placeholder="Ex: PETR4, BTC"
+                                    className="h-12 rounded-xl bg-zinc-900 border-zinc-800 focus:ring-primary uppercase placeholder:normal-case pr-10"
+                                />
+                                {isFetchingPrice ? (
+                                    <Loader2 className="w-4 h-4 text-primary absolute right-4 top-1/2 -translate-y-1/2 animate-spin" />
+                                ) : (
+                                    <Search className="w-4 h-4 text-zinc-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <Label className="text-zinc-400">Nome do Ativo (Descrição)</Label>
+                        <Label className="text-zinc-400">Nome do Ativo</Label>
                         <Input
                             name="name"
-                            placeholder="Ex: Petrobras PN, Bitcoin"
+                            placeholder="Ex: Petrobras PN"
                             required
                             className="h-12 rounded-xl bg-zinc-900 border-zinc-800 focus:ring-primary"
                         />
                     </div>
 
 
-                    {/* Linha 2: Quantidade e Preço Unitário */}
+                    {/* Linha 2: Quantidade, Preço (Auto) e Data */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="space-y-2">
                             <Label className="text-zinc-400">Data da Compra</Label>
@@ -144,7 +185,7 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
                             <Input
                                 name="quantity"
                                 type="number"
-                                step="0.00000001"
+                                step="any"
                                 placeholder="0"
                                 required
                                 value={quantity}
@@ -154,7 +195,10 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label className="text-zinc-400">Preço Unitário (R$)</Label>
+                            <Label className="text-zinc-400 flex items-center justify-between">
+                                Preço Unit. (R$)
+                                {unitPrice && <span className="text-[10px] text-primary flex items-center gap-1"><RefreshCw className="w-3 h-3" /> Auto</span>}
+                            </Label>
                             <Input
                                 name="unit_price"
                                 type="number"

@@ -65,7 +65,7 @@ export function InvestmentsView({ spaceId }: InvestmentsViewProps) {
 
             <InvestmentSummary assets={assets} />
             <AssetList assets={assets} onDelete={deleteAsset} />
-            <InvestmentTips />
+            <InvestmentTips assets={assets} />
         </div>
     );
 }
