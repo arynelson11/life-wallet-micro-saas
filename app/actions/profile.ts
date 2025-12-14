@@ -13,8 +13,7 @@ export async function updateProfile(formData: FormData) {
 
     const fullName = formData.get("fullName") as string;
     const phone = formData.get("phone") as string;
-    // Avatar logic: We will assume for now we might get a URL string if implemented, 
-    // but clearly user asked for fix on "Save Changes".
+    const avatarUrl = formData.get("avatarUrl") as string;
 
     const updates: any = {
         updated_at: new Date().toISOString(),
@@ -22,6 +21,7 @@ export async function updateProfile(formData: FormData) {
 
     if (fullName) updates.full_name = fullName;
     if (phone) updates.phone = phone;
+    if (avatarUrl) updates.avatar_url = avatarUrl; // Save URL if present
 
     const { error } = await supabase
         .from("profiles")
