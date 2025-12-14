@@ -30,10 +30,12 @@ export async function updateProfile(formData: FormData) {
 
     if (error) {
         console.error("Profile update error:", error);
-        throw new Error(`Erro ao atualizar perfil: ${error.message}`);
+        return { success: false, error: error.message };
     }
 
     revalidatePath("/settings");
     revalidatePath("/dashboard");
     revalidatePath("/", "layout");
+
+    return { success: true };
 }
