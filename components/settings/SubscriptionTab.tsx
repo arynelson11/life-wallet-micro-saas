@@ -64,19 +64,16 @@ export function SubscriptionTab({ profile, isStripeConfigured }: SubscriptionTab
                         )}
 
                         {!isActive ? (
-                            <form action={async () => {
-                                'use server' // Note: This doesn't behave as true server action in client component unless passed or wrapped.
-                                // Actually, we need to invoke the server action imported.
-                                if (!isStripeConfigured) return;
-                                await createCheckoutSession("price_1Q..."); // Replace or use generic
-                            }}>
-                                <Button
-                                    className="w-full h-12 rounded-xl bg-primary text-black font-bold hover:bg-primary/90 shadow-[0_0_20px_-5px_rgba(74,222,128,0.3)] transition-all"
-                                    disabled={!isStripeConfigured}
-                                >
-                                    Fazer Upgrade <Zap className="w-4 h-4 ml-2 fill-black" />
-                                </Button>
-                            </form>
+                            <Button
+                                className="w-full h-12 rounded-xl bg-primary text-black font-bold hover:bg-primary/90 shadow-[0_0_20px_-5px_rgba(74,222,128,0.3)] transition-all"
+                                disabled={!isStripeConfigured}
+                                onClick={async () => {
+                                    if (!isStripeConfigured) return;
+                                    await createCheckoutSession("price_1Q...");
+                                }}
+                            >
+                                Fazer Upgrade <Zap className="w-4 h-4 ml-2 fill-black" />
+                            </Button>
                         ) : (
                             <form action={createCustomerPortalSession}>
                                 <Button
