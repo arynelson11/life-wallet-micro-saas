@@ -9,7 +9,7 @@ export async function createAsset(formData: FormData) {
     const category = formData.get("category") as string;
     const space_id = formData.get("space_id") as string;
 
-    // New fields: Normalize Ticker (Trim + Upper)
+    // New fields: Normalize Ticker (Trim + Upper) - Critical for Consolidation
     const rawTicker = formData.get("ticker") as string;
     const ticker = rawTicker ? rawTicker.trim().toUpperCase() : null;
 
@@ -22,6 +22,7 @@ export async function createAsset(formData: FormData) {
 
     // 1. Check if asset exists with the same Ticker (if ticker provided)
     if (ticker) {
+        // We use maybeSingle() to get 0 or 1 row.
         const { data: existingAsset } = await supabase
             .from("investments")
             .select("*")
@@ -49,6 +50,8 @@ export async function createAsset(formData: FormData) {
                     quantity: newTotalQty,
                     amount: newTotalValue,
                     unit_price: newAveragePrice,
+                    // Optional: Update name/category if user changed them, or keep existing?
+                    // User might want to correct name. Let's update.
                     name: name || existingAsset.name,
                     category: category || existingAsset.category
                 })
@@ -67,9 +70,9 @@ export async function createAsset(formData: FormData) {
         .insert({
             name,
             category,
-            amount: transactionAmount, // Store Total Value in 'amount'
+            amount: transactionAmount,
             space_id,
-            ticker,
+            ticker, // stored as uppercase
             quantity,
             unit_price,
             purchase_date
@@ -91,7 +94,6 @@ export async function updateAsset(formData: FormData) {
         // --- CONTRIBUTION LOGIC ---
         const addedQuantity = parseFloat(formData.get("added_quantity") as string);
         const pricePaid = parseFloat(formData.get("price_paid") as string);
-        // purchase_date could be used for history log if we had one, but for now just updating current state
 
         const transactionValue = addedQuantity * pricePaid;
 
