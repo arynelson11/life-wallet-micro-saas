@@ -23,10 +23,15 @@ export async function updateProfile(formData: FormData) {
     if (phone) updates.phone = phone;
     if (avatarUrl) updates.avatar_url = avatarUrl; // Save URL if present
 
+    // Use Upsert to handle cases where profile might not exist
     const { error } = await supabase
         .from("profiles")
-        .update(updates)
-        .eq("id", user.id);
+        .upsert({
+            id: user.id,
+            email: user.email, // Required for new inserts
+            updated_at: new Date().toISOString(),
+            ...updates
+        });
 
     if (error) {
         console.error("Profile update error:", error);
