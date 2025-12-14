@@ -23,8 +23,9 @@ export function OnboardingView() {
             } else {
                 toast.error(result.error || "Erro ao criar carteira.");
             }
-        } catch (error) {
-            toast.error("Erro desconhecido.");
+        } catch (error: any) {
+            console.error("Onboarding Error:", error);
+            toast.error(`Erro: ${error.message || JSON.stringify(error)}`);
         } finally {
             setIsLoading(false);
         }
