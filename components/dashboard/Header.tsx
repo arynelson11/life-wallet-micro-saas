@@ -67,18 +67,18 @@ export function Header({ user }: HeaderProps) {
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 pt-4 gap-4">
             {/* Title Section */}
             <div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
+                <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground mb-1">
                     <span>Vendas</span>
                     <span>/</span>
                     <span>Produtos Digitais</span>
                 </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
+                <h1 className="text-xl md:text-3xl font-bold text-foreground tracking-tight">
                     Performance de Vendas
                 </h1>
             </div>
 
             {/* Actions Section */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
                 {/* Search */}
                 <div className="relative hidden md:block">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -92,12 +92,14 @@ export function Header({ user }: HeaderProps) {
                 </div>
 
                 {/* Report Dialog */}
-                <ReportDialog />
+                <div className="hidden md:block">
+                    <ReportDialog />
+                </div>
 
                 {/* Date Picker */}
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="outline" className="h-10 rounded-full border-input shadow-sm bg-background text-foreground hover:bg-accent px-4 gap-2">
+                        <Button variant="outline" className="hidden md:flex h-10 rounded-full border-input shadow-sm bg-background text-foreground hover:bg-accent px-4 gap-2">
                             <CalendarIcon className="w-4 h-4" />
                             <span>{date ? format(date, "dd MMM yyyy", { locale: ptBR }) : "Escolha uma data"}</span>
                         </Button>
@@ -115,7 +117,7 @@ export function Header({ user }: HeaderProps) {
                 {/* Add Widget Button */}
                 <Dialog open={isWidgetOpen} onOpenChange={setIsWidgetOpen}>
                     <DialogTrigger asChild>
-                        <Button variant="outline" className="h-10 rounded-full border-input shadow-sm bg-background hover:bg-accent gap-2">
+                        <Button variant="outline" className="hidden md:flex h-10 rounded-full border-input shadow-sm bg-background hover:bg-accent gap-2">
                             <Plus className="w-4 h-4" />
                             <span>Adicionar widget</span>
                         </Button>

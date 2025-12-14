@@ -32,28 +32,28 @@ export function OnboardingView() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-[60vh]">
-            <Card className="w-full max-w-md border-2 border-primary/10 shadow-xl">
-                <CardHeader className="text-center space-y-4">
-                    <div className="mx-auto w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center text-primary">
-                        <Wallet className="w-8 h-8" />
+        <div className="flex items-center justify-center min-h-[60vh] px-4">
+            <Card className="w-full max-w-md border-0 bg-zinc-900/50 backdrop-blur-sm shadow-2xl">
+                <CardHeader className="text-center space-y-4 pt-8">
+                    <div className="mx-auto w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center text-primary mb-2 ring-1 ring-primary/20">
+                        <Wallet className="w-10 h-10" strokeWidth={1.5} />
                     </div>
-                    <CardTitle className="text-2xl font-bold">Bem-vindo ao LifeWallet!</CardTitle>
-                    <CardDescription className="text-base">
-                        Para começar a controlar suas finanças, precisamos criar sua primeira carteira digital.
+                    <CardTitle className="text-3xl font-bold tracking-tight">LifeWallet</CardTitle>
+                    <CardDescription className="text-lg text-zinc-400">
+                        Sua independência financeira começa aqui.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="bg-muted/50 p-4 rounded-lg text-sm text-muted-foreground text-center">
-                        Isso criará um espaço seguro ("Minha Carteira") onde você poderá registrar suas receitas, despesas e metas.
+                <CardContent className="space-y-6 pb-8">
+                    <div className="bg-black/40 p-5 rounded-2xl text-sm leading-relaxed text-zinc-400 text-center border border-white/5">
+                        Vamos criar seu <span className="text-white font-medium">Espaço Pessoal</span> para organizar suas receitas, despesas e metas automáticas.
                     </div>
                     <Button
                         onClick={handleCreateSpace}
                         disabled={isLoading}
-                        className="w-full h-12 text-lg gap-2 font-semibold shadow-lg hover:shadow-xl transition-all"
+                        className="w-full h-14 text-lg gap-3 font-bold rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ArrowRight className="w-5 h-5" />}
-                        Criar Minha Carteira
+                        {isLoading ? <Loader2 className="w-6 h-6 animate-spin" /> : <ArrowRight className="w-6 h-6" />}
+                        Começar Agora
                     </Button>
                 </CardContent>
             </Card>
