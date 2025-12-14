@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState, useEffect } from 'react';
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -10,8 +11,8 @@ import { OnboardingView } from "@/components/dashboard/OnboardingView";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function DashboardPage() {
-    const [isMounted, setIsMounted] = useState(false);
+// 1. Defina o conteúdo da página como um componente interno
+const DashboardContent = () => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [summary, setSummary] = useState<any>(null);
@@ -21,15 +22,7 @@ export default function DashboardPage() {
     const router = useRouter();
     const supabase = createClient();
 
-    // 1. MOUNTING GUARD (Critical for fixing Server Render Error)
     useEffect(() => {
-        setIsMounted(true);
-    }, []);
-
-    // 2. DATA FETCHING
-    useEffect(() => {
-        if (!isMounted) return;
-
         const fetchData = async () => {
             try {
                 // Auth Check
@@ -67,12 +60,7 @@ export default function DashboardPage() {
         };
 
         fetchData();
-    }, [isMounted, router, supabase]);
-
-    // 3. RENDER GATES
-    if (!isMounted) {
-        return null; // Prevent server rendering of broken components
-    }
+    }, [router, supabase]);
 
     if (loading) {
         return (
@@ -102,4 +90,12 @@ export default function DashboardPage() {
             </div>
         </div>
     );
-}
+};
+
+// 2. FORCE O CARREGAMENTO DINÂMICO SEM SSR (A Correção Real)
+const DashboardPage = dynamic(() => Promise.resolve(DashboardContent), {
+    ssr: false, // ISSO IMPEDE O ERRO DE SERVIDOR
+    loading: () => <div className="h-screen w-full bg-background flex items-center justify-center text-primary"><Loader2 className="w-10 h-10 animate-spin" /></div>
+});
+
+export default DashboardPage;
