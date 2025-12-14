@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const DashboardContent = () => {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
+    const [profile, setProfile] = useState<any>(null);
     const [summary, setSummary] = useState<any>(null);
     const [fullData, setFullData] = useState<any>({ transactions: [], debts: [], cards: [], goals: [] });
     const [spaceId, setSpaceId] = useState<string | null>(null);
@@ -33,6 +34,14 @@ const DashboardContent = () => {
                     return;
                 }
                 setUser(currentUser);
+
+                // Fetch Public Profile (Avatar & Name)
+                const { data: profileData } = await supabase
+                    .from('profiles')
+                    .select('full_name, avatar_url')
+                    .eq('id', currentUser.id)
+                    .single();
+                setProfile(profileData);
 
                 // Space Check
                 const { data: space, error: spaceError } = await supabase
@@ -78,11 +87,11 @@ const DashboardContent = () => {
             <header className="fixed top-0 w-full bg-[#09090b]/90 backdrop-blur-md z-40 px-6 py-4 flex justify-between items-center border-b border-white/5 md:hidden">
                 <div className="flex items-center gap-3">
                     <Avatar className="w-10 h-10 border border-white/10">
-                        <AvatarImage src={user?.user_metadata?.avatar_url} />
+                        <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
                         <AvatarFallback className="bg-zinc-800 text-zinc-400">{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <h1 className="text-sm text-zinc-400">Olá, {user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário'}</h1>
+                        <h1 className="text-sm text-zinc-400">Olá, {profile?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário'}</h1>
                         <p className="font-bold text-white text-sm">Bem-vindo(a)</p>
                     </div>
                 </div>
@@ -95,9 +104,9 @@ const DashboardContent = () => {
             <header className="hidden md:flex w-full bg-[#09090b] z-40 px-8 py-6 justify-between items-center border-b border-white/5">
                 <h1 className="text-2xl font-bold">LifeWallet Dashboard</h1>
                 <div className="flex items-center gap-4">
-                    <p className="text-zinc-400">Olá, {user?.user_metadata?.full_name || 'Usuário'}</p>
+                    <p className="text-zinc-400">Olá, {profile?.full_name || user?.user_metadata?.full_name || 'Usuário'}</p>
                     <Avatar>
-                        <AvatarImage src={user?.user_metadata?.avatar_url} />
+                        <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
                         <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                 </div>
