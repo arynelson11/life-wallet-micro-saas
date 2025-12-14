@@ -10,13 +10,23 @@ export async function createAsset(formData: FormData) {
     const amount = parseFloat(formData.get("amount") as string);
     const space_id = formData.get("space_id") as string;
 
+    // New fields
+    const ticker = formData.get("ticker") as string;
+    const quantity = parseFloat(formData.get("quantity") as string);
+    const unit_price = parseFloat(formData.get("unit_price") as string);
+    const purchase_date = formData.get("purchase_date") as string;
+
     const { error } = await supabase
         .from("investments")
         .insert({
             name,
             category,
             amount,
-            space_id
+            space_id,
+            ticker,
+            quantity,
+            unit_price,
+            purchase_date
         });
 
     if (error) {
