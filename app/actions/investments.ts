@@ -23,7 +23,7 @@ export async function createAsset(formData: FormData) {
         throw new Error(error.message);
     }
 
-    revalidatePath("/metas");
+    revalidatePath("/dashboard");
 }
 
 export async function deleteAsset(id: string) {
@@ -38,5 +38,5 @@ export async function deleteAsset(id: string) {
         throw new Error(error.message);
     }
 
-    revalidatePath("/metas");
+    revalidatePath("/dashboard");
 }

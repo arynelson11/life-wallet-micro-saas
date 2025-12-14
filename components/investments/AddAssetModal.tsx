@@ -7,17 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, Loader2 } from "lucide-react";
-import { createAsset } from "@/app/actions/investments";
-import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-interface AddAssetModalProps {
-    spaceId: string;
-    children?: React.ReactNode;
-}
+// ...
 
 export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
 
     async function handleSubmit(formData: FormData) {
         setIsLoading(true);
@@ -25,6 +22,7 @@ export function AddAssetModal({ spaceId, children }: AddAssetModalProps) {
             formData.append("space_id", spaceId);
             await createAsset(formData);
             toast.success("Ativo adicionado com sucesso!");
+            router.refresh();
             setOpen(false);
         } catch (error) {
             console.error(error);
