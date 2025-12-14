@@ -42,9 +42,16 @@ export default async function MainLayout({
         if (owner) spaceId = owner.id;
     }
 
+    // 3. Fetch User Profile (Avatar/Name)
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
     return (
         <>
-            <Sidebar />
+            <Sidebar profile={profile} />
 
             {/* Conteúdo Principal */}
             <main className="min-h-screen transition-all duration-300 pb-24 md:pb-4 md:pl-28 px-5 py-6 md:pr-8">
@@ -54,7 +61,7 @@ export default async function MainLayout({
             </main>
 
             {/* Menu Inferior (Apenas Mobile) */}
-            <MobileNav spaceId={spaceId} />
+            <MobileNav spaceId={spaceId} profile={profile} />
         </>
     );
 }
