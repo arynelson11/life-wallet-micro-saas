@@ -397,11 +397,14 @@ export async function createCardTransaction(data: any) {
 
     if (!user) return { success: false, error: "Usuário não autenticado" };
 
-    // Ensure numeric amount and add user_id
+    // Ensure numeric amount, add user_id, and map date -> transaction_date
+    const { date, ...rest } = data;
+
     const payload = {
-        ...data,
+        ...rest,
         amount: Number(data.amount),
-        user_id: user.id
+        user_id: user.id,
+        transaction_date: date
     };
 
     const { error } = await supabase.from('card_transactions').insert(payload);
