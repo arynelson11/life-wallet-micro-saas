@@ -6,8 +6,11 @@ import { LayoutDashboard, Wallet, Plus, PieChart, Calendar } from "lucide-react"
 import { TransactionDialog } from "./TransactionDialog";
 import { cn } from "@/lib/utils";
 
-export function MobileNav({ spaceId }: { spaceId: string }) {
+export function MobileNav({ spaceId, profile }: { spaceId: string; profile?: any }) {
     const pathname = usePathname();
+
+    // Use profile avatar if available, or just keeping structure compliant for now
+    // logic to use profile can be added later if we want avatar in bottom bar
 
     const isActive = (path: string) => pathname === path || pathname?.startsWith(`${path}/`);
 
@@ -15,7 +18,7 @@ export function MobileNav({ spaceId }: { spaceId: string }) {
         <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-zinc-950/90 backdrop-blur-lg border-t border-white/10 pb-safe pt-2 px-2">
             <div className="flex items-end justify-between max-w-md mx-auto h-16 relative">
 
-                {/* 1. DASHBOARD */}
+                {/* 1. DASHBOARD */} [SAME AS BEFORE]
                 <Link href="/dashboard" className="flex-1 flex flex-col items-center justify-end pb-2 gap-1 h-full touch-manipulation">
                     <div className={cn("transition-colors duration-300", isActive('/dashboard') && !pathname.includes('transactions') ? 'text-primary' : 'text-zinc-500')}>
                         <LayoutDashboard className="w-6 h-6" strokeWidth={isActive('/dashboard') && !pathname.includes('transactions') ? 2.5 : 2} />
