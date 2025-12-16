@@ -83,6 +83,18 @@ export async function getFinancialSummary(spaceId: string) {
         .select("*")
         .eq("space_id", spaceId);
 
+    // Calculate usage from card_transactions
+    const { data: cardTx } = await supabase
+        .from("card_transactions")
+        .select("card_id, amount")
+        .eq("space_id", spaceId)
+        .eq("status", "pending");
+
+    const cardUsage: Record<string, number> = {};
+    cardTx?.forEach(t => {
+        cardUsage[t.card_id] = (cardUsage[t.card_id] || 0) + Number(t.amount);
+    });
+
     // 4. Goals (Savings / Assets)
     const { data: goals } = await supabase
         .from("goals")
@@ -151,8 +163,7 @@ export async function getFinancialSummary(spaceId: string) {
             id: c.id,
             name: c.name,
             limit: Number(c.limit_amount),
-            // Mock usage calculation since we don't have transaction > card link yet
-            used: 0,
+            used: cardUsage?.[c.id] || 0,
             color: c.color
         })) || [],
         assets: {

@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useState } from "react";
 import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { createTransaction, updateTransaction, deleteTransaction } from "@/actions/finance-actions";
+import { createTransaction, updateTransaction, deleteTransaction, createCardTransaction } from "@/actions/finance-actions";
 import { format } from "date-fns";
 
 interface TransactionFormProps {
@@ -68,7 +68,21 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
             let result;
 
             if (isEdit && initialData) {
+                // Note: Updating card transactions is not fully wired yet (would need separate updateCardTransaction call if this was originally a card tx)
+                // For now, assuming standard transaction update
                 result = await updateTransaction(initialData.id, payload);
+            } else if (creditCardId) {
+                const cardPayload = {
+                    space_id: spaceId,
+                    card_id: creditCardId,
+                    description: formData.description,
+                    amount: Number(formData.amount),
+                    date: new Date(formData.date).toISOString(),
+                    category: formData.category,
+                    installments: 1,
+                    status: 'pending'
+                };
+                result = await createCardTransaction(cardPayload);
             } else {
                 result = await createTransaction(payload);
             }
@@ -77,7 +91,7 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
                 throw new Error(result.error);
             }
 
-            toast.success(isEdit ? "Transação atualizada!" : "Transação criada!");
+            toast.success(isEdit ? "Transação atualizada!" : (creditCardId ? "Compra no cartão registrada!" : "Transação criada!"));
 
             setOpen(false);
             if (!isEdit) { // Reset form only on create
