@@ -117,7 +117,13 @@ const DashboardContent = () => {
 
                 {/* SAFEGUARD: Error Boundary for the Complex Tabs */}
                 <GlobalErrorBoundary>
-                    {!spaceId ? (
+                    {/* Prevent render if summary is missing but space exists (race condition/error) */}
+                    {spaceId && !summary ? (
+                        <div className="flex flex-col items-center justify-center py-20">
+                            <Loader2 className="w-8 h-8 animate-spin text-zinc-500 mb-4" />
+                            <p className="text-zinc-500">Carregando resumo financeiro...</p>
+                        </div>
+                    ) : !spaceId ? (
                         <div className="w-full bg-[#111] border border-[#222] rounded-3xl p-6 flex flex-col items-center text-center shadow-2xl relative overflow-hidden mt-4">
                             <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-[#CCF381] to-transparent opacity-50"></div>
                             <div className="w-16 h-16 bg-[#1A1A1A] rounded-2xl flex items-center justify-center mb-4 text-[#CCF381]">
