@@ -1,6 +1,28 @@
+"use client";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+import { createCreditCard, updateCreditCard, deleteCreditCard } from "@/actions/finance-actions";
 import { useRouter } from "next/navigation";
 
-// ... existing imports
+interface CreditCardFormProps {
+    initialData?: {
+        id: string;
+        name: string;
+        limit_amount: number;
+        closing_day: number;
+        due_day: number;
+        color: string;
+    };
+    spaceId: string;
+    trigger?: React.ReactNode;
+    onSuccess?: () => void;
+}
 
 export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: CreditCardFormProps) {
     const router = useRouter();
