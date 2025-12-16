@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowUpRight, TrendingUp, Wallet, ArrowDownRight, CreditCard, DollarSign, PiggyBank, Target, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Area, AreaChart, Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -25,6 +26,8 @@ interface OverviewViewProps {
 }
 
 export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
+
+    const router = useRouter();
 
     const handleGenerateReport = () => {
         toast.success("Relatório solicitado!", {
@@ -243,7 +246,7 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                 {/* 5. Metas & Objetivos (Renamed from Patrimônio) */}
                 <div
                     className="orvion-card p-6 h-[280px] bg-zinc-900 border border-zinc-800 text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-primary/50 transition-all"
-                    onClick={() => onTabChange("savings")} // Assuming this tab lists goals? Or maybe "metas" tab if it exists. Re-using "savings" as it was.
+                    onClick={() => router.push("/metas")}
                 >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl translate-x-10 -translate-y-10" />
 
@@ -273,7 +276,7 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                 {/* 6. Total Investido (NEW CARD) */}
                 <div
                     className="orvion-card p-6 h-[280px] bg-black border border-zinc-800 text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-purple-500/50 transition-all"
-                    onClick={() => onTabChange("investments")} // Assuming "investments" tab exists or will be routed there
+                    onClick={() => onTabChange("savings")}
                 >
                     <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl translate-x-10 -translate-y-10" />
 
