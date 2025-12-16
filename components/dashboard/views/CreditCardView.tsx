@@ -122,13 +122,15 @@ export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardVie
 
                                 <div className="relative z-10 mt-4">
                                     <span className="font-mono text-xl md:text-2xl tracking-[0.15em] font-medium text-white/90 drop-shadow-md">
-                                        •••• •••• •••• {String(selectedCard.limit).slice(0, 2)}XX
+                                        •••• •••• •••• {selectedCard.name.match(/ (\d{4})$/)?.[1] || "••••"}
                                     </span>
                                 </div>
 
                                 <div className="relative z-10 flex justify-between items-end">
                                     <div>
-                                        <p className="font-medium tracking-wide text-sm md:text-base uppercase text-white/80 mb-1">{selectedCard.name}</p>
+                                        <p className="font-medium tracking-wide text-sm md:text-base uppercase text-white/80 mb-1">
+                                            {selectedCard.name.replace(/ \d{4}$/, "")}
+                                        </p>
                                         <div className="flex gap-4 text-xs font-mono text-white/60">
                                             <span>VAL {String(selectedCard.due_day).padStart(2, '0')}/28</span>
                                         </div>

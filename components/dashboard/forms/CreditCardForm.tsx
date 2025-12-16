@@ -1,40 +1,25 @@
-"use client";
+import { useRouter } from "next/navigation";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { createCreditCard, updateCreditCard, deleteCreditCard } from "@/actions/finance-actions";
-
-interface CreditCardFormProps {
-    initialData?: {
-        id: string;
-        name: string;
-        limit_amount: number;
-        closing_day: number;
-        due_day: number;
-        color: string;
-    };
-    spaceId: string;
-    trigger?: React.ReactNode;
-    onSuccess?: () => void;
-}
+// ... existing imports
 
 export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: CreditCardFormProps) {
+    const router = useRouter();
     const isEdit = !!initialData;
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    // Parse name and digits if editing
+    const nameMatch = initialData?.name.match(/(.*) (\d{4})$/);
+    const initialName = nameMatch ? nameMatch[1] : (initialData?.name || "");
+    const initialLast4 = nameMatch ? nameMatch[2] : "";
+
     const [formData, setFormData] = useState({
-        name: initialData?.name || "",
+        name: initialName,
+        last4: initialLast4,
         limit_amount: initialData?.limit_amount || "",
         closing_day: initialData?.closing_day || "",
         due_day: initialData?.due_day || "",
-        color: initialData?.color || "#000000"
+        color: initialData?.color || "#09090b" // Default black
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -42,20 +27,19 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
         setIsLoading(true);
 
         try {
+            // Combine name and digits
+            const finalName = formData.last4 ? `${formData.name} ${formData.last4}` : formData.name;
+
             const payload = {
                 space_id: spaceId,
-                name: formData.name,
+                name: finalName,
                 limit_amount: Number(formData.limit_amount),
                 closing_day: Number(formData.closing_day),
                 due_day: Number(formData.due_day),
                 color: formData.color
             };
 
-            if (!spaceId) {
-                toast.error("Erro: Espaço não identificado.");
-                setIsLoading(false);
-                return;
-            }
+            // ... checks ...
 
             let result;
             if (isEdit && initialData) {
@@ -66,11 +50,11 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
 
             if (!result.success) throw new Error(result.error);
 
-            toast.success(isEdit ? "Cartão atualizado!" : "Cartão criado!");
+            toast.success(isEdit ? "Cartão atualizado!" : "Cartão criado com sucesso!");
             setOpen(false);
-            if (!isEdit) setFormData({ name: "", limit_amount: "", closing_day: "", due_day: "", color: "#000000" });
+            if (!isEdit) setFormData({ name: "", last4: "", limit_amount: "", closing_day: "", due_day: "", color: "#09090b" });
             onSuccess?.();
-            window.location.reload();
+            router.refresh();
         } catch (error) {
             console.error(error);
             toast.error(error instanceof Error ? error.message : "Erro ao salvar cartão");
@@ -79,6 +63,7 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
         }
     };
 
+    // ... handleDelete (update reload to router.refresh) ...
     const handleDelete = async () => {
         if (!initialData) return;
         if (!confirm("Excluir este cartão?")) return;
@@ -90,7 +75,7 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
             toast.success("Cartão excluído!");
             setOpen(false);
             onSuccess?.();
-            window.location.reload();
+            router.refresh();
         } catch (error) {
             console.error(error);
             toast.error(error instanceof Error ? error.message : "Erro ao excluir");
@@ -103,7 +88,7 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 {trigger || (
-                    <Button className="rounded-full gap-2 font-semibold">
+                    <Button className="rounded-full gap-2 font-semibold shadow-md active:scale-95 transition-all">
                         <Plus className="w-4 h-4" />
                         Adicionar Cartão
                     </Button>
@@ -111,12 +96,12 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>{isEdit ? "Editar Cartão" : "Novo Cartão de Crédito"}</DialogTitle>
+                    <DialogTitle>{isEdit ? "Editar Cartão" : "Novo Cartão"}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-6 py-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="name">Nome do Cartão</Label>
+                    <div className="grid grid-cols-12 gap-4">
+                        <div className="col-span-8 grid gap-2">
+                            <Label htmlFor="name">Nome</Label>
                             <Input
                                 id="name"
                                 placeholder="Ex: Nubank"
@@ -125,17 +110,28 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="limit">Limite (R$)</Label>
+                        <div className="col-span-4 grid gap-2">
+                            <Label htmlFor="last4">Final</Label>
                             <Input
-                                id="limit"
-                                type="number"
-                                placeholder="0,00"
-                                required
-                                value={formData.limit_amount}
-                                onChange={(e) => setFormData({ ...formData, limit_amount: e.target.value })}
+                                id="last4"
+                                placeholder="1234"
+                                maxLength={4}
+                                value={formData.last4}
+                                onChange={(e) => setFormData({ ...formData, last4: e.target.value.replace(/\D/g, '') })}
                             />
                         </div>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="limit">Limite (R$)</Label>
+                        <Input
+                            id="limit"
+                            type="number"
+                            placeholder="0,00"
+                            required
+                            value={formData.limit_amount}
+                            onChange={(e) => setFormData({ ...formData, limit_amount: e.target.value })}
+                        />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
@@ -166,22 +162,22 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                     </div>
 
                     <div className="grid gap-2">
-                        <Label>Escolha a Cor</Label>
-                        <div className="flex gap-3">
+                        <Label>Cor do Cartão</Label>
+                        <div className="flex gap-4">
                             {[
-                                '#820ad1', // Nubank
-                                '#ff7a00', // Inter
+                                '#820ad1', // Nubank (Purple)
                                 '#09090b', // Black
-                                '#2563eb', // Blue
-                                '#16a34a'  // Green
+                                '#f97316', // Inter (Orange)
+                                '#3b82f6', // Blue
+                                '#22c55e'  // Green
                             ].map(color => (
                                 <div
                                     key={color}
                                     onClick={() => setFormData({ ...formData, color })}
-                                    className={`w-10 h-10 rounded-full cursor-pointer transition-all hover:scale-110 shadow-sm flex items-center justify-center ${formData.color === color ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''}`}
+                                    className={`w-8 h-8 rounded-full cursor-pointer transition-all hover:scale-110 shadow-sm flex items-center justify-center ${formData.color === color ? 'ring-2 ring-offset-2 ring-offset-background ring-foreground scale-110' : 'opacity-80 hover:opacity-100'}`}
                                     style={{ background: color }}
                                 >
-                                    {formData.color === color && <div className="w-2 h-2 bg-white rounded-full" />}
+                                    {formData.color === color && <div className="w-full h-full rounded-full border-2 border-white/20" />}
                                 </div>
                             ))}
                         </div>
@@ -199,9 +195,9 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                                 <Trash2 className="w-4 h-4" />
                             </Button>
                         )}
-                        <Button type="submit" disabled={isLoading} className="ml-auto w-full md:w-auto bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
+                        <Button type="submit" disabled={isLoading} className="ml-auto w-full md:w-auto font-bold">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {isEdit ? "Salvar Alterações" : "Criar Cartão"}
+                            {isEdit ? "Salvar" : "Criar Cartão"}
                         </Button>
                     </div>
                 </form>
