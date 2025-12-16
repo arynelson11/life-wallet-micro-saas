@@ -55,7 +55,7 @@ export default async function MetasPage() {
                         <span>/</span>
                         <span>Metas</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-black tracking-tight">
+                    <h1 className="text-3xl font-bold text-white tracking-tight">
                         Metas & Sonhos
                     </h1>
                 </div>

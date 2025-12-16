@@ -138,44 +138,55 @@ export function GoalDetailsDialog({ goal, spaceId, children }: { goal: any, spac
                                         {progress.toFixed(0)}%
                                     </span>
                                 </div>
-                                <div className="text-right">
-                                    <p className="text-zinc-500 text-xs">Falta apenas</p>
-                                    <p className="text-white font-bold text-lg">{formatCurrency(remaining)}</p>
-                                </div>
+                                <p className="text-zinc-500 text-xs text-right">Acumulado / Meta</p>
+                                <p className="text-white font-bold text-lg text-right">
+                                    <span className="text-emerald-400">{formatCurrency(goal.current_amount)}</span>
+                                    <span className="text-zinc-600 mx-1">/</span>
+                                    <span className="text-zinc-400">{formatCurrency(goal.target_amount)}</span>
+                                </p>
                             </div>
+                        </div>
 
-                            {/* Barra de Progresso Customizada (Slider Style) */}
-                            <div className="h-4 bg-zinc-900 border border-zinc-800 rounded-full overflow-hidden mb-8 relative">
-                                <div
-                                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-1000 ease-out"
-                                    style={{ width: `${progress}%` }}
-                                >
-                                    {/* Brilho na ponta da barra */}
-                                    <div className="absolute right-0 top-0 h-full w-2 bg-white blur-[2px] shadow-[0_0_10px_white]"></div>
-                                </div>
+                        {/* Barra de Progresso Customizada (Slider Style) */}
+                        <div className="h-6 bg-zinc-900 border border-zinc-800 rounded-full overflow-hidden mb-8 relative shadow-inner">
+                            <div
+                                className="absolute top-0 left-0 h-full bg-gradient-to-r from-emerald-600 to-emerald-400 transition-all duration-1000 ease-out flex items-center justify-end pr-2"
+                                style={{ width: `${progress}%` }}
+                            >
+                                {/* Brilho e Partículas */}
+                                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+                                <div className="h-full w-1 bg-white/50 blur-[1px]"></div>
                             </div>
+                        </div>
 
-                            {/* Área de Depósito Rápido */}
-                            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-2 flex gap-2">
+                        {/* Área de Depósito Rápido */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold uppercase text-zinc-500 tracking-wider ml-1">Guardar Dinheiro</label>
+                            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-2 flex gap-2 shadow-lg focus-within:ring-1 focus-within:ring-emerald-500/50 transition-all">
                                 <input
                                     type="number"
-                                    placeholder="R$ 0,00"
+                                    placeholder="Quanto você vai guardar hoje?"
                                     value={addAmount}
                                     onChange={(e) => setAddAmount(e.target.value)}
-                                    className="bg-transparent border-none text-white placeholder:text-zinc-600 px-4 w-full focus:outline-none font-bold"
+                                    className="bg-transparent border-none text-white placeholder:text-zinc-600 px-4 w-full focus:outline-none font-bold input-number-no-arrow"
                                 />
                                 <Button
                                     onClick={handleDeposit}
                                     disabled={loading || !addAmount}
                                     className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl px-6 font-bold shadow-lg shadow-emerald-500/20"
                                 >
-                                    {loading ? "..." : <Plus className="w-5 h-5" />}
+                                    {loading ? "Salvando..." : (
+                                        <>
+                                            Adicionar <Plus className="w-4 h-4 ml-2" />
+                                        </>
+                                    )}
                                 </Button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+            </div>
+        </DialogContent>
+        </Dialog >
     );
 }
