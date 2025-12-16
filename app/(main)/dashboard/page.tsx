@@ -258,6 +258,8 @@ const DashboardContent = () => {
                             fullData={fullData}
                             spaceId={spaceId}
                             profileId={user?.id}
+                            user={user}
+                            profile={profile}
                         />
                     )}
                 </GlobalErrorBoundary>
