@@ -1,4 +1,4 @@
-import { MobileNav } from "@/components/MobileNav";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Sidebar } from "@/components/Sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { SubscriptionGuard } from "@/components/SubscriptionGuard";
@@ -45,17 +45,19 @@ export default async function MainLayout({
 
     return (
         <UserProfileProvider>
-            <Sidebar />
+            <div className="hidden md:block">
+                <Sidebar />
+            </div>
 
             {/* Conteúdo Principal */}
-            <main className="min-h-screen transition-all duration-300 pb-24 md:pb-4 md:pl-28 px-5 py-6 md:pr-8">
+            <main className="min-h-screen transition-all duration-300 pb-32 md:pb-4 md:pl-28 px-5 py-6 md:pr-8">
                 <SubscriptionGuard>
                     {children}
                 </SubscriptionGuard>
             </main>
 
             {/* Menu Inferior (Apenas Mobile) */}
-            <MobileNav spaceId={spaceId} />
+            <MobileBottomNav />
         </UserProfileProvider>
     );
 }

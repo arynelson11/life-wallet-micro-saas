@@ -157,7 +157,7 @@ export function AssetDetailsModal({ asset, open, onOpenChange, onSuccess }: Asse
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl rounded-[2rem] border-white/10 bg-[#09090b] text-white p-0 overflow-hidden">
+            <DialogContent className="w-screen h-screen sm:w-full sm:h-auto sm:max-w-2xl rounded-none sm:rounded-[2rem] border-white/10 bg-[#09090b] text-white p-0 overflow-y-auto sm:overflow-hidden">
 
                 {/* Header Section */}
                 <div className="bg-zinc-900/50 border-b border-white/5 p-8">

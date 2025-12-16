@@ -59,7 +59,42 @@ export function AssetList({ assets, onDelete, onAssetUpdate }: AssetListProps) {
                 </div>
 
                 <div className="w-full text-left">
-                    <table className="w-full">
+                    {/* MOBILE LIST VIEW */}
+                    <div className="md:hidden space-y-3 px-4 pb-4">
+                        {assets.map((asset) => (
+                            <div
+                                key={asset.id}
+                                onClick={() => handleRowClick(asset)}
+                                className="bg-white/5 border border-white/10 rounded-2xl p-4 flex justify-between items-center active:scale-[0.98] transition-all cursor-pointer"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-primary font-bold text-xs border border-white/5">
+                                        {asset.ticker ? asset.ticker.substring(0, 2) : asset.name.substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-white text-sm truncate max-w-[120px]">{asset.name}</h4>
+                                        <span className="text-[10px] items-center px-2 py-0.5 rounded-full bg-black/20 text-zinc-400 border border-white/5">
+                                            {asset.category}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="font-bold text-primary text-base">
+                                        {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(asset.amount)}
+                                    </p>
+                                    {asset.quantity > 0 && <p className="text-xs text-zinc-500">{asset.quantity} un.</p>}
+                                </div>
+                            </div>
+                        ))}
+                        {assets.length === 0 && (
+                            <div className="text-center text-zinc-500 py-10 border-2 border-dashed border-zinc-800 rounded-2xl">
+                                Nenhum ativo encontrado.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* DESKTOP TABLE VIEW */}
+                    <table className="hidden md:table w-full">
                         <thead className="bg-white/5 text-xs uppercase text-zinc-500 font-medium">
                             <tr>
                                 <th className="px-6 py-4 text-left">Ativo</th>

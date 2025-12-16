@@ -264,28 +264,7 @@ const DashboardContent = () => {
 
             </main>
 
-            {/* BOTTOM NAVIGATION (Barra Inferior Fixa - Mobile Only) */}
-            <nav className="fixed bottom-0 left-0 w-full bg-[#050505] border-t border-[#1A1A1A] pb-safe pt-2 px-6 flex justify-between items-center z-50 h-20 md:hidden">
-                <button className="flex flex-col items-center gap-1 text-[#CCF381]">
-                    <LayoutDashboard className="w-6 h-6" />
-                    <span className="text-[10px] font-medium">Dash</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 text-zinc-500 hover:text-white transition-colors">
-                    <Wallet className="w-6 h-6" />
-                    <span className="text-[10px] font-medium">Carteira</span>
-                </button>
-                <button className="flex flex-col items-center justify-center -mt-8 bg-[#CCF381] text-black w-14 h-14 rounded-full shadow-[0_0_20px_rgba(204,243,129,0.3)] transition-transform active:scale-95">
-                    <Plus className="w-8 h-8" />
-                </button>
-                <button className="flex flex-col items-center gap-1 text-zinc-500 hover:text-white transition-colors">
-                    <PieChart className="w-6 h-6" />
-                    <span className="text-[10px] font-medium">Metas</span>
-                </button>
-                <button className="flex flex-col items-center gap-1 text-zinc-500 hover:text-white transition-colors">
-                    <User className="w-6 h-6" />
-                    <span className="text-[10px] font-medium">Perfil</span>
-                </button>
-            </nav>
+
         </div>
     );
 };

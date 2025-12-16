@@ -51,7 +51,7 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                 </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
 
                 {/* 0. Saldo Total Summary (NEW) */}
                 <div className="orvion-card p-6 flex flex-col justify-between h-[280px] cursor-pointer hover:border-primary/30 transition-all border border-transparent bg-secondary/5">

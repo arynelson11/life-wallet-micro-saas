@@ -116,7 +116,7 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="w-screen h-screen sm:w-full sm:h-auto sm:max-w-[425px] max-h-none sm:max-h-[90vh] overflow-y-auto rounded-none sm:rounded-lg border-zinc-800 bg-[#09090b]">
                 <DialogHeader>
                     <DialogTitle>{isEdit ? "Editar Cartão" : "Novo Cartão"}</DialogTitle>
                 </DialogHeader>
