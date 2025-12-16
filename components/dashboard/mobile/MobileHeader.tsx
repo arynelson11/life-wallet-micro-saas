@@ -25,7 +25,7 @@ export function MobileHeader({ user, profile }: MobileHeaderProps) {
                     <span className="font-bold text-white text-base tracking-tight">{firstName}</span>
                 </div>
             </div>
-            
+
             <button className="relative p-2.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white transition-colors active:scale-95">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-primary rounded-full border-2 border-zinc-900"></span>

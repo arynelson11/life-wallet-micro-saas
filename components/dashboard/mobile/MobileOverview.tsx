@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { 
-    Eye, 
-    EyeOff, 
+import {
+    Eye,
+    EyeOff,
     TrendingUp,
     TrendingDown,
 } from "lucide-react";
@@ -34,7 +34,7 @@ export function MobileOverview({ summary, transactions = [], onNavigate }: Mobil
         return last6Months.map(date => {
             const monthLabel = format(date, 'MMM', { locale: ptBR });
             const formattedLabel = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
-            
+
             const monthTransactions = transactions.filter(t => {
                 const tDate = new Date(t.date);
                 return tDate.getMonth() === date.getMonth() && tDate.getFullYear() === date.getFullYear();
@@ -58,7 +58,7 @@ export function MobileOverview({ summary, transactions = [], onNavigate }: Mobil
 
     return (
         <div className="px-4 flex flex-col gap-4 mt-4 animate-fade-in-up">
-            
+
             {/* 1. Saldo Total */}
             <div className="w-full p-6 rounded-3xl bg-zinc-900/50 border border-zinc-800/50 backdrop-blur-sm flex flex-col gap-3">
                 <div className="flex justify-between items-center">
@@ -106,31 +106,31 @@ export function MobileOverview({ summary, transactions = [], onNavigate }: Mobil
 
             {/* 3. Chart */}
             <div className="w-full h-72 bg-zinc-900/50 border border-zinc-800/50 rounded-3xl p-5 flex flex-col overflow-hidden">
-                    <span className="text-zinc-400 text-sm font-medium mb-4">Fluxo de Caixa</span>
-                    <div className="flex-1 w-full min-w-0 -ml-2">
-                    <DashboardChart 
-                        data={processChartData(transactions)} 
+                <span className="text-zinc-400 text-sm font-medium mb-4">Fluxo de Caixa</span>
+                <div className="flex-1 w-full min-w-0 -ml-2">
+                    <DashboardChart
+                        data={processChartData(transactions)}
                     />
-                    </div>
+                </div>
             </div>
 
             {/* 4. List (Transactions) */}
             <div className="flex flex-col gap-2 pb-4">
-                    <div className="flex items-center justify-between mt-2 mb-2 px-1">
+                <div className="flex items-center justify-between mt-2 mb-2 px-1">
                     <h3 className="text-base font-bold text-white">Últimas Transações</h3>
                     <button onClick={() => onNavigate("monthly")} className="text-xs text-primary font-medium hover:underline">Ver todas</button>
-                    </div>
-                    
-                    <div className="flex flex-col bg-zinc-900/50 border border-zinc-800/50 rounded-3xl overflow-hidden divide-y divide-zinc-800/50">
+                </div>
+
+                <div className="flex flex-col bg-zinc-900/50 border border-zinc-800/50 rounded-3xl overflow-hidden divide-y divide-zinc-800/50">
                     {transactions.slice(0, 5).map((t, i) => (
                         <div key={i} className="flex items-center justify-between p-4 bg-transparent hover:bg-zinc-900/50 transition-colors">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-lg border border-zinc-700/30">
                                     {t.category === 'Alimentação' ? '🍔' :
                                         t.category === 'Moradia' ? '🏠' :
-                                        t.category === 'Transporte' ? '🚗' : 
-                                        t.category === 'Lazer' ? '🎉' : 
-                                        t.type === 'income' ? '💰' : '💸'}
+                                            t.category === 'Transporte' ? '🚗' :
+                                                t.category === 'Lazer' ? '🎉' :
+                                                    t.type === 'income' ? '💰' : '💸'}
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-zinc-200 font-medium text-sm">{t.description || t.category}</span>
@@ -145,7 +145,7 @@ export function MobileOverview({ summary, transactions = [], onNavigate }: Mobil
                     {transactions.length === 0 && (
                         <div className="text-center text-zinc-600 py-8 text-sm">Sem movimentações recentes.</div>
                     )}
-                    </div>
+                </div>
             </div>
         </div>
     );
