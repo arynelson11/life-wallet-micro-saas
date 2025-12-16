@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
 
 export async function getFinancialSummary(spaceId: string) {
     const supabase = await createClient();
@@ -327,6 +328,7 @@ export async function createCreditCard(data: any) {
         console.error("Error creating card:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/dashboard");
     return { success: true };
 }
 
@@ -337,6 +339,7 @@ export async function updateCreditCard(id: string, data: any) {
         console.error("Error updating card:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/dashboard");
     return { success: true };
 }
 
@@ -347,12 +350,11 @@ export async function deleteCreditCard(id: string) {
         console.error("Error deleting card:", error);
         return { success: false, error: error.message };
     }
+    revalidatePath("/dashboard");
     return { success: true };
 }
 
 // --- GOALS CRUD ---
-import { revalidatePath } from "next/cache";
-
 // --- GOALS CRUD ---
 export async function createGoal(data: any) {
     const supabase = await createClient();
