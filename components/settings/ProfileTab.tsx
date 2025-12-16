@@ -8,17 +8,31 @@ import { updateProfile } from "@/app/actions/profile";
 import { Loader2, User, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { useUserProfile } from "@/context/UserProfileContext";
+import { useRouter } from "next/navigation";
 
 interface ProfileTabProps {
     user: any;
-    profile: any;
+    profile?: any; // kept for compatibility but not primary source
 }
 
-export function ProfileTab({ user, profile }: ProfileTabProps) {
+export function ProfileTab({ user, profile: initialProfile }: ProfileTabProps) {
+    const { profile: contextProfile, refetchProfile } = useUserProfile();
+    // Use context profile if available, otherwise fall back to prop
+    const activeProfile = contextProfile || initialProfile;
+
     const [isPending, startTransition] = useTransition();
     const [uploading, setUploading] = useState(false);
-    const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || null);
+    const [avatarUrl, setAvatarUrl] = useState(activeProfile?.avatar_url || null);
     const [supabase] = useState(() => createClient());
+    const router = useRouter();
+
+    // Sync state with profile (Context)
+    useEffect(() => {
+        if (activeProfile?.avatar_url) {
+            setAvatarUrl(activeProfile.avatar_url);
+        }
+    }, [activeProfile]);
 
     const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         try {
@@ -37,21 +51,32 @@ export function ProfileTab({ user, profile }: ProfileTabProps) {
                 .from('avatars')
                 .upload(filePath, file);
 
-            if (uploadError) {
-                throw uploadError;
-            }
+            if (uploadError) throw uploadError;
 
             // 2. Get Public URL
             const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            const publicUrl = data.publicUrl;
 
-            // 3. Update Local State
-            setAvatarUrl(data.publicUrl);
+            // 3. Update Database IMMEDIATELY (Manual Profile Update)
+            const { error: dbError } = await supabase
+                .from('profiles')
+                .update({
+                    avatar_url: publicUrl,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', user.id);
 
-            toast.success("Imagem enviada! Clique em 'Salvar Alterações' para confirmar.");
+            if (dbError) throw dbError;
+
+            // 4. Force Global Context Update
+            await refetchProfile();
+            setAvatarUrl(publicUrl);
+
+            toast.success("Foto atualizada com sucesso!");
 
         } catch (error: any) {
             console.error('Error uploading avatar:', error);
-            toast.error("Erro ao enviar imagem. Verifique se é pequena (max 2MB).");
+            toast.error("Erro ao enviar imagem. Tente novamente.");
         } finally {
             setUploading(false);
         }
@@ -59,13 +84,17 @@ export function ProfileTab({ user, profile }: ProfileTabProps) {
 
     const handleSubmit = (formData: FormData) => {
         startTransition(async () => {
-            // Append avatar URL to form data explicitly if not present in input, 
-            // but since we render it in defaultValue, it should be fine? 
-            // Actually, controlled inputs or hidden inputs are safer.
-            // We will rely on get('avatarUrl') from the hidden input.
+            // We don't strictly need to pass avatarUrl here if we already saved it, but it doesn't hurt.
+            // The server action 'updateProfile' also updates 'full_name' and 'phone'.
             try {
-                await updateProfile(formData);
-                toast.success("Perfil atualizado com sucesso!");
+                const result = await updateProfile(formData);
+                if (result.success) {
+                    toast.success("Perfil salvo!");
+                    await refetchProfile(); // Refresh context for name changes
+                    router.refresh();
+                } else {
+                    toast.error(`Erro: ${result.error}`);
+                }
             } catch (e: any) {
                 console.error(e);
                 toast.error(`Erro ao atualizar: ${e.message}`);
@@ -73,8 +102,8 @@ export function ProfileTab({ user, profile }: ProfileTabProps) {
         });
     };
 
-    const initials = profile?.full_name
-        ? profile.full_name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
+    const initials = activeProfile?.full_name
+        ? activeProfile.full_name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase()
         : user.email?.substring(0, 2).toUpperCase();
 
     return (
@@ -134,7 +163,7 @@ export function ProfileTab({ user, profile }: ProfileTabProps) {
                             <Input
                                 name="fullName"
                                 placeholder="Seu nome"
-                                defaultValue={profile?.full_name || ""}
+                                defaultValue={activeProfile?.full_name || ""}
                                 className="h-12 rounded-xl bg-zinc-900/50 border-white/10 focus:ring-primary pl-10"
                             />
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
@@ -145,7 +174,7 @@ export function ProfileTab({ user, profile }: ProfileTabProps) {
                         <Input
                             name="phone"
                             placeholder="(11) 99999-9999"
-                            defaultValue={profile?.phone || ""}
+                            defaultValue={activeProfile?.phone || ""}
                             className="h-12 rounded-xl bg-zinc-900/50 border-white/10 focus:ring-primary"
                         />
                     </div>

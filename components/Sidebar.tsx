@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useUserProfile } from "@/context/UserProfileContext";
 
 const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
@@ -24,14 +25,11 @@ const bottomItems = [
     { icon: Settings, label: "Configurações", href: "/settings" },
 ];
 
-interface SidebarProps {
-    profile?: any;
-}
-
-export function Sidebar({ profile }: SidebarProps) {
+export function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
     const supabase = createClient();
+    const { profile } = useUserProfile();
 
     const handleLogout = async () => {
         await supabase.auth.signOut();

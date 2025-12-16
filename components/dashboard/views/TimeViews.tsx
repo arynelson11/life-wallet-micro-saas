@@ -14,8 +14,7 @@ interface TimeViewProps {
     transactions: any[];
 }
 
-import { format, isSameMonth, isSameYear, parseISO, startOfYear, eachMonthOfInterval, endOfYear } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { TransactionTable } from "../TransactionTable";
 
 export function MonthlyView({ transactions = [] }: TimeViewProps) {
     const now = new Date();
@@ -24,55 +23,35 @@ export function MonthlyView({ transactions = [] }: TimeViewProps) {
 
     const income = monthlyTransactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0);
     const expense = monthlyTransactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0);
-    // "Investido" logic - assuming category 'Investimentos' or type 'expense' + category 'Economias'?
-    // For now, let's look for category
     const invested = monthlyTransactions.filter(t => t.category === 'Investimentos' || t.category === 'Economias').reduce((acc, t) => acc + Number(t.amount), 0);
-
-    // Balance calculation
     const balance = income - expense;
 
     return (
-        <div className="space-y-6 animate-fade-in-up">
-            <div className="orvion-card p-8">
-                <h2 className="text-2xl font-bold mb-6">Resumo de {format(now, 'MMMM', { locale: ptBR })}</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="p-4 bg-secondary/50 rounded-xl">
-                        <p className="text-muted-foreground text-sm">Entradas</p>
-                        <p className="text-xl font-bold text-green-500">R$ {income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                    </div>
-                    <div className="p-4 bg-secondary/50 rounded-xl">
-                        <p className="text-muted-foreground text-sm">Saídas</p>
-                        <p className="text-xl font-bold text-red-500">R$ {expense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                    </div>
-                    <div className="p-4 bg-secondary/50 rounded-xl">
-                        <p className="text-muted-foreground text-sm">Investido</p>
-                        <p className="text-xl font-bold text-blue-500">R$ {invested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                    </div>
-                    <div className={`p-4 rounded-xl text-white ${balance >= 0 ? 'bg-primary/20 text-primary' : 'bg-red-500/10 text-red-500'}`}>
-                        <p className="text-xs opacity-75">Saldo Final</p>
-                        <p className="text-xl font-bold">+ R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
-                    </div>
+        <div className="space-y-8 animate-fade-in-up">
+            {/* Summary Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
+                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Entradas</p>
+                    <p className="text-2xl font-bold text-emerald-600">R$ {income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </div>
+                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
+                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Saídas</p>
+                    <p className="text-2xl font-bold text-rose-600">R$ {expense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </div>
+                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
+                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Investido</p>
+                    <p className="text-2xl font-bold text-sky-600">R$ {invested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </div>
+                <div className={`p-5 border rounded-3xl shadow-sm ${balance >= 0 ? 'bg-zinc-900 border-zinc-800 text-primary' : 'bg-red-50 border-red-100 text-rose-600'}`}>
+                    <p className="opacity-70 text-xs font-medium uppercase tracking-wider mb-1 text-white">Saldo</p>
+                    <p className="text-2xl font-bold">+ R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                </div>
+            </div>
 
-                <h3 className="font-bold mb-4">Extrato do Mês</h3>
-                <div className="border border-border rounded-xl bg-card">
-                    <div className="grid grid-cols-1 divide-y divide-border">
-                        {monthlyTransactions.length === 0 ? (
-                            <div className="p-6 text-center text-muted-foreground">Nenhuma movimentação este mês.</div>
-                        ) : (
-                            monthlyTransactions.map((t, i) => (
-                                <div key={i} className="flex justify-between p-4 hover:bg-secondary/20 transition-colors">
-                                    <span className="text-muted-foreground font-mono text-sm w-16">{format(parseISO(t.date), 'dd/MM')}</span>
-                                    <span className="flex-1 font-medium">{t.description}</span>
-                                    <span className="text-sm text-muted-foreground w-32 hidden md:block">{t.category}</span>
-                                    <span className={`font-bold ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
-                                        {t.type === 'income' ? '+' : '-'} {Number(t.amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                                    </span>
-                                </div>
-                            ))
-                        )}
-                    </div>
-                </div>
+            {/* List Redesign */}
+            <div>
+                <h3 className="text-lg font-bold text-zinc-900 mb-4 px-2">Extrato Detalhado</h3>
+                <TransactionTable transactions={monthlyTransactions} />
             </div>
         </div>
     );
