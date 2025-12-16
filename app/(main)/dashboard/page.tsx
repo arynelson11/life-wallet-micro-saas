@@ -10,7 +10,14 @@ import { OnboardingView } from "@/components/dashboard/OnboardingView";
 import { Loader2, AlertTriangle, LayoutDashboard, Wallet, PieChart, User, Bell, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // 1. Defina o conteúdo da página como um componente interno
 const DashboardContent = () => {
@@ -72,6 +79,21 @@ const DashboardContent = () => {
         fetchData();
     }, [router, supabase]);
 
+    const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            const term = e.currentTarget.value.toLowerCase();
+            if (!term) return;
+
+            if (term.includes('meta') || term.includes('sonho')) {
+                router.push('/metas');
+            } else if (['ação', 'fii', 'invest', 'petr4'].some(k => term.includes(k))) {
+                router.push('/dashboard?tab=savings');
+            } else {
+                toast("Buscando por: " + term);
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-black">
@@ -95,9 +117,31 @@ const DashboardContent = () => {
                         <p className="font-bold text-white text-sm">Bem-vindo(a)</p>
                     </div>
                 </div>
-                <button className="p-2 bg-zinc-900/50 rounded-full text-zinc-400 hover:text-white border border-white/5">
-                    <Bell className="w-5 h-5" />
-                </button>
+                {/* Mobile Notifications */}
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="p-2 bg-zinc-900/50 rounded-full text-zinc-400 hover:text-white border border-white/5 relative">
+                            <Bell className="w-5 h-5" />
+                            <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200">
+                        <DropdownMenuLabel>Notificações</DropdownMenuLabel>
+                        <DropdownMenuSeparator className="bg-zinc-800" />
+                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                            <div className="font-medium text-white">💰 Dividendos Recebidos</div>
+                            <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                            <div className="font-medium text-white">🎯 Meta Atingida</div>
+                            <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                            <div className="font-medium text-white">⚠️ Conta de Luz</div>
+                            <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </header>
 
             {/* HEADER DESKTOP (Simple Fallback) */}
@@ -111,15 +155,36 @@ const DashboardContent = () => {
                         type="text"
                         placeholder="Buscar ativos, metas ou transações..."
                         className="w-full bg-zinc-900 text-zinc-200 text-sm rounded-full pl-10 pr-4 py-2 border border-transparent focus:border-zinc-700 focus:outline-none focus:ring-0 placeholder:text-zinc-600 transition-all"
+                        onKeyDown={handleSearch}
                     />
                 </div>
 
                 <div className="flex items-center gap-4">
                     {/* Notifications */}
-                    <button className="relative p-2 text-zinc-400 hover:text-white transition-colors">
-                        <Bell className="w-5 h-5" />
-                        <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
-                    </button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <button className="relative p-2 text-zinc-400 hover:text-white transition-colors outline-none">
+                                <Bell className="w-5 h-5" />
+                                <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
+                            </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200">
+                            <DropdownMenuLabel>Notificações</DropdownMenuLabel>
+                            <DropdownMenuSeparator className="bg-zinc-800" />
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                                <div className="font-medium text-white">💰 Dividendos Recebidos</div>
+                                <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                                <div className="font-medium text-white">🎯 Meta Atingida</div>
+                                <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
+                                <div className="font-medium text-white">⚠️ Conta de Luz</div>
+                                <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
 
                     <div className="h-6 w-px bg-zinc-800 mx-2 hidden md:block"></div>
 
