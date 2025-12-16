@@ -18,6 +18,7 @@ interface OverviewViewProps {
         debt: { total: number; paid: number };
         cards: { id: string; name: string; limit: number; used: number; color: string }[];
         assets: { total: number; fixed: number; variable: number; goalsCount: number };
+        investments?: { total: number; fixed: number; variable: number; count: number };
     };
     onTabChange: (tab: string) => void;
 }
@@ -238,39 +239,91 @@ export function OverviewView({ summary, onTabChange }: OverviewViewProps) {
                     </div>
                 </div>
 
-                {/* 5. Economias Summary */}
+                {/* 5. Metas & Objetivos (Renamed from Patrimônio) */}
                 <div
-                    className="orvion-card p-6 h-[280px] bg-black text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition-transform"
-                    onClick={() => onTabChange("savings")}
+                    className="orvion-card p-6 h-[280px] bg-zinc-900 border border-zinc-800 text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-primary/50 transition-all"
+                    onClick={() => onTabChange("savings")} // Assuming this tab lists goals? Or maybe "metas" tab if it exists. Re-using "savings" as it was.
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl translate-x-10 -translate-y-10" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl translate-x-10 -translate-y-10" />
 
                     <div className="flex items-center gap-3 relative z-10">
-                        <div className="w-10 h-10 bg-white/10 text-primary rounded-xl flex items-center justify-center backdrop-blur-md">
-                            <PiggyBank className="w-5 h-5" />
+                        <div className="w-10 h-10 bg-zinc-800 text-primary rounded-xl flex items-center justify-center border border-zinc-700">
+                            <Target className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="font-bold text-lg">Patrimônio</h3>
-                            <p className="text-sm text-zinc-400">Total Acumulado</p>
+                            <h3 className="font-bold text-lg">Metas & Objetivos</h3>
+                            <p className="text-sm text-zinc-400">Sonhos em Progresso</p>
                         </div>
                     </div>
 
                     <div className="relative z-10">
-                        <span className="text-4xl font-bold tracking-tight">{formatCurrency(summary.assets.total)}</span>
+                        <span className="text-3xl font-bold tracking-tight">{formatCurrency(summary.assets.total)}</span>
                         <div className="flex items-center gap-2 text-primary mt-2">
-                            <Target className="w-4 h-4" />
+                            <PiggyBank className="w-4 h-4" />
                             <span className="text-sm font-medium">{summary.assets.goalsCount} Metas Ativas</span>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 relative z-10 mt-auto">
-                        <div className="bg-white/5 rounded-lg p-3">
-                            <p className="text-xs text-zinc-400">Renda Fixa</p>
-                            <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.fixed / summary.assets.total) * 100) : 0}%</p>
+                    <div className="w-full bg-zinc-800 rounded-full h-2 mt-auto overflow-hidden">
+                        <div className="h-full bg-primary" style={{ width: '60%' }} /> {/* Placeholder progress or calc if available */}
+                    </div>
+                </div>
+
+                {/* 6. Total Investido (NEW CARD) */}
+                <div
+                    className="orvion-card p-6 h-[280px] bg-black border border-zinc-800 text-white relative overflow-hidden flex flex-col justify-between cursor-pointer hover:border-purple-500/50 transition-all"
+                    onClick={() => onTabChange("investments")} // Assuming "investments" tab exists or will be routed there
+                >
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl translate-x-10 -translate-y-10" />
+
+                    <div className="flex items-center gap-3 relative z-10">
+                        <div className="w-10 h-10 bg-zinc-900 text-purple-500 rounded-xl flex items-center justify-center border border-zinc-800">
+                            <TrendingUp className="w-5 h-5" />
                         </div>
-                        <div className="bg-white/5 rounded-lg p-3">
-                            <p className="text-xs text-zinc-400">Variável</p>
-                            <p className="font-bold">{summary.assets.total > 0 ? Math.round((summary.assets.variable / summary.assets.total) * 100) : 0}%</p>
+                        <div>
+                            <h3 className="font-bold text-lg">Carteira de Ativos</h3>
+                            <p className="text-sm text-zinc-400">Total Investido</p>
+                        </div>
+                    </div>
+
+                    <div className="relative z-10">
+                        <span className="text-3xl font-bold tracking-tight">{formatCurrency(summary.investments?.total || 0)}</span>
+                        <div className="flex items-center gap-2 text-purple-500 mt-2">
+                            <Wallet className="w-4 h-4" />
+                            <span className="text-sm font-medium">{summary.investments?.count || 0} Ativos na Carteira</span>
+                        </div>
+                    </div>
+
+                    {/* Mini Donut Chart for Allocation */}
+                    <div className="h-16 w-full flex items-center gap-4 mt-auto">
+                        <div className="h-16 w-16 relative">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={[
+                                            { value: summary.investments?.fixed || 0 },
+                                            { value: summary.investments?.variable || 0 }
+                                        ]}
+                                        innerRadius={15}
+                                        outerRadius={25}
+                                        paddingAngle={2}
+                                        dataKey="value"
+                                    >
+                                        <Cell fill="#a855f7" /> {/* Purple for Fixed/General */}
+                                        <Cell fill="#22c55e" /> {/* Green for Variable/Risk */}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                        <div className="flex flex-col justify-center gap-1 text-xs">
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-purple-500" />
+                                <span className="text-zinc-400">Renda Fixa</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-green-500" />
+                                <span className="text-zinc-400">Renda Variável</span>
+                            </div>
                         </div>
                     </div>
                 </div>

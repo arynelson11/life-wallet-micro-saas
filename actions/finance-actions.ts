@@ -104,6 +104,26 @@ export async function getFinancialSummary(spaceId: string) {
         }
     });
 
+    // 5. Investments (New Table)
+    const { data: investments } = await supabase
+        .from("investments")
+        .select("*")
+        .eq("space_id", spaceId);
+
+    let totalInvested = 0;
+    let fixedIncomeInvested = 0;
+    let variableIncomeInvested = 0;
+
+    investments?.forEach(i => {
+        const amount = Number(i.amount) * Number(i.quantity);
+        totalInvested += amount;
+        if (['LCI', 'LCA', 'CDB', 'Tesouro', 'Renda Fixa'].some(t => i.type.includes(t))) {
+            fixedIncomeInvested += amount;
+        } else {
+            variableIncomeInvested += amount;
+        }
+    });
+
     return {
         balance: totalBalance,
         income: totalIncome,
@@ -125,10 +145,16 @@ export async function getFinancialSummary(spaceId: string) {
             color: c.color
         })) || [],
         assets: {
-            total: totalAssets,
+            total: totalAssets, // Keep this as Goals Total for backward compat or specific UI use
             fixed: fixedIncomeAssets,
             variable: variableIncomeAssets,
             goalsCount: goals?.length || 0
+        },
+        investments: {
+            total: totalInvested,
+            fixed: fixedIncomeInvested,
+            variable: variableIncomeInvested,
+            count: investments?.length || 0
         }
     };
 }
