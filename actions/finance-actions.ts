@@ -115,9 +115,20 @@ export async function getFinancialSummary(spaceId: string) {
     let variableIncomeInvested = 0;
 
     investments?.forEach(i => {
-        const amount = Number(i.amount) * Number(i.quantity);
+        // Safe access: Use unit_price if available, else amount. Use quantity if available, else 1.
+        // Also handle legacy 'amount' which might represent total if quantity is missing.
+        const qty = Number(i.quantity) || 1;
+        const val = Number(i.unit_price || i.amount) || 0;
+
+        // If we really migrated to unit_price * quantity, strict logic:
+        const amount = val * qty;
         totalInvested += amount;
-        if (['LCI', 'LCA', 'CDB', 'Tesouro', 'Renda Fixa'].some(t => i.type.includes(t))) {
+
+        // Verify if category matches Fixed Income
+        const cat = (i.category || i.type || '').toLowerCase(); // Fallback safely
+
+        // Heuristic for Fixed Income
+        if (['lci', 'lca', 'cdb', 'tesouro', 'renda fixa', 'fixa'].some(t => cat.includes(t))) {
             fixedIncomeInvested += amount;
         } else {
             variableIncomeInvested += amount;
@@ -145,7 +156,7 @@ export async function getFinancialSummary(spaceId: string) {
             color: c.color
         })) || [],
         assets: {
-            total: totalAssets, // Keep this as Goals Total for backward compat or specific UI use
+            total: totalAssets, // Keep this as Goals Total
             fixed: fixedIncomeAssets,
             variable: variableIncomeAssets,
             goalsCount: goals?.length || 0
