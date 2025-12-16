@@ -52,7 +52,7 @@ export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardVie
     };
 
     return (
-        <div className="space-y-6 animate-fade-in-up">
+        <div className="space-y-6 animate-fade-in-up pb-32">
             <div className="flex justify-between items-center">
                 <h2 className="text-2xl font-bold">Meus Cartões</h2>
                 <div className="flex gap-2">
@@ -86,7 +86,7 @@ export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardVie
                         {selectedCard && (
                             <div
                                 className={cn(
-                                    "w-full aspect-[1.586] rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-500 transform hover:scale-[1.02]",
+                                    "w-full aspect-[1.586] rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 pb-8 text-white shadow-2xl relative overflow-hidden flex flex-col justify-between transition-all duration-500 transform hover:scale-[1.02]",
                                 )}
                                 style={{
                                     background: `linear-gradient(135deg, ${selectedCard.color} 0%, #1a1a1a 100%)`,
