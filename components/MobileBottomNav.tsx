@@ -44,8 +44,8 @@ export function MobileBottomNav() {
     ];
 
     return (
-        <nav className="md:hidden fixed bottom-0 left-0 w-full bg-zinc-950/90 backdrop-blur-md border-t border-zinc-800 pb-safe pt-2 px-2 z-50 h-[80px]">
-            <div className="flex items-center justify-around h-full pb-2">
+        <nav className="md:hidden fixed bottom-6 left-4 right-4 h-16 rounded-full bg-zinc-950/90 backdrop-blur-xl border border-zinc-800/50 z-50 shadow-2xl safe-area-bottom">
+            <div className="flex items-center justify-between px-6 h-full w-full">
                 {tabs.map((tab) => {
                     const active = tab.isActive(pathname, currentTab);
                     const Icon = tab.icon;
