@@ -185,8 +185,7 @@ export function GoalDetailsDialog({ goal, spaceId, children }: { goal: any, spac
                         </div>
                     </div>
                 </div>
-            </div>
-        </DialogContent>
-        </Dialog >
+            </DialogContent>
+        </Dialog>
     );
 }

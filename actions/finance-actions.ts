@@ -380,3 +380,44 @@ export async function deleteGoal(id: string) {
     revalidatePath("/dashboard");
     return { success: true };
 }
+
+// --- CARD TRANSACTIONS CRUD ---
+export async function createCardTransaction(data: any) {
+    const supabase = await createClient();
+
+    // Ensure numeric amount
+    const payload = {
+        ...data,
+        amount: Number(data.amount)
+    };
+
+    const { error } = await supabase.from('card_transactions').insert(payload);
+    if (error) {
+        console.error("Error creating card transaction:", error);
+        return { success: false, error: error.message };
+    }
+    revalidatePath("/dashboard");
+    return { success: true };
+}
+
+export async function updateCardTransaction(id: string, data: any) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('card_transactions').update(data).eq('id', id);
+    if (error) {
+        console.error("Error updating card transaction:", error);
+        return { success: false, error: error.message };
+    }
+    revalidatePath("/dashboard");
+    return { success: true };
+}
+
+export async function deleteCardTransaction(id: string) {
+    const supabase = await createClient();
+    const { error } = await supabase.from('card_transactions').delete().eq('id', id);
+    if (error) {
+        console.error("Error deleting card transaction:", error);
+        return { success: false, error: error.message };
+    }
+    revalidatePath("/dashboard");
+    return { success: true };
+}
