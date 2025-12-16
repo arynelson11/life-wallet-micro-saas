@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSearchParams, useRouter } from "next/navigation";
 import { OverviewView } from "@/components/dashboard/views/OverviewView";
 import { EarningsView } from "@/components/dashboard/views/EarningsView";
@@ -85,7 +86,29 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <div className="w-full overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar">
+            {/* MOBILE DROPDOWN */}
+            <div className="md:hidden w-full mb-6">
+                <Select value={activeTab} onValueChange={setActiveTab}>
+                    <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl font-medium focus:ring-primary/20">
+                        <span className="text-zinc-400 mr-2 font-normal">Visão:</span>
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                        <SelectItem value="overview">Visão Geral</SelectItem>
+                        <SelectItem value="earnings">Ganhos</SelectItem>
+                        <SelectItem value="fixed-expenses">Despesas Fixas</SelectItem>
+                        <SelectItem value="variable-expenses">Variáveis</SelectItem>
+                        <SelectItem value="debts">Dívidas</SelectItem>
+                        <SelectItem value="credit-card">Cartão de Crédito</SelectItem>
+                        <SelectItem value="savings">Economias</SelectItem>
+                        <SelectItem value="monthly">Visão Mensal</SelectItem>
+                        <SelectItem value="annual">Visão Anual</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
+
+            {/* DESKTOP TABS */}
+            <div className="hidden md:block w-full overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar">
                 <TabsList className="bg-transparent p-0 h-auto gap-2 inline-flex justify-start w-auto">
                     <TabsTrigger value="overview" className={triggerClass}>Visão Geral</TabsTrigger>
                     <TabsTrigger value="earnings" className={triggerClass}>Ganhos</TabsTrigger>

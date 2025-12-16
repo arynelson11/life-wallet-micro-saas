@@ -37,9 +37,9 @@ export function MobileBottomNav() {
         },
         {
             name: "Perfil",
-            href: "/configuracoes", // Assuming generic settings/profile route
+            href: "/perfil",
             icon: User,
-            isActive: (p: string, t: string | null) => p === "/configuracoes" || p === "/perfil"
+            isActive: (p: string, t: string | null) => p === "/perfil" || p === "/configuracoes"
         },
     ];
 
