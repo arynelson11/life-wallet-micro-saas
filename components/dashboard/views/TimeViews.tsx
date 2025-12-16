@@ -32,19 +32,19 @@ export function MonthlyView({ transactions = [] }: TimeViewProps) {
         <div className="space-y-8 animate-fade-in-up">
             {/* Summary Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
-                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Entradas</p>
-                    <p className="text-2xl font-bold text-emerald-600">R$ {income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-sm">
+                    <p className="text-zinc-400 text-xs font-medium uppercase tracking-wider mb-1">Entradas</p>
+                    <p className="text-2xl font-bold text-emerald-500">R$ {income.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </div>
-                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
-                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Saídas</p>
-                    <p className="text-2xl font-bold text-rose-600">R$ {expense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-sm">
+                    <p className="text-zinc-400 text-xs font-medium uppercase tracking-wider mb-1">Saídas</p>
+                    <p className="text-2xl font-bold text-rose-500">R$ {expense.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </div>
-                <div className="p-5 bg-white border border-zinc-100 rounded-3xl shadow-sm">
-                    <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider mb-1">Investido</p>
-                    <p className="text-2xl font-bold text-sky-600">R$ {invested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+                <div className="p-5 bg-zinc-900 border border-zinc-800 rounded-3xl shadow-sm">
+                    <p className="text-zinc-400 text-xs font-medium uppercase tracking-wider mb-1">Investido</p>
+                    <p className="text-2xl font-bold text-sky-500">R$ {invested.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </div>
-                <div className={`p-5 border rounded-3xl shadow-sm ${balance >= 0 ? 'bg-zinc-900 border-zinc-800 text-primary' : 'bg-red-50 border-red-100 text-rose-600'}`}>
+                <div className={`p-5 border rounded-3xl shadow-sm ${balance >= 0 ? 'bg-zinc-900 border-zinc-700 text-primary' : 'bg-zinc-900 border-red-900/50 text-rose-500'}`}>
                     <p className="opacity-70 text-xs font-medium uppercase tracking-wider mb-1 text-white">Saldo</p>
                     <p className="text-2xl font-bold">+ R$ {balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                 </div>
@@ -52,7 +52,7 @@ export function MonthlyView({ transactions = [] }: TimeViewProps) {
 
             {/* List Redesign */}
             <div>
-                <h3 className="text-lg font-bold text-zinc-900 mb-4 px-2">Extrato Detalhado</h3>
+                <h3 className="text-lg font-bold text-white mb-4 px-2">Extrato Detalhado</h3>
                 <TransactionTable transactions={monthlyTransactions} />
             </div>
         </div>
