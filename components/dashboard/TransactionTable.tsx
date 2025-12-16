@@ -117,7 +117,7 @@ export function TransactionTable({ transactions, onDelete, onEdit }: Transaction
         // Better: store as { label: string, date: Date, items: [] } and sort.
 
         // Re-approach:
-        const groupsArr = [];
+        const groupsArr: { label: string; items: Transaction[] }[] = [];
         const seenDates = new Set();
 
         // Iterate sorted transactions
