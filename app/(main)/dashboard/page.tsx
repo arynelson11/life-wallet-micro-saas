@@ -103,9 +103,28 @@ const DashboardContent = () => {
             {/* HEADER DESKTOP (Simple Fallback) */}
             <header className="hidden md:flex w-full bg-[#09090b] z-40 px-8 py-6 justify-between items-center border-b border-white/5">
                 <h1 className="text-2xl font-bold">LifeWallet Dashboard</h1>
+
+                {/* Search Bar */}
+                <div className="hidden lg:block relative w-96">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+                    <input
+                        type="text"
+                        placeholder="Buscar ativos, metas ou transações..."
+                        className="w-full bg-zinc-900 text-zinc-200 text-sm rounded-full pl-10 pr-4 py-2 border border-transparent focus:border-zinc-700 focus:outline-none focus:ring-0 placeholder:text-zinc-600 transition-all"
+                    />
+                </div>
+
                 <div className="flex items-center gap-4">
-                    <p className="text-zinc-400">Olá, {profile?.full_name || user?.user_metadata?.full_name || 'Usuário'}</p>
-                    <Avatar>
+                    {/* Notifications */}
+                    <button className="relative p-2 text-zinc-400 hover:text-white transition-colors">
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
+                    </button>
+
+                    <div className="h-6 w-px bg-zinc-800 mx-2 hidden md:block"></div>
+
+                    <p className="text-zinc-400 text-sm hidden md:block">Olá, {profile?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário'}</p>
+                    <Avatar className="w-9 h-9 border border-zinc-800">
                         <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
                         <AvatarFallback>{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
