@@ -10,6 +10,7 @@ import { OnboardingView } from "@/components/dashboard/OnboardingView";
 import { Loader2, AlertTriangle, LayoutDashboard, Wallet, PieChart, User, Bell, Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
