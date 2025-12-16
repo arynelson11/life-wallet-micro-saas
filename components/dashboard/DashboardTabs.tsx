@@ -82,18 +82,19 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
     const fixedExpenses = expenseTransactions.filter(t => ['Moradia', 'Educação', 'Seguros', 'Assinaturas', 'Saúde'].includes(t.category) || t.category === 'Fixa'); // Simple heuristic
     const variableExpenses = expenseTransactions.filter(t => !['Moradia', 'Educação', 'Seguros', 'Assinaturas', 'Saúde'].includes(t.category) && t.category !== 'Fixa');
 
-    const triggerClass = "rounded-full border border-zinc-200 bg-white/50 px-4 h-9 text-sm text-zinc-600 data-[state=active]:bg-zinc-900 data-[state=active]:text-white data-[state=active]:border-zinc-900 hover:text-zinc-900 transition-all shadow-sm whitespace-nowrap";
+    // Desktop Trigger Style (Restored)
+    const desktopTriggerClass = "rounded-full px-6 h-10 text-zinc-600 data-[state=active]:bg-black data-[state=active]:text-[#CCF381] hover:text-black transition-colors";
 
     return (
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            {/* MOBILE DROPDOWN */}
+            {/* MOBILE DROPDOWN (Native Select) */}
             <div className="md:hidden w-full mb-6">
                 <Select value={activeTab} onValueChange={setActiveTab}>
-                    <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-white h-12 rounded-xl font-medium focus:ring-primary/20">
-                        <span className="text-zinc-400 mr-2 font-normal">Visão:</span>
+                    <SelectTrigger className="w-full bg-zinc-900 border-zinc-800 text-zinc-100 h-12 rounded-xl font-medium focus:ring-primary/20 focus:ring-offset-0">
+                        <span className="text-zinc-500 mr-2 font-normal">Visualizando:</span>
                         <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-800 text-white">
+                    <SelectContent className="bg-zinc-900 border-zinc-800 text-zinc-100">
                         <SelectItem value="overview">Visão Geral</SelectItem>
                         <SelectItem value="earnings">Ganhos</SelectItem>
                         <SelectItem value="fixed-expenses">Despesas Fixas</SelectItem>
@@ -107,18 +108,19 @@ export function DashboardTabs({ summary, fullData, spaceId, profileId }: Dashboa
                 </Select>
             </div>
 
-            {/* DESKTOP TABS */}
+            {/* DESKTOP TABS (Original Horizontal List) */}
             <div className="hidden md:block w-full overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 no-scrollbar">
-                <TabsList className="bg-transparent p-0 h-auto gap-2 inline-flex justify-start w-auto">
-                    <TabsTrigger value="overview" className={triggerClass}>Visão Geral</TabsTrigger>
-                    <TabsTrigger value="earnings" className={triggerClass}>Ganhos</TabsTrigger>
-                    <TabsTrigger value="fixed-expenses" className={triggerClass}>Despesas Fixas</TabsTrigger>
-                    <TabsTrigger value="variable-expenses" className={triggerClass}>Variáveis</TabsTrigger>
-                    <TabsTrigger value="debts" className={triggerClass}>Dívidas</TabsTrigger>
-                    <TabsTrigger value="credit-card" className={triggerClass}>Cartão de Crédito</TabsTrigger>
-                    <TabsTrigger value="savings" className={triggerClass}>Economias</TabsTrigger>
-                    <TabsTrigger value="monthly" className={triggerClass}>Visão Mensal</TabsTrigger>
-                    <TabsTrigger value="annual" className={triggerClass}>Visão Anual</TabsTrigger>
+                <TabsList className="bg-white/50 backdrop-blur-sm border border-zinc-200 p-1 h-12 rounded-full inline-flex min-w-max">
+                    <TabsTrigger value="overview" className={desktopTriggerClass}>Visão Geral</TabsTrigger>
+                    <TabsTrigger value="earnings" className={desktopTriggerClass}>Ganhos</TabsTrigger>
+                    <TabsTrigger value="fixed-expenses" className={desktopTriggerClass}>Despesas Fixas</TabsTrigger>
+                    <TabsTrigger value="variable-expenses" className={desktopTriggerClass}>Variáveis</TabsTrigger>
+                    <TabsTrigger value="debts" className={desktopTriggerClass}>Dívidas</TabsTrigger>
+                    <TabsTrigger value="credit-card" className={desktopTriggerClass}>Cartão de Crédito</TabsTrigger>
+                    <TabsTrigger value="savings" className={desktopTriggerClass}>Economias</TabsTrigger>
+                    <div className="w-px h-6 bg-zinc-300 mx-2 self-center" />
+                    <TabsTrigger value="monthly" className={desktopTriggerClass}>Visão Mensal</TabsTrigger>
+                    <TabsTrigger value="annual" className={desktopTriggerClass}>Visão Anual</TabsTrigger>
                 </TabsList>
             </div>
 
