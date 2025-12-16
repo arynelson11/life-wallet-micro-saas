@@ -13,7 +13,7 @@ interface CreditCardViewProps {
 }
 
 export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardViewProps) {
-    const [selectedCardId, setSelectedCardId] = useState<string | number>(null);
+    const [selectedCardId, setSelectedCardId] = useState<string | number | null>(null);
 
     // Effect to set initial selected card when cards load
     useEffect(() => {
