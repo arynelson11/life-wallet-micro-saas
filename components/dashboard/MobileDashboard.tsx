@@ -130,8 +130,7 @@ export function MobileDashboard({ summary, transactions = [], user, profile, onN
                     <div className="flex-1 w-full min-w-0">
                         {/* Reusing DashboardChart but ensuring it fits mobile container */}
                         <DashboardChart
-                            data={transactions}
-                            type="bar" // Using bar for clear monthly view
+                            data={processChartData(transactions)}
                         />
                     </div>
                 </div>
