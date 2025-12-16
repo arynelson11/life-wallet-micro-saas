@@ -1,26 +1,18 @@
-
 "use client";
 
 import { useState } from "react";
 import {
-    Bell,
-    User,
     Eye,
     EyeOff,
-    ArrowUpRight,
-    Barcode,
-    Plus,
-    CreditCard,
-    ArrowRight,
     TrendingUp,
-    ArrowDownRight,
-    Home,
-    Search,
-    Wallet
+    TrendingDown,
+    ArrowUpRight,
+    ArrowDownRight
 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { DashboardChart } from "@/components/DashboardChart";
 
 interface MobileDashboardProps {
     summary: any;
@@ -37,116 +29,143 @@ export function MobileDashboard({ summary, transactions = [], user, profile, onN
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
     };
 
+    const processChartData = (transactions: any[]) => {
+        const last6Months = Array.from({ length: 6 }, (_, i) => {
+            const d = new Date();
+            d.setMonth(d.getMonth() - (5 - i));
+            return d;
+        });
+
+        return last6Months.map(date => {
+            const monthLabel = format(date, 'MMM', { locale: ptBR });
+            const formattedLabel = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+
+            const monthTransactions = transactions.filter(t => {
+                const tDate = new Date(t.date);
+                return tDate.getMonth() === date.getMonth() && tDate.getFullYear() === date.getFullYear();
+            });
+
+            const entrada = monthTransactions
+                .filter(t => t.type === 'income')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            const saida = monthTransactions
+                .filter(t => t.type === 'expense')
+                .reduce((acc, t) => acc + t.amount, 0);
+
+            return {
+                month: formattedLabel,
+                entrada,
+                saida
+            };
+        });
+    };
+
     const firstName = profile?.full_name?.split(' ')[0] || user?.user_metadata?.full_name?.split(' ')[0] || 'Usuário';
 
     return (
         <div className="md:hidden min-h-screen bg-black text-white pb-32 animate-fade-in-up">
 
-            {/* 1. HEADER "CLEAN" */}
-            <div className="flex justify-between items-center p-6 bg-black sticky top-0 z-40">
+            {/* 1. Header Clean & Serious */}
+            <div className="flex justify-between items-center p-6 bg-black sticky top-0 z-40 border-b border-zinc-900">
                 <div className="flex items-center gap-3">
-                    <Avatar className="w-10 h-10 border border-zinc-800">
+                    <Avatar className="w-8 h-8 opacity-80">
                         <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
-                        <AvatarFallback className="bg-zinc-800 text-zinc-400">{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-zinc-800 text-zinc-400 text-xs">{user?.email?.substring(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col">
-                        <span className="text-zinc-400 text-xs">Olá,</span>
-                        <span className="font-bold text-white text-base">{firstName}</span>
-                    </div>
+                    <h1 className="text-lg font-semibold text-white">Visão Geral</h1>
                 </div>
-                <button className="relative p-2 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2 right-2.5 w-1.5 h-1.5 bg-red-500 rounded-full border border-zinc-900"></span>
-                </button>
             </div>
 
-            <div className="px-6 space-y-8">
+            <div className="px-4 flex flex-col gap-4 mt-4">
 
-                {/* 2. POWER CARD */}
-                <div className="w-full aspect-[1.8] rounded-[2rem] bg-gradient-to-br from-indigo-600 via-purple-600 to-zinc-900 p-6 flex flex-col justify-between shadow-2xl shadow-purple-900/20 relative overflow-hidden group">
-
-                    {/* Background Noise/Decoration */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl translate-x-10 -translate-y-10" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-400/10 rounded-full blur-2xl -translate-x-5 translate-y-5" />
-
-                    <div className="relative z-10 flex justify-between items-start">
-                        <span className="text-white/80 text-sm font-medium tracking-wide">Saldo Total</span>
-                        <button onClick={() => setShowBalance(!showBalance)} className="text-white/70 hover:text-white">
-                            {showBalance ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                {/* 2. Saldo Total (Desktop Adapted) */}
+                <div className="w-full p-6 rounded-2xl bg-zinc-900 border border-zinc-800 flex flex-col gap-2">
+                    <div className="flex justify-between items-center">
+                        <span className="text-zinc-400 text-sm font-medium">Saldo Total</span>
+                        <button onClick={() => setShowBalance(!showBalance)} className="text-zinc-500 hover:text-white transition-colors">
+                            {showBalance ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                         </button>
                     </div>
+                    {showBalance ? (
+                        <h2 className="text-3xl font-bold text-white tracking-tight">
+                            {formatCurrency(summary.balance)}
+                        </h2>
+                    ) : (
+                        <div className="h-9 w-40 bg-zinc-800 rounded animate-pulse" />
+                    )}
+                </div>
 
-                    <div className="relative z-10">
-                        {showBalance ? (
-                            <h1 className="text-4xl font-bold text-white tracking-tight">
-                                <span className="text-lg font-medium text-white/60 mr-1">R$</span>
-                                {formatCurrency(summary.balance).replace('R$', '').trim()}
-                            </h1>
-                        ) : (
-                            <div className="h-10 w-48 bg-white/10 rounded-xl animate-pulse backdrop-blur-sm" />
-                        )}
-                    </div>
-
-                    <div className="relative z-10 flex items-center gap-2">
-                        {/* Sparkline Decorative */}
-                        <div className="h-8 w-24 flex items-end gap-1">
-                            {[40, 60, 45, 70, 50, 80, 75].map((h, i) => (
-                                <div key={i} style={{ height: `${h}%` }} className="w-2 bg-white/20 rounded-t-sm" />
-                            ))}
+                {/* 3. Resumo (Grid 2-Col) */}
+                <div className="grid grid-cols-2 gap-4">
+                    {/* Receita */}
+                    <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col gap-3">
+                        <div className="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                            <TrendingUp className="w-4 h-4" />
                         </div>
-                        <span className="text-xs text-emerald-300 font-medium bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
-                            + 12% este mês
-                        </span>
+                        <div>
+                            <span className="text-zinc-500 text-xs font-medium block mb-1">Receitas</span>
+                            <span className="text-emerald-500 font-bold text-lg block">
+                                {showBalance ? formatCurrency(summary.income) : "R$ ---"}
+                            </span>
+                        </div>
+                    </div>
+                    {/* Despesa */}
+                    <div className="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex flex-col gap-3">
+                        <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                            <TrendingDown className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <span className="text-zinc-500 text-xs font-medium block mb-1">Despesas</span>
+                            <span className="text-red-500 font-bold text-lg block">
+                                {showBalance ? formatCurrency(summary.expenses) : "R$ ---"}
+                            </span>
+                        </div>
                     </div>
                 </div>
 
-                {/* 3. QUICK ACTIONS */}
-                <div className="flex justify-between px-2">
-                    {[
-                        { icon: ArrowUpRight, label: "Pix", action: () => { } },
-                        { icon: ArrowRight, label: "Transferir", action: () => { } },
-                        { icon: CreditCard, label: "Cartões", action: () => onNavigate("credit-card") },
-                        { icon: Plus, label: "Mais", action: () => onNavigate("overview") }
-                    ].map((item, i) => (
-                        <div key={i} className="flex flex-col items-center gap-3 cursor-pointer" onClick={item.action}>
-                            <div className="w-16 h-16 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-100 shadow-lg active:scale-95 transition-transform">
-                                <item.icon className="w-7 h-7" />
-                            </div>
-                            <span className="text-xs text-zinc-400 font-medium">{item.label}</span>
-                        </div>
-                    ))}
+                {/* 4. Chart (Adapted 100% Width) */}
+                <div className="w-full h-64 bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col overflow-hidden">
+                    <span className="text-zinc-400 text-sm font-medium mb-4">Fluxo de Caixa</span>
+                    <div className="flex-1 w-full min-w-0">
+                        {/* Reusing DashboardChart but ensuring it fits mobile container */}
+                        <DashboardChart
+                            data={transactions}
+                            type="bar" // Using bar for clear monthly view
+                        />
+                    </div>
                 </div>
 
-                {/* 4. LISTA DE TRANSAÇÕES (FEED) */}
-                <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-bold text-white">Atividade Recente</h3>
-                        <button onClick={() => onNavigate("monthly")} className="text-xs text-purple-400 font-medium">Ver tudo</button>
+                {/* 5. List (Transactions) - Vertical List without cards */}
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between mt-2 mb-2">
+                        <h3 className="text-base font-bold text-white">Últimas Transações</h3>
+                        <button onClick={() => onNavigate("monthly")} className="text-xs text-zinc-500 hover:text-white transition-colors">Ver todas</button>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="flex flex-col bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden divide-y divide-zinc-800/50">
                         {transactions.slice(0, 5).map((t, i) => (
-                            <div key={i} className="flex items-center justify-between p-4 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 backdrop-blur-sm">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center text-2xl border border-zinc-700/50">
+                            <div key={i} className="flex items-center justify-between p-4 bg-zinc-900">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-zinc-800 flex items-center justify-center text-lg border border-zinc-700/30">
                                         {t.category === 'Alimentação' ? '🍔' :
                                             t.category === 'Moradia' ? '🏠' :
                                                 t.category === 'Transporte' ? '🚗' :
                                                     t.category === 'Lazer' ? '🎉' :
                                                         t.type === 'income' ? '💰' : '💸'}
                                     </div>
-                                    <div>
-                                        <p className="text-white font-bold text-sm">{t.description || t.category}</p>
-                                        <p className="text-zinc-500 text-xs mt-0.5 capitalize">{format(new Date(t.date), "d MMM", { locale: ptBR })}</p>
+                                    <div className="flex flex-col">
+                                        <span className="text-zinc-200 font-medium text-sm">{t.description || t.category}</span>
+                                        <span className="text-zinc-500 text-xs capitalize">{format(new Date(t.date), "dd MMM", { locale: ptBR })}</span>
                                     </div>
                                 </div>
-                                <span className={`font-bold ${t.type === 'income' ? 'text-emerald-500' : 'text-zinc-100'}`}>
+                                <span className={`font-medium text-sm ${t.type === 'income' ? 'text-emerald-500' : 'text-zinc-200'}`}>
                                     {t.type === 'income' ? '+' : '-'} {formatCurrency(t.amount).replace('R$', '').trim()}
                                 </span>
                             </div>
                         ))}
                         {transactions.length === 0 && (
-                            <div className="text-center text-zinc-600 py-8 text-sm italic">Nenhuma atividade recente.</div>
+                            <div className="text-center text-zinc-600 py-6 text-sm">Sem movimentações.</div>
                         )}
                     </div>
                 </div>

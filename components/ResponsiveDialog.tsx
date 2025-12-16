@@ -69,7 +69,7 @@ export function ResponsiveDialog({
     return (
         <Drawer open={open} onOpenChange={onOpenChange}>
             <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-            <DrawerContent className="bg-zinc-50 border-t border-zinc-100 rounded-t-[2rem]">
+            <DrawerContent className="bg-zinc-950 border-t border-zinc-800 rounded-t-[2rem] text-zinc-100">
                 <div className="mx-auto w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mt-4 mb-4" />
                 <DrawerHeader className="text-left">
                     <DrawerTitle className="text-2xl font-bold text-zinc-900">{title}</DrawerTitle>
