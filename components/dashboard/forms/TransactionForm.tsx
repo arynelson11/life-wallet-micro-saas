@@ -39,6 +39,9 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
         category: initialData?.category || ""
     });
 
+    const [isInstallment, setIsInstallment] = useState(false);
+    const [installments, setInstallments] = useState(2);
+
     const categories = type === 'income'
         ? ["Salário", "Freelance", "Renda Extra", "Investimentos", "Outros"]
         : ["Alimentação", "Transporte", "Moradia", "Lazer", "Assinaturas", "Saúde", "Educação", "Outros"];
@@ -79,7 +82,8 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
                     amount: Number(formData.amount),
                     date: new Date(formData.date).toISOString(),
                     category: formData.category,
-                    installments: 1,
+                    installments_total: isInstallment ? installments : 1,
+                    installments_current: 1,
                     status: 'pending'
                 };
                 result = await createCardTransaction(cardPayload);
@@ -171,7 +175,7 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="date">Data</Label>
+                            <Label htmlFor="date">Data da Compra</Label>
                             <Input
                                 id="date"
                                 type="date"
@@ -181,6 +185,41 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
                             />
                         </div>
                     </div>
+
+                    {/* Exibir opções de parcelamento APENAS se for Cartão de Crédito */}
+                    {creditCardId && (
+                        <div className="bg-zinc-50 border border-zinc-100 rounded-lg p-3 dark:bg-zinc-900 dark:border-zinc-800">
+                            <div className="flex items-center gap-2 mb-2">
+                                <input
+                                    type="checkbox"
+                                    id="isInstallment"
+                                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    checked={isInstallment}
+                                    onChange={(e) => setIsInstallment(e.target.checked)}
+                                />
+                                <Label htmlFor="isInstallment" className="cursor-pointer">É uma compra parcelada?</Label>
+                            </div>
+
+                            {isInstallment && (
+                                <div className="mt-2 animate-in slide-in-from-top-2 fade-in">
+                                    <Label htmlFor="installments">Número de Parcelas</Label>
+                                    <Input
+                                        id="installments"
+                                        type="number"
+                                        min="2"
+                                        max="48"
+                                        value={installments}
+                                        onChange={(e) => setInstallments(Number(e.target.value))}
+                                        className="mt-1"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        Valor da parcela: R$ {(Number(formData.amount) / installments).toFixed(2)}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     <div className="grid gap-2">
                         <Label htmlFor="category">Categoria</Label>
                         <Select
@@ -210,9 +249,9 @@ export function TransactionForm({ type, initialData, spaceId, profileId, creditC
                                 <Trash2 className="w-4 h-4" />
                             </Button>
                         )}
-                        <Button type="submit" disabled={isLoading} className="ml-auto w-full md:w-auto">
+                        <Button type="submit" disabled={isLoading} className="ml-auto w-full md:w-auto font-bold">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {isEdit ? "Salvar Alterações" : "Criar Transação"}
+                            {isEdit ? "Salvar Alterações" : "Confirmar"}
                         </Button>
                     </div>
                 </form>

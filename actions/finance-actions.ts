@@ -313,7 +313,16 @@ export async function deleteDebt(id: string) {
 // --- CREDIT CARDS CRUD ---
 export async function createCreditCard(data: any) {
     const supabase = await createClient();
-    const { error } = await supabase.from('credit_cards').insert(data);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { success: false, error: "Usuário não autenticado" };
+
+    const payload = {
+        ...data,
+        user_id: user.id
+    };
+
+    const { error } = await supabase.from('credit_cards').insert(payload);
     if (error) {
         console.error("Error creating card:", error);
         return { success: false, error: error.message };
@@ -384,11 +393,15 @@ export async function deleteGoal(id: string) {
 // --- CARD TRANSACTIONS CRUD ---
 export async function createCardTransaction(data: any) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Ensure numeric amount
+    if (!user) return { success: false, error: "Usuário não autenticado" };
+
+    // Ensure numeric amount and add user_id
     const payload = {
         ...data,
-        amount: Number(data.amount)
+        amount: Number(data.amount),
+        user_id: user.id
     };
 
     const { error } = await supabase.from('card_transactions').insert(payload);

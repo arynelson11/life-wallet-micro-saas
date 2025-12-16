@@ -28,16 +28,28 @@ export function CreditCardView({ cards = [], spaceId, profileId }: CreditCardVie
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
     };
 
-    // Helper to determine card brand logo (simple heuristic or static)
-    const CardBrand = () => (
-        <div className="flex flex-col items-center">
-            <div className="flex -space-x-2">
-                <div className="w-6 h-6 rounded-full bg-white/80 mix-blend-screen" />
-                <div className="w-6 h-6 rounded-full bg-white/50 mix-blend-screen" />
+    // Helper to determine card brand logo based on name
+    const CardBrand = () => {
+        const isVisa = selectedCard?.name?.toLowerCase().includes('visa');
+
+        if (isVisa) {
+            return (
+                <div className="flex flex-col items-end">
+                    <span className="text-2xl font-black italic tracking-tighter text-white/90">VISA</span>
+                </div>
+            )
+        }
+
+        // Default to Mastercard style
+        return (
+            <div className="flex flex-col items-center">
+                <div className="flex -space-x-4">
+                    <div className="w-8 h-8 rounded-full bg-[#EB001B]/90 mix-blend-screen" />
+                    <div className="w-8 h-8 rounded-full bg-[#F79E1B]/90 mix-blend-screen" />
+                </div>
             </div>
-            <span className="text-[8px] font-bold text-white/80 mt-1 tracking-wider uppercase">Mastercard</span>
-        </div>
-    );
+        );
+    };
 
     return (
         <div className="space-y-6 animate-fade-in-up">

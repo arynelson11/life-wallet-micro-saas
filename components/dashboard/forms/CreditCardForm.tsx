@@ -113,27 +113,31 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                 <DialogHeader>
                     <DialogTitle>{isEdit ? "Editar Cartão" : "Novo Cartão de Crédito"}</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">Apelido do Cartão</Label>
-                        <Input
-                            id="name"
-                            placeholder="Ex: Nubank Platinum"
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        />
+                <form onSubmit={handleSubmit} className="grid gap-6 py-4">
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="name">Nome do Cartão</Label>
+                            <Input
+                                id="name"
+                                placeholder="Ex: Nubank"
+                                required
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="limit">Limite (R$)</Label>
+                            <Input
+                                id="limit"
+                                type="number"
+                                placeholder="0,00"
+                                required
+                                value={formData.limit_amount}
+                                onChange={(e) => setFormData({ ...formData, limit_amount: e.target.value })}
+                            />
+                        </div>
                     </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="limit">Limite (R$)</Label>
-                        <Input
-                            id="limit"
-                            type="number"
-                            required
-                            value={formData.limit_amount}
-                            onChange={(e) => setFormData({ ...formData, limit_amount: e.target.value })}
-                        />
-                    </div>
+
                     <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="closing">Dia Fechamento</Label>
@@ -141,7 +145,7 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                                 id="closing"
                                 type="number"
                                 min="1" max="31"
-                                placeholder="DD"
+                                placeholder="Dia"
                                 required
                                 value={formData.closing_day}
                                 onChange={(e) => setFormData({ ...formData, closing_day: e.target.value })}
@@ -153,23 +157,32 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                                 id="due"
                                 type="number"
                                 min="1" max="31"
-                                placeholder="DD"
+                                placeholder="Dia"
                                 required
                                 value={formData.due_day}
                                 onChange={(e) => setFormData({ ...formData, due_day: e.target.value })}
                             />
                         </div>
                     </div>
+
                     <div className="grid gap-2">
-                        <Label>Cor do Cartão</Label>
-                        <div className="flex gap-2">
-                            {['#820ad1', '#ff7a00', '#000000', '#0051ff', '#e60012'].map(color => (
+                        <Label>Escolha a Cor</Label>
+                        <div className="flex gap-3">
+                            {[
+                                '#820ad1', // Nubank
+                                '#ff7a00', // Inter
+                                '#09090b', // Black
+                                '#2563eb', // Blue
+                                '#16a34a'  // Green
+                            ].map(color => (
                                 <div
                                     key={color}
                                     onClick={() => setFormData({ ...formData, color })}
-                                    className={`w-8 h-8 rounded-full cursor-pointer border-2 ${formData.color === color ? 'border-primary' : 'border-transparent'}`}
+                                    className={`w-10 h-10 rounded-full cursor-pointer transition-all hover:scale-110 shadow-sm flex items-center justify-center ${formData.color === color ? 'ring-2 ring-offset-2 ring-primary scale-110' : ''}`}
                                     style={{ background: color }}
-                                />
+                                >
+                                    {formData.color === color && <div className="w-2 h-2 bg-white rounded-full" />}
+                                </div>
                             ))}
                         </div>
                     </div>
@@ -186,9 +199,9 @@ export function CreditCardForm({ initialData, spaceId, trigger, onSuccess }: Cre
                                 <Trash2 className="w-4 h-4" />
                             </Button>
                         )}
-                        <Button type="submit" disabled={isLoading} className="ml-auto">
+                        <Button type="submit" disabled={isLoading} className="ml-auto w-full md:w-auto bg-primary text-primary-foreground hover:bg-primary/90 font-bold">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            {isEdit ? "Salvar" : "Adicionar Cartão"}
+                            {isEdit ? "Salvar Alterações" : "Criar Cartão"}
                         </Button>
                     </div>
                 </form>
