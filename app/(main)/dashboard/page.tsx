@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { DashboardTabs } from "@/components/dashboard/DashboardTabs";
 import { getFinancialSummary, getFullFinancialData } from "@/actions/finance-actions";
 import { OnboardingView } from "@/components/dashboard/OnboardingView";
-import { Loader2, AlertTriangle, LayoutDashboard, Wallet, PieChart, User, Bell, Plus, Search } from "lucide-react";
+import { Loader2, AlertTriangle, LayoutDashboard, Wallet, PieChart, User, Bell, Plus, Search, CheckCheck } from "lucide-react";
 import { toast } from "sonner";
 import { GlobalErrorBoundary } from "@/components/GlobalErrorBoundary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,6 +28,14 @@ const DashboardContent = () => {
     const [summary, setSummary] = useState<any>(null);
     const [fullData, setFullData] = useState<any>({ transactions: [], debts: [], cards: [], goals: [] });
     const [spaceId, setSpaceId] = useState<string | null>(null);
+
+    // Notifications State
+    const [hasUnread, setHasUnread] = useState(true);
+
+    const handleMarkAsRead = () => {
+        setHasUnread(false);
+        toast.success("Todas as notificações foram marcadas como lidas");
+    };
 
     const router = useRouter();
     const supabase = createClient();
@@ -123,24 +131,37 @@ const DashboardContent = () => {
                     <DropdownMenuTrigger asChild>
                         <button className="p-2 bg-zinc-900/50 rounded-full text-zinc-400 hover:text-white border border-white/5 relative">
                             <Bell className="w-5 h-5" />
-                            <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
+                            {/* Bolinha vermelha condicional */}
+                            {hasUnread && <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>}
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200">
-                        <DropdownMenuLabel>Notificações</DropdownMenuLabel>
-                        <DropdownMenuSeparator className="bg-zinc-800" />
-                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                            <div className="font-medium text-white">💰 Dividendos Recebidos</div>
-                            <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                            <div className="font-medium text-white">🎯 Meta Atingida</div>
-                            <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                            <div className="font-medium text-white">⚠️ Conta de Luz</div>
-                            <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
-                        </DropdownMenuItem>
+                    <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200 p-0">
+                        {/* Header com Botão Limpar */}
+                        <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+                            <span className="font-semibold text-sm text-white">Notificações</span>
+                            <button
+                                onClick={handleMarkAsRead}
+                                className="text-xs text-zinc-500 hover:text-[#CCF381] flex items-center gap-1 transition-colors"
+                            >
+                                <CheckCheck className="w-3 h-3" />
+                                Marcar todas como lidas
+                            </button>
+                        </div>
+
+                        <div className={`py-1 ${!hasUnread ? 'opacity-50' : ''}`}>
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                <div className="font-medium text-white flex items-center gap-2">💰 Dividendos Recebidos {!hasUnread && <span className="text-[10px] text-zinc-600">(Lido)</span>}</div>
+                                <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                <div className="font-medium text-white">🎯 Meta Atingida</div>
+                                <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                <div className="font-medium text-white">⚠️ Conta de Luz</div>
+                                <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
+                            </DropdownMenuItem>
+                        </div>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </header>
@@ -162,28 +183,41 @@ const DashboardContent = () => {
 
                 <div className="flex items-center gap-4">
                     {/* Notifications */}
+                    {/* Notifications */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className="relative p-2 text-zinc-400 hover:text-white transition-colors outline-none">
                                 <Bell className="w-5 h-5" />
-                                <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>
+                                {hasUnread && <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#09090b]"></span>}
                             </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200">
-                            <DropdownMenuLabel>Notificações</DropdownMenuLabel>
-                            <DropdownMenuSeparator className="bg-zinc-800" />
-                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                                <div className="font-medium text-white">💰 Dividendos Recebidos</div>
-                                <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                                <div className="font-medium text-white">🎯 Meta Atingida</div>
-                                <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3">
-                                <div className="font-medium text-white">⚠️ Conta de Luz</div>
-                                <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
-                            </DropdownMenuItem>
+                        <DropdownMenuContent align="end" className="w-80 bg-zinc-950 border-zinc-800 text-zinc-200 p-0">
+                            {/* Header com Botão Limpar */}
+                            <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-800">
+                                <span className="font-semibold text-sm text-white">Notificações</span>
+                                <button
+                                    onClick={handleMarkAsRead}
+                                    className="text-xs text-zinc-500 hover:text-[#CCF381] flex items-center gap-1 transition-colors"
+                                >
+                                    <CheckCheck className="w-3 h-3" />
+                                    Marcar todas como lidas
+                                </button>
+                            </div>
+
+                            <div className={`py-1 ${!hasUnread ? 'opacity-50' : ''}`}>
+                                <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                    <div className="font-medium text-white flex items-center gap-2">💰 Dividendos Recebidos {!hasUnread && <span className="text-[10px] text-zinc-600">(Lido)</span>}</div>
+                                    <div className="text-xs text-zinc-500">PETR4 pagou R$ 45,00 • Há 2h</div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                    <div className="font-medium text-white">🎯 Meta Atingida</div>
+                                    <div className="text-xs text-zinc-500">"Viagem Disney" chegou a 50%! • Ontem</div>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="focus:bg-zinc-900 cursor-pointer flex flex-col items-start gap-1 py-3 px-4">
+                                    <div className="font-medium text-white">⚠️ Conta de Luz</div>
+                                    <div className="text-xs text-zinc-500">Lembrete de vencimento • Hoje</div>
+                                </DropdownMenuItem>
+                            </div>
                         </DropdownMenuContent>
                     </DropdownMenu>
 
